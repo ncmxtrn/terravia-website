@@ -5,8 +5,10 @@
   This is the foundation of our design system, allowing for easy changes to colors and spacing.
 */
 :root {
-    --primary-color: #2E4035; /* Deep Forest Green */
-    --accent-color: #39FF14;   /* Tech Green / Neon */
+    --primary-color: #2E4035;
+    /* Deep Forest Green */
+    --accent-color: #39FF14;
+    /* Tech Green / Neon */
     --background-light: #f8f9fa;
     --text-color: #333;
     --text-light: #ffffff;
@@ -34,14 +36,24 @@ body {
     background-color: #fff;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     line-height: 1.2;
     font-weight: 700;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.25rem; }
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.25rem;
+}
 
 p {
     margin-bottom: var(--spacing-unit);
@@ -77,7 +89,7 @@ img {
 }
 
 #main-header.scrolled {
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 #main-header nav {
@@ -94,7 +106,8 @@ img {
 }
 
 .nav-links {
-    display: none; /* Hidden on mobile */
+    display: none;
+    /* Hidden on mobile */
     list-style: none;
 }
 
@@ -113,7 +126,8 @@ img {
 .primary-cta {
     background-color: var(--accent-color);
     color: var(--primary-color);
-    display: none; /* Hidden on mobile, shown on desktop */
+    display: none;
+    /* Hidden on mobile, shown on desktop */
 }
 
 .secondary-cta {
@@ -124,7 +138,8 @@ img {
 
 /* Mobile Menu Toggle */
 .mobile-menu-toggle {
-    display: block; /* Shown on mobile */
+    display: block;
+    /* Shown on mobile */
     background: none;
     border: none;
     cursor: pointer;
@@ -163,12 +178,15 @@ img {
 #main-header.nav-open .mobile-menu-toggle .bar:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
 }
+
 #main-header.nav-open .mobile-menu-toggle .bar:nth-child(2) {
     opacity: 0;
 }
+
 #main-header.nav-open .mobile-menu-toggle .bar:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg);
 }
+
 #main-header.nav-open .mobile-menu-toggle .bar {
     background-color: var(--text-light);
 }
@@ -238,14 +256,14 @@ section h2 {
     background-color: #fff;
     padding: calc(var(--spacing-unit) * 1.5);
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
 }
 
 .service-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .service-card h3 {
@@ -333,19 +351,23 @@ section h2 {
   Here we transition from a mobile-first (stacked) layout to a multi-column desktop layout.
 */
 @media (min-width: 768px) {
-    h1 { font-size: 3.5rem; }
+    h1 {
+        font-size: 3.5rem;
+    }
 
     /* Header for Desktop */
     .mobile-menu-toggle {
-        display: none; /* Hide hamburger menu on desktop */
+        display: none;
+        /* Hide hamburger menu on desktop */
     }
 
     .nav-links {
-        display: flex; /* Show nav links */
+        display: flex;
+        /* Show nav links */
         flex-direction: row;
         gap: calc(var(--spacing-unit) * 1.5);
     }
-    
+
     .nav-links li a {
         color: var(--primary-color);
         position: relative;
@@ -366,9 +388,10 @@ section h2 {
     .nav-links li a:hover::after {
         width: 100%;
     }
-    
+
     .primary-cta {
-        display: inline-block; /* Show desktop CTA */
+        display: inline-block;
+        /* Show desktop CTA */
         margin-left: calc(var(--spacing-unit) * 1.5);
     }
 
@@ -385,8 +408,9 @@ section h2 {
         gap: calc(var(--spacing-unit) * 3);
         text-align: left;
     }
-    
-    .tech-text, .tech-image {
+
+    .tech-text,
+    .tech-image {
         flex: 1;
     }
 
@@ -412,5 +436,44 @@ section h2 {
 @media (min-width: 1024px) {
     .services-grid {
         grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* --- LiDAR App Showcase Section --- */
+#lidar-app {
+    background-color: #fff;
+    /* White background to stand out */
+}
+
+.app-showcase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--spacing-unit) * 2);
+    text-align: center;
+}
+
+.app-text .cta-button {
+    display: inline-block;
+    /* Ensure it's visible on mobile */
+    margin-top: var(--spacing-unit);
+}
+
+.app-image img {
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    .app-showcase {
+        flex-direction: row-reverse;
+        /* Image on the right */
+        text-align: left;
+        gap: calc(var(--spacing-unit) * 3);
+    }
+
+    .app-text,
+    .app-image {
+        flex: 1;
     }
 }

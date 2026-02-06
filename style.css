@@ -1,0 +1,416 @@
+/* --- Base & Mobile First Styles --- */
+
+/* 
+  Root variables for consistent theming. 
+  This is the foundation of our design system, allowing for easy changes to colors and spacing.
+*/
+:root {
+    --primary-color: #2E4035; /* Deep Forest Green */
+    --accent-color: #39FF14;   /* Tech Green / Neon */
+    --background-light: #f8f9fa;
+    --text-color: #333;
+    --text-light: #ffffff;
+    --spacing-unit: 1rem;
+}
+
+/* Base reset and typography */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #fff;
+}
+
+h1, h2, h3 {
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.25rem; }
+
+p {
+    margin-bottom: var(--spacing-unit);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- Header --- */
+/* Mobile First: Header is simple, with navigation links hidden by default. */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 1000;
+    transition: box-shadow 0.3s ease;
+}
+
+#main-header.scrolled {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#main-header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: none; /* Hidden on mobile */
+    list-style: none;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+}
+
+.primary-cta {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    display: none; /* Hidden on mobile, shown on desktop */
+}
+
+.secondary-cta {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: block; /* Shown on mobile */
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.mobile-menu-toggle .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Mobile Nav (when active) */
+#main-header.nav-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--primary-color);
+}
+
+#main-header.nav-open .nav-links a {
+    color: var(--text-light);
+    font-size: 2rem;
+    margin: 1rem 0;
+}
+
+#main-header.nav-open .mobile-menu-toggle .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+#main-header.nav-open .mobile-menu-toggle .bar:nth-child(2) {
+    opacity: 0;
+}
+#main-header.nav-open .mobile-menu-toggle .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+#main-header.nav-open .mobile-menu-toggle .bar {
+    background-color: var(--text-light);
+}
+
+
+/* --- Hero Section --- */
+#hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-light);
+    background-image: url('https://placehold.co/1200x800/1a251e/1a251e?text=.');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+#hero h1 {
+    margin-bottom: var(--spacing-unit);
+}
+
+#hero p {
+    font-size: 1.1rem;
+    margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+/* --- Sections General Styling --- */
+section {
+    padding: calc(var(--spacing-unit) * 4) 0;
+}
+
+section:nth-of-type(odd) {
+    background-color: var(--background-light);
+}
+
+section h2 {
+    text-align: center;
+    margin-bottom: calc(var(--spacing-unit) * 2);
+    color: var(--primary-color);
+}
+
+/* --- Services Section --- */
+/* Mobile First: Services are in a single column flex layout. */
+.services-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+}
+
+.service-card {
+    background-color: #fff;
+    padding: calc(var(--spacing-unit) * 1.5);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.service-card h3 {
+    color: var(--primary-color);
+    margin-bottom: calc(var(--spacing-unit) / 2);
+}
+
+/* --- Tech Section --- */
+/* Mobile First: Text and image are stacked in a single column. */
+.tech-content {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-unit) * 2);
+    align-items: center;
+}
+
+.tech-text {
+    text-align: center;
+}
+
+.tech-text .highlight {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.tech-image img {
+    border-radius: 8px;
+}
+
+
+/* --- Portfolio Section --- */
+/* Mobile First: Images are stacked. */
+.portfolio-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+}
+
+.portfolio-grid img {
+    border-radius: 8px;
+}
+
+/* --- Footer --- */
+#contact {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: calc(var(--spacing-unit) * 3) 0;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: calc(var(--spacing-unit) * 2);
+    margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+.footer-links a {
+    color: var(--text-light);
+    margin: 0 0.5rem;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--accent-color);
+}
+
+.footer-contact a {
+    color: var(--accent-color);
+}
+
+.copyright {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: var(--spacing-unit);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* --- Responsive Styles (Desktop) --- */
+/*
+  This media query applies styles for screens wider than 768px.
+  Here we transition from a mobile-first (stacked) layout to a multi-column desktop layout.
+*/
+@media (min-width: 768px) {
+    h1 { font-size: 3.5rem; }
+
+    /* Header for Desktop */
+    .mobile-menu-toggle {
+        display: none; /* Hide hamburger menu on desktop */
+    }
+
+    .nav-links {
+        display: flex; /* Show nav links */
+        flex-direction: row;
+        gap: calc(var(--spacing-unit) * 1.5);
+    }
+    
+    .nav-links li a {
+        color: var(--primary-color);
+        position: relative;
+    }
+
+    .nav-links li a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--accent-color);
+        transition: width 0.3s ease;
+    }
+
+    .nav-links li a:hover::after {
+        width: 100%;
+    }
+    
+    .primary-cta {
+        display: inline-block; /* Show desktop CTA */
+        margin-left: calc(var(--spacing-unit) * 1.5);
+    }
+
+    /* Services Grid for Desktop */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: calc(var(--spacing-unit) * 1.5);
+    }
+
+    /* Tech Section for Desktop */
+    .tech-content {
+        flex-direction: row;
+        gap: calc(var(--spacing-unit) * 3);
+        text-align: left;
+    }
+    
+    .tech-text, .tech-image {
+        flex: 1;
+    }
+
+    .tech-text {
+        text-align: left;
+    }
+
+    /* Portfolio Grid for Desktop */
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: calc(var(--spacing-unit) * 1.5);
+    }
+
+    /* Footer for Desktop */
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+}
+
+@media (min-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

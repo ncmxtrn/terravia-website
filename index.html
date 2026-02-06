@@ -1,123 +1,235 @@
-<!--<!DOCTYPE html> -->
+<!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terravia - Précision Géomatique par Drone</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Terravia Geomatics</title>
+    
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 </head>
+
 <body>
-
-    <header id="main-header">
-        <nav class="container">
-            <a href="#" class="logo">Terravia</a>
-            <ul class="nav-links">
-                <li><a href="#services">Services</a></li>
-                <li><a href="#technologie">Technologie</a></li>
-                <li><a href="#a-propos">À propos</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <a href="#" class="cta-button primary-cta">Demander une soumission</a>
-            <button class="mobile-menu-toggle">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-        </nav>
-    </header>
-
-    <main>
-        <section id="hero">
-            <div class="hero-overlay"></div>
-            <div class="container">
-                <h1>La Précision Géomatique par Drone</h1>
-                <p>Solutions LiDAR, Photogrammétrie et Inspection pour les professionnels.</p>
-                <a href="#" class="cta-button secondary-cta">Démarrer un projet</a>
-            </div>
-        </section>
-
-        <section id="services" class="container">
-            <h2>Nos Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <h3>Acquisition LiDAR</h3>
-                    <p>Pénétration de la végétation, précision topographique.</p>
+    <div class="site-wrapper">
+        
+        <header class="site-header">
+            <div class="container header-content">
+                <div class="logo">
+                    <span class="material-symbols-outlined logo-icon">flight</span>
+                    <h2>Terravia</h2>
                 </div>
-                <div class="service-card">
-                    <h3>Photogrammétrie</h3>
-                    <p>Orthomosaïques haute résolution et modèles 3D.</p>
-                </div>
-                <div class="service-card">
-                    <h3>Inspection d'Infrastructures</h3>
-                    <p>Analyse thermique et visuelle sécuritaire.</p>
-                </div>
-                <div class="service-card">
-                    <h3>Volumétrie</h3>
-                    <p>Calcul de stocks précis pour carrières et mines.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="lidar-app" class="container">
-            <h2>Explorez nos données en 3D</h2>
-            <div class="app-showcase">
-                <div class="app-text">
-                    <h3>Visualiseur LiDAR Interactif</h3>
-                    <p>Découvrez la puissance de nos acquisitions de données brutes. Notre application web vous permet de naviguer, de mesurer et d'analyser des nuages de points LiDAR directement dans votre navigateur.</p>
-                    <p>Idéal pour la validation de projet, la collaboration et la prise de décision rapide.</p>
-                    <a href="https://votre-application-lidar.com" class="cta-button primary-cta" target="_blank">Lancer l'application</a>
-                </div>
-                <div class="app-image">
-                    <img src="https://placehold.co/600x400/2E4035/FFFFFF?text=Visualiseur+LiDAR" alt="Visualiseur LiDAR interactif Terravia">
-                </div>
-            </div>
-        </section>
-
-        <section id="technologie" class="container">
-            <div class="tech-content">
-                <div class="tech-text">
-                    <h2>Technologie de Pointe</h2>
-                    <p>Terravia utilise des drones de dernière génération équipés de capteurs avancés pour garantir une acquisition de données d'une fiabilité maximale. Nos livrables sont directement compatibles avec vos logiciels métiers comme AutoCAD et BricsCAD.</p>
-                    <p class="highlight">Données prêtes pour l'arpentage.</p>
-                </div>
-                <div class="tech-image">
-                    <img src="https://placehold.co/600x400/2E4035/FFFFFF?text=Drone+Avancé" alt="Drone Terravia en mission">
-                </div>
-            </div>
-        </section>
-
-        <section id="a-propos" class="container">
-            <h2>Exemples de Projets</h2>
-            <div class="portfolio-grid">
-                <img src="https://placehold.co/400x300/2E4035/FFFFFF?text=Projet+1" alt="Exemple de projet 1">
-                <img src="https://placehold.co/400x300/2E4035/FFFFFF?text=Projet+2" alt="Exemple de projet 2">
-                <img src="https://placehold.co/400x300/2E4035/FFFFFF?text=Projet+3" alt="Exemple de projet 3">
-            </div>
-        </section>
-    </main>
-
-    <footer id="contact">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-links">
+                
+                <nav class="main-nav">
                     <a href="#services">Services</a>
                     <a href="#technologie">Technologie</a>
-                    <a href="#a-propos">À propos</a>
-                    <a href="#">Contact</a>
-                </div>
-                <div class="footer-contact">
-                    <p>Contactez-nous: <a href="mailto:contact@terravia.xyz">contact@terravia.xyz</a></p>
+                    <a href="#projets">Projets</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+                
+                <div class="header-actions">
+                    <button class="btn btn-primary">Demander une soumission</button>
+                    <button class="menu-toggle">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2026 Terravia. Tous droits réservés.</p>
-            </div>
-        </div>
-    </footer>
+        </header>
 
-    <script src="script.js"></script>
+        <main>
+            <section class="hero-section">
+                <div class="hero-background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWeqVyL8VDPCEoVDcurPS_F93LisAMvxD_YIKsQCp1nrPirWp1gL7xTCCR3ePEa1gLINaz4lWGOqCsPswesWSOPLhhbDpEOxGPLm5RbsRkDbp08U9CQ4d9KRsn-l-GBw-ebG-fUnYUXeZVw90DbK1BQb6zhYZV_mYCIyaZ-lc_EwZJZVYnefqJkogn_4vvKuTLOEG2fcX_VXPNvuT_6yAviU6eWkwtzxLZPheSiP1Pl3UCG73-nS7ZvAnJPOHJa_1vNMnI9REjFbU");'></div>
+                <div class="hero-overlay"></div>
+                
+                <div class="container hero-content">
+                    <h1>La Précision Géomatique <span class="text-highlight">par Drone</span></h1>
+                    <p class="lead-text">
+                        Acquisition de données haute fidélité pour ingénieurs et arpenteurs. Transformez le réel en données exploitables.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary">Démarrer un projet</button>
+                        <button class="btn btn-outline-white">Découvrir nos services</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="services-section" id="services">
+                <div class="container">
+                    <div class="section-header center">
+                        <div class="badge">Nos Expertises</div>
+                        <h2>Solutions de pointe pour <span class="text-gradient">l'ingénierie</span></h2>
+                        <p class="subtitle">Des technologies adaptées aux exigences rigoureuses des arpenteurs-géomètres et ingénieurs civils.</p>
+                    </div>
+
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">grid_4x4</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>LiDAR</h3>
+                                <p>Relevés topographiques de haute précision pénétrant la végétation dense pour des modèles de terrain (MNT) exacts.</p>
+                            </div>
+                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                        </div>
+
+                        <div class="service-card">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">imagesmode</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>Photogrammétrie</h3>
+                                <p>Modélisation 3D photoréaliste et orthophotos géoréférencées à haute résolution pour la cartographie urbaine.</p>
+                            </div>
+                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                        </div>
+
+                        <div class="service-card">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">content_paste_search</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>Inspection</h3>
+                                <p>Inspection visuelle détaillée et thermographique d'infrastructures critiques, ponts, tours et barrages.</p>
+                            </div>
+                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                        </div>
+
+                        <div class="service-card">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">deployed_code</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>Volumétrie</h3>
+                                <p>Calculs de volumes précis et suivis de stocks pour carrières, sites miniers et chantiers de construction.</p>
+                            </div>
+                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tech-section" id="technologie">
+                <div class="container">
+                    <div class="split-layout">
+                        <div class="tech-text">
+                            <div class="label-tech">Plateforme Intelligente</div>
+                            <h2>Visualisez et analysez vos données</h2>
+                            <p>
+                                Accédez à notre application interne dédiée pour visualiser et exploiter tout le potentiel de vos données. Explorez vos nuages de points LiDAR et modèles photogrammétriques.
+                            </p>
+                            <ul class="check-list">
+                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Visualisation interactive LiDAR et 3D</li>
+                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Comparaison des relevés historiques</li>
+                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Suivi d'évolution par photo aérienne</li>
+                            </ul>
+                            <button class="btn btn-dark">Découvrir la plateforme</button>
+                        </div>
+                        
+                        <div class="tech-image-wrapper">
+                            <div class="image-container" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'></div>
+                            <div class="floating-ui">
+                                <div class="file-info">
+                                    <span class="material-symbols-outlined">description</span>
+                                    <span>Relevé_Site_A.dwg</span>
+                                </div>
+                                <span class="status-badge">Prêt</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="projects-section" id="projets">
+                <div class="container">
+                    <div class="projects-header">
+                        <div>
+                            <h2>Projets Récents</h2>
+                            <p>Découvrez comment nos données transforment la planification de projets.</p>
+                        </div>
+                        <a href="#" class="link-view-all">Voir tout le portfolio <span class="material-symbols-outlined">arrow_forward</span></a>
+                    </div>
+
+                    <div class="projects-grid">
+                        <article class="project-card">
+                            <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4ula1grEpGV8QlJldq5I7LU6y9m-Ed_RoPBC0VPaEPOz7SEnqZ6fUIX4ucea9VEKNvhICeu0t7gWZXygJYS8c0V6rO1KYcExEvMPdZicozQGNK_SynpbeZWsKInG2HRwneJ59Cj-pkIhBfNvB8dXNBG_p1FnXHWwknFdejUvzsfnB7bzi3JkVnCXf4D83w3VpWt7pE5PLm_sehGnoH1dRyyuscP-Ef-JZZolZLYHkAnqy-yOXi-_WnZCeMd3oeyuh4TwMQAwLqIE");'></div>
+                            <div class="project-overlay"></div>
+                            <div class="project-info">
+                                <span class="project-category">Volumétrie</span>
+                                <h3>Carrière Saint-Marc</h3>
+                                <p class="project-detail">Calcul de stock mensuel avec précision < 1%.</p>
+                            </div>
+                        </article>
+
+                        <article class="project-card">
+                            <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAq5q63pIWqzAooSxqgkupd4LuhDeeWMsyPAkg1RVpmasKJL8srYtUzfMdGEbcs7USTLHghe3I74oiH_cZ5hzqZol7fxWU77Bo5cwDPRj_9tWQIWoJ-Il635aG-Dqk2lIkBgYw0RVsMgrYvrWZD0PH2vlSZPvmwgcczguT50EaL5i2ogyK1Tooe1-M_fqbiA6k452kTiZ_QnG9_fHIP0Z2HGN2DA6PGEyLrsRL4Q8N6OjaE_2uDwOW0H8yFjss0G_hHSbL1jeA_LA");'></div>
+                            <div class="project-overlay"></div>
+                            <div class="project-info">
+                                <span class="project-category">LiDAR</span>
+                                <h3>Route Forestière 117</h3>
+                                <p class="project-detail">MNT sous canopée pour tracé routier.</p>
+                            </div>
+                        </article>
+
+                        <article class="project-card">
+                            <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4KIQbMnyZSMMLGYh0SfiQyWUm8RUh9xKWxV_-qCSiVAmKXiIvVh2sxAqMN_yAcbDVNp9M7jqZg7pKQBmuvcRWWT-5aBgAYuUzILM6Bc6FqLH52rpYlmU5YjZrY_uQ3s-_Zj8jKc3W18o4yKdfSaxcTw3EGEFbrzfcGw21IU_V9bmasx5Vzl8ecikI4Gmc7OiAPzSL-yfWLKq8dyNksNiX_TEJC5oqeQXgiAtdTu3kYn8tWHaCsix1p_9YCUWT0hHzNWrh96r975g");'></div>
+                            <div class="project-overlay"></div>
+                            <div class="project-info">
+                                <span class="project-category">Suivi de Chantier</span>
+                                <h3>Complexe Condo Rive-Sud</h3>
+                                <p class="project-detail">Orthomosaïque haute résolution hebdomadaire.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer" id="contact">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <span class="material-symbols-outlined logo-icon">flight</span>
+                            <h3>Terravia</h3>
+                        </div>
+                        <p>L'excellence en acquisition de données géospatiales par drone.</p>
+                    </div>
+                    
+                    <div class="footer-links">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#">LiDAR Aéroporté</a></li>
+                            <li><a href="#">Photogrammétrie</a></li>
+                            <li><a href="#">Inspection d'Ouvrages</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Entreprise</h4>
+                        <ul>
+                            <li><a href="#">À propos</a></li>
+                            <li><a href="#">Carrières</a></li>
+                            <li><a href="#">Blogue Technique</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-contact">
+                        <h4>Contactez-nous</h4>
+                        <ul>
+                            <li><span class="material-symbols-outlined icon">location_on</span> 1234 Boul. de l'Avenir, Laval</li>
+                            <li><span class="material-symbols-outlined icon">call</span> +1 (514) 555-0123</li>
+                            <li><span class="material-symbols-outlined icon">mail</span> info@terravia.ca</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2026 Terravia Géomatique. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>

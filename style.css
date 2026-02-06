@@ -1,479 +1,690 @@
-/* --- Base & Mobile First Styles --- */
-
-/* 
-  Root variables for consistent theming. 
-  This is the foundation of our design system, allowing for easy changes to colors and spacing.
-*/
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
 :root {
-    --primary-color: #2E4035;
-    /* Deep Forest Green */
-    --accent-color: #39FF14;
-    /* Tech Green / Neon */
-    --background-light: #f8f9fa;
-    --text-color: #333;
-    --text-light: #ffffff;
-    --spacing-unit: 1rem;
+    /* Palette de couleurs Terravia */
+    --color-primary: #4ADE80;
+    /* Le vert néon */
+    --color-primary-dark: #22c55e;
+    --color-forest: #1A3C34;
+    /* Le vert foncé */
+    --color-forest-light: #234e44;
+    --color-bg-light: #f8fcf8;
+    --color-text-dark: #1A3C34;
+    --color-white: #ffffff;
+    --color-gray-light: #e5e7eb;
+
+    /* Typographie */
+    --font-main: 'Inter', sans-serif;
+
+    /* Espacements standards */
+    --spacing-container: 1rem;
+    --width-max: 1280px;
+    /* Équivalent au max-w-7xl de Tailwind */
 }
 
-/* Base reset and typography */
-*,
-*::before,
-*::after {
+/* Reset de base pour annuler les marges par défaut des navigateurs */
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-html {
-    scroll-behavior: smooth;
-    font-size: 16px;
-}
-
 body {
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: #fff;
+    font-family: var(--font-main);
+    color: var(--color-text-dark);
+    background-color: var(--color-bg-light);
+    line-height: 1.5;
 }
 
-h1,
-h2,
-h3 {
-    line-height: 1.2;
-    font-weight: 700;
+/* Container principal pour centrer le contenu */
+.container {
+    max-width: var(--width-max);
+    margin: 0 auto;
+    padding: 0 var(--spacing-container);
+    width: 100%;
 }
 
-h1 {
-    font-size: 2.5rem;
-}
-
-h2 {
-    font-size: 2rem;
-}
-
-h3 {
-    font-size: 1.25rem;
-}
-
-p {
-    margin-bottom: var(--spacing-unit);
-}
-
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
+/* Images responsives */
 img {
     max-width: 100%;
-    height: auto;
     display: block;
 }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
+/* Liens par défaut */
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s;
 }
 
-/* --- Header --- */
-/* Mobile First: Header is simple, with navigation links hidden by default. */
-#main-header {
-    position: fixed;
+/* =========================================
+   2. COMPOSANTS (Boutons, Badges)
+   ========================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-forest);
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-outline-white {
+    background-color: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--color-white);
+    backdrop-filter: blur(4px);
+}
+
+.btn-outline-white:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-dark {
+    background-color: var(--color-forest);
+    color: var(--color-white);
+}
+
+.btn-dark:hover {
+    background-color: var(--color-forest-light);
+}
+
+/* =========================================
+   3. EN-TÊTE (HEADER)
+   ========================================= */
+.site-header {
+    position: sticky;
     top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    z-index: 1000;
-    transition: box-shadow 0.3s ease;
+    z-index: 100;
+    background-color: rgba(248, 252, 248, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e7f3e7;
+    height: 80px;
+    display: flex;
+    align-items: center;
 }
 
-#main-header.scrolled {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-#main-header nav {
+.header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
 }
 
 .logo {
-    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-forest);
+}
+
+.logo-icon {
+    font-size: 32px;
+    color: var(--color-primary);
+    font-variation-settings: 'FILL' 1;
+}
+
+.logo h2,
+.logo h3 {
     font-weight: 700;
-    color: var(--primary-color);
+    font-size: 1.25rem;
 }
 
-.nav-links {
+/* Navigation desktop */
+.main-nav {
     display: none;
-    /* Hidden on mobile */
-    list-style: none;
+    /* Caché sur mobile par défaut */
 }
 
-.cta-button {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+.main-nav a {
+    margin: 0 1rem;
     font-weight: 500;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    font-size: 0.9rem;
 }
 
-.cta-button:hover {
-    transform: translateY(-2px);
+.main-nav a:hover {
+    color: var(--color-primary-dark);
 }
 
-.primary-cta {
-    background-color: var(--accent-color);
-    color: var(--primary-color);
-    display: none;
-    /* Hidden on mobile, shown on desktop */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.secondary-cta {
-    background-color: var(--accent-color);
-    color: var(--primary-color);
-    font-size: 1.1rem;
-}
-
-/* Mobile Menu Toggle */
-.mobile-menu-toggle {
-    display: block;
-    /* Shown on mobile */
+.menu-toggle {
     background: none;
     border: none;
     cursor: pointer;
-    z-index: 1001;
+    color: var(--color-forest);
 }
 
-.mobile-menu-toggle .bar {
-    display: block;
-    width: 25px;
-    height: 3px;
-    margin: 5px auto;
-    background-color: var(--primary-color);
-    transition: all 0.3s ease-in-out;
-}
-
-/* Mobile Nav (when active) */
-#main-header.nav-open .nav-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--primary-color);
-}
-
-#main-header.nav-open .nav-links a {
-    color: var(--text-light);
-    font-size: 2rem;
-    margin: 1rem 0;
-}
-
-#main-header.nav-open .mobile-menu-toggle .bar:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-}
-
-#main-header.nav-open .mobile-menu-toggle .bar:nth-child(2) {
-    opacity: 0;
-}
-
-#main-header.nav-open .mobile-menu-toggle .bar:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-}
-
-#main-header.nav-open .mobile-menu-toggle .bar {
-    background-color: var(--text-light);
-}
-
-
-/* --- Hero Section --- */
-#hero {
+/* =========================================
+   4. SECTION HÉROS (HERO)
+   ========================================= */
+.hero-section {
     position: relative;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--text-light);
-    background-image: url('https://placehold.co/1200x800/1a251e/1a251e?text=.');
+    padding: 6rem 0;
+    color: var(--color-white);
+    /* Pour s'assurer que le texte est au-dessus du fond */
+    isolation: isolate;
+}
+
+/* Gestion du fond */
+.hero-background {
+    position: absolute;
+    inset: 0;
+    /* Raccourci pour top:0, right:0, bottom:0, left:0 */
     background-size: cover;
     background-position: center;
+    z-index: -2;
 }
 
 .hero-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    inset: 0;
+    background-color: var(--color-forest);
+    opacity: 0.85;
+    /* Ajustement pour lisibilité */
+    /* Dégradé subtil */
+    background: linear-gradient(to right, rgba(26, 60, 52, 0.9), rgba(26, 60, 52, 0.7));
+    z-index: -1;
 }
 
-#hero .container {
-    position: relative;
-    z-index: 2;
+.hero-content h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
 }
 
-#hero h1 {
-    margin-bottom: var(--spacing-unit);
+.text-highlight {
+    color: var(--color-primary);
 }
 
-#hero p {
-    font-size: 1.1rem;
-    margin-bottom: calc(var(--spacing-unit) * 2);
+.lead-text {
+    font-size: 1.125rem;
+    color: #e5e7eb;
+    margin-bottom: 2rem;
+    max-width: 550px;
 }
 
-/* --- Sections General Styling --- */
-section {
-    padding: calc(var(--spacing-unit) * 4) 0;
-}
-
-section:nth-of-type(odd) {
-    background-color: var(--background-light);
-}
-
-section h2 {
-    text-align: center;
-    margin-bottom: calc(var(--spacing-unit) * 2);
-    color: var(--primary-color);
-}
-
-/* --- Services Section --- */
-/* Mobile First: Services are in a single column flex layout. */
-.services-grid {
+.hero-buttons {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-unit);
+    gap: 1rem;
+}
+
+/* =========================================
+   5. SECTION SERVICES
+   ========================================= */
+.services-section {
+    padding: 5rem 0;
+    position: relative;
+    /* Motif de grille en arrière-plan */
+    background-image:
+        linear-gradient(to right, #e7f3e7 1px, transparent 1px),
+        linear-gradient(to bottom, #e7f3e7 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.section-header {
+    margin-bottom: 4rem;
+}
+
+.section-header.center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.badge {
+    display: inline-block;
+    background-color: rgba(74, 222, 128, 0.1);
+    color: var(--color-primary-dark);
+    padding: 0.25rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    color: var(--color-forest);
+    margin-bottom: 1rem;
+}
+
+.text-gradient {
+    background: linear-gradient(to right, var(--color-forest), var(--color-primary-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.subtitle {
+    max-width: 600px;
+    color: var(--color-forest);
+    opacity: 0.7;
+}
+
+/* Grille des services */
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* 1 colonne sur mobile */
+    gap: 1.5rem;
 }
 
 .service-card {
-    background-color: #fff;
-    padding: calc(var(--spacing-unit) * 1.5);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
+    background: white;
+    border: 1px solid #d0e7d0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .service-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(74, 222, 128, 0.5);
 }
 
-.service-card h3 {
-    color: var(--primary-color);
-    margin-bottom: calc(var(--spacing-unit) / 2);
-}
-
-/* --- Tech Section --- */
-/* Mobile First: Text and image are stacked in a single column. */
-.tech-content {
+.icon-box {
+    width: 3rem;
+    height: 3rem;
+    background-color: rgba(26, 60, 52, 0.05);
+    border-radius: 0.5rem;
     display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing-unit) * 2);
     align-items: center;
+    justify-content: center;
+    color: var(--color-forest);
+    transition: background-color 0.3s;
 }
 
-.tech-text {
-    text-align: center;
+.service-card:hover .icon-box {
+    background-color: var(--color-primary);
 }
 
-.tech-text .highlight {
-    font-weight: 700;
-    color: var(--primary-color);
-    font-size: 1.1rem;
+.card-content h3 {
+    font-size: 1.25rem;
+    color: var(--color-forest);
+    margin-bottom: 0.5rem;
 }
 
-.tech-image img {
-    border-radius: 8px;
-}
-
-
-/* --- Portfolio Section --- */
-/* Mobile First: Images are stacked. */
-.portfolio-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-unit);
-}
-
-.portfolio-grid img {
-    border-radius: 8px;
-}
-
-/* --- Footer --- */
-#contact {
-    background-color: var(--primary-color);
-    color: var(--text-light);
-    padding: calc(var(--spacing-unit) * 3) 0;
-}
-
-.footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: calc(var(--spacing-unit) * 2);
-    margin-bottom: calc(var(--spacing-unit) * 2);
-}
-
-.footer-links a {
-    color: var(--text-light);
-    margin: 0 0.5rem;
-    transition: color 0.2s;
-}
-
-.footer-links a:hover {
-    color: var(--accent-color);
-}
-
-.footer-contact a {
-    color: var(--accent-color);
-}
-
-.copyright {
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: var(--spacing-unit);
+.card-content p {
     font-size: 0.9rem;
-    opacity: 0.8;
+    color: var(--color-forest);
+    opacity: 0.7;
+    line-height: 1.6;
 }
 
-/* --- Responsive Styles (Desktop) --- */
-/*
-  This media query applies styles for screens wider than 768px.
-  Here we transition from a mobile-first (stacked) layout to a multi-column desktop layout.
-*/
+.link-arrow {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.link-arrow span {
+    font-size: 1.1rem;
+    margin-left: 0.25rem;
+    transition: transform 0.2s;
+}
+
+.service-card:hover .link-arrow span {
+    transform: translateX(5px);
+}
+
+/* =========================================
+   6. SECTION TECHNOLOGIE
+   ========================================= */
+.tech-section {
+    padding: 5rem 0;
+    background-color: white;
+    border-top: 1px solid #d0e7d0;
+    border-bottom: 1px solid #d0e7d0;
+}
+
+.split-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    align-items: center;
+}
+
+.tech-text h2 {
+    font-size: 2rem;
+    color: var(--color-forest);
+    margin: 1rem 0;
+}
+
+.check-list {
+    list-style: none;
+    margin: 1.5rem 0;
+}
+
+.check-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.check-icon {
+    color: var(--color-primary);
+}
+
+.tech-image-wrapper {
+    width: 100%;
+    position: relative;
+}
+
+.image-container {
+    background-color: var(--color-forest);
+    aspect-ratio: 4/3;
+    border-radius: 1rem;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.floating-ui {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge {
+    background-color: var(--color-primary);
+    color: var(--color-forest);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+/* =========================================
+   7. SECTION PROJETS
+   ========================================= */
+.projects-section {
+    padding: 5rem 0;
+}
+
+.projects-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.projects-header h2 {
+    font-size: 2rem;
+    color: var(--color-forest);
+}
+
+.link-view-all {
+    display: flex;
+    align-items: center;
+    color: var(--color-forest);
+    font-weight: 700;
+    gap: 0.25rem;
+}
+
+.link-view-all:hover {
+    color: var(--color-primary-dark);
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.project-card {
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.project-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.7s;
+}
+
+.project-card:hover .project-bg {
+    transform: scale(1.1);
+}
+
+.project-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(26, 60, 52, 0.9), transparent);
+}
+
+.project-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    color: white;
+}
+
+.project-category {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.project-detail {
+    font-size: 0.875rem;
+    color: #d1d5db;
+    margin-top: 0.5rem;
+    opacity: 0;
+    /* Caché par défaut */
+    transform: translateY(10px);
+    transition: all 0.3s;
+}
+
+.project-card:hover .project-detail {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   8. PIED DE PAGE (FOOTER)
+   ========================================= */
+.site-footer {
+    background-color: var(--color-forest);
+    color: white;
+    padding: 4rem 0 2rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+}
+
+.footer-brand p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.footer-links ul,
+.footer-contact ul {
+    list-style: none;
+}
+
+.footer-links li,
+.footer-contact li {
+    margin-bottom: 1rem;
+}
+
+.footer-links a,
+.footer-contact a {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.footer-links a:hover,
+.footer-contact a:hover {
+    color: var(--color-primary);
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.footer-contact .icon {
+    color: var(--color-primary);
+    font-size: 1.25rem;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.875rem;
+}
+
+/* =========================================
+   9. MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
+/* Tablettes et écrans moyens (min-width: 640px / 768px) */
 @media (min-width: 768px) {
-    h1 {
+
+    /* Header */
+    .menu-toggle {
+        display: none;
+    }
+
+    .main-nav {
+        display: block;
+    }
+
+    /* On affiche le menu */
+
+    /* Hero */
+    .hero-buttons {
+        flex-direction: row;
+    }
+
+    .hero-content h1 {
         font-size: 3.5rem;
     }
 
-    /* Header for Desktop */
-    .mobile-menu-toggle {
-        display: none;
-        /* Hide hamburger menu on desktop */
-    }
-
-    .nav-links {
-        display: flex;
-        /* Show nav links */
-        flex-direction: row;
-        gap: calc(var(--spacing-unit) * 1.5);
-    }
-
-    .nav-links li a {
-        color: var(--primary-color);
-        position: relative;
-    }
-
-    .nav-links li a::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -5px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: var(--accent-color);
-        transition: width 0.3s ease;
-    }
-
-    .nav-links li a:hover::after {
-        width: 100%;
-    }
-
-    .primary-cta {
-        display: inline-block;
-        /* Show desktop CTA */
-        margin-left: calc(var(--spacing-unit) * 1.5);
-    }
-
-    /* Services Grid for Desktop */
+    /* Grilles */
     .services-grid {
-        display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: calc(var(--spacing-unit) * 1.5);
     }
 
-    /* Tech Section for Desktop */
-    .tech-content {
-        flex-direction: row;
-        gap: calc(var(--spacing-unit) * 3);
-        text-align: left;
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .tech-text,
-    .tech-image {
-        flex: 1;
-    }
-
-    .tech-text {
-        text-align: left;
-    }
-
-    /* Portfolio Grid for Desktop */
-    .portfolio-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: calc(var(--spacing-unit) * 1.5);
-    }
-
-    /* Footer for Desktop */
-    .footer-content {
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: left;
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
+/* Grands écrans (min-width: 1024px) */
 @media (min-width: 1024px) {
     .services-grid {
         grid-template-columns: repeat(4, 1fr);
     }
-}
 
-/* --- LiDAR App Showcase Section --- */
-#lidar-app {
-    background-color: #fff;
-    /* White background to stand out */
-}
-
-.app-showcase {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: calc(var(--spacing-unit) * 2);
-    text-align: center;
-}
-
-.app-text .cta-button {
-    display: inline-block;
-    /* Ensure it's visible on mobile */
-    margin-top: var(--spacing-unit);
-}
-
-.app-image img {
-    border-radius: 8px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-@media (min-width: 768px) {
-    .app-showcase {
-        flex-direction: row-reverse;
-        /* Image on the right */
-        text-align: left;
-        gap: calc(var(--spacing-unit) * 3);
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 
-    .app-text,
-    .app-image {
+    .footer-grid {
+        grid-template-columns: 1fr 0.5fr 0.5fr 1fr;
+    }
+
+    /* Technologie Split Layout */
+    .split-layout {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .tech-text {
         flex: 1;
+    }
+
+    .tech-image-wrapper {
+        flex: 1;
+    }
+
+    .projects-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
     }
 }

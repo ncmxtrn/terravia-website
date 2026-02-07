@@ -31,10 +31,21 @@
 }
 
 body {
+    opacity: 1;
+    /* C'est ici qu'on règle la vitesse (1 seconde) */
+    transition: opacity 1s ease-in-out;
+    
+    /* Tes autres styles de base restent ici */
     font-family: var(--font-main);
     color: var(--color-text-dark);
     background-color: var(--color-bg-light);
     line-height: 1.5;
+}
+
+body.is-loading {
+    opacity: 0;
+    transition: none !important;
+    visibility: hidden;
 }
 
 /* Container principal pour centrer le contenu */

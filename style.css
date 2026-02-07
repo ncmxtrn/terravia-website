@@ -1,13 +1,15 @@
 /* =========================================
    1. VARIABLES & RESET
    ========================================= */
+/*
+   Les variables CSS (Custom Properties) sont essentielles pour la maintenance.
+   Si tu veux changer le vert principal partout, tu le changes juste ici !
+*/
 :root {
     /* Palette de couleurs Terravia */
-    --color-primary: #4ADE80;
-    /* Le vert néon */
+    --color-primary: #4ADE80;       /* Le vert néon */
     --color-primary-dark: #22c55e;
-    --color-forest: #1A3C34;
-    /* Le vert foncé */
+    --color-forest: #1A3C34;        /* Le vert foncé */
     --color-forest-light: #234e44;
     --color-bg-light: #f8fcf8;
     --color-text-dark: #1A3C34;
@@ -19,11 +21,14 @@
 
     /* Espacements standards */
     --spacing-container: 1rem;
-    --width-max: 1280px;
-    /* Équivalent au max-w-7xl de Tailwind */
+    --width-max: 1280px; /* Équivalent au max-w-7xl de Tailwind */
 }
 
-/* Reset de base pour annuler les marges par défaut des navigateurs */
+/*
+   Box-sizing: border-box est crucial !
+   Cela fait en sorte que le padding et la bordure sont inclus dans la largeur totale.
+   Sans ça, les calculs de taille deviennent un enfer.
+*/
 * {
     box-sizing: border-box;
     margin: 0;
@@ -31,32 +36,35 @@
 }
 
 body {
+    /* Transition pour l'effet de chargement en douceur */
     opacity: 1;
-    /* C'est ici qu'on règle la vitesse (1 seconde) */
     transition: opacity 1s ease-in-out;
     
-    /* Tes autres styles de base restent ici */
     font-family: var(--font-main);
     color: var(--color-text-dark);
     background-color: var(--color-bg-light);
-    line-height: 1.5;
+    line-height: 1.5; /* Bon pour la lisibilité */
 }
 
+/* Classe utilitaire pour l'état de chargement */
 body.is-loading {
     opacity: 0;
     transition: none !important;
     visibility: hidden;
 }
 
-/* Container principal pour centrer le contenu */
+/*
+   .container : Le pilier de la mise en page centrée.
+   Il empêche le site de s'étirer à l'infini sur les écrans géants.
+*/
 .container {
     max-width: var(--width-max);
-    margin: 0 auto;
-    padding: 0 var(--spacing-container);
+    margin: 0 auto; /* Centre le bloc horizontalement */
+    padding: 0 var(--spacing-container); /* Marge interne de sécurité sur mobile */
     width: 100%;
 }
 
-/* Images responsives */
+/* Images responsives : Empêche les images de déborder de leur parent */
 img {
     max-width: 100%;
     display: block;
@@ -242,12 +250,12 @@ a {
 }
 
 /* =========================================
-   5. SECTION SERVICES
+   5. SECTION SERVICES (GRID EXAMPLE)
    ========================================= */
 .services-section {
     padding: 5rem 0;
     position: relative;
-    /* Motif de grille en arrière-plan */
+    /* Motif de grille purement décoratif en CSS */
     background-image:
         linear-gradient(to right, #e7f3e7 1px, transparent 1px),
         linear-gradient(to bottom, #e7f3e7 1px, transparent 1px);
@@ -260,11 +268,13 @@ a {
 
 .section-header.center {
     text-align: center;
+    /* Flexbox est super pour centrer des éléments empilés verticalement */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+/* Styles décoratifs pour les titres et badges... */
 .badge {
     display: inline-block;
     background-color: rgba(74, 222, 128, 0.1);
@@ -298,12 +308,17 @@ a {
     opacity: 0.7;
 }
 
-/* Grille des services */
+/*
+   GRID LAYOUT - Le cœur du sujet !
+   --------------------------------
+   On commence en mobile-first : 1 colonne par défaut.
+   Voir la section "Media Queries" plus bas pour voir comment ça passe à 2 puis 4 colonnes.
+*/
 .services-grid {
     display: grid;
+    /* 1fr signifie "1 fraction de l'espace disponible". Ici, 1 seule colonne qui prend tout. */
     grid-template-columns: 1fr;
-    /* 1 colonne sur mobile */
-    gap: 1.5rem;
+    gap: 1.5rem; /* Espace entre les cases de la grille */
 }
 
 .service-card {
@@ -311,6 +326,10 @@ a {
     border: 1px solid #d0e7d0;
     border-radius: 0.75rem;
     padding: 1.5rem;
+    /*
+       On utilise Flexbox à l'INTÉRIEUR d'une cellule de Grid pour organiser le contenu de la carte.
+       Grid pour la structure globale, Flex pour le contenu interne.
+    */
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -318,7 +337,7 @@ a {
 }
 
 .service-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px); /* Petit effet de levitation au survol */
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     border-color: rgba(74, 222, 128, 0.5);
 }
@@ -487,6 +506,10 @@ a {
     color: var(--color-primary-dark);
 }
 
+/*
+   Autre exemple de Grid
+   Encore une fois, on commence simple (1 colonne) pour mobile.
+*/
 .projects-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -497,6 +520,10 @@ a {
     position: relative;
     border-radius: 0.75rem;
     overflow: hidden;
+    /*
+       Aspect-ratio est magique : il maintient les proportions de la carte
+       quelle que soit sa largeur. Ici 4/3 (comme une vieille télé).
+    */
     aspect-ratio: 4/3;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -563,6 +590,11 @@ a {
     padding: 4rem 0 2rem;
 }
 
+/*
+   Le footer est l'exemple parfait pour Grid car on veut souvent des
+   colonnes de tailles inégales (ex: logo large, liens étroits).
+   Voir les media queries pour la configuration complexe.
+*/
 .footer-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -628,10 +660,17 @@ a {
 /* =========================================
    9. MEDIA QUERIES (RESPONSIVE)
    ========================================= */
-/* Tablettes et écrans moyens (min-width: 640px / 768px) */
+/*
+   C'est ici que la magie Responsive opère !
+   On utilise des "breakpoints" (points de rupture).
+   Tout ce qui est au-dessus s'applique par défaut au mobile (Mobile-First).
+   Ici, on surcharge les règles pour les écrans plus grands.
+*/
+
+/* --- TABLETTES (min-width: 768px) --- */
 @media (min-width: 768px) {
 
-    /* Header */
+    /* Header : On cache le bouton burger et on affiche les liens normaux */
     .menu-toggle {
         display: none;
     }
@@ -640,9 +679,7 @@ a {
         display: block;
     }
 
-    /* On affiche le menu */
-
-    /* Hero */
+    /* Hero : Les boutons passent côte à côte au lieu d'empilés */
     .hero-buttons {
         flex-direction: row;
     }
@@ -651,7 +688,11 @@ a {
         font-size: 3.5rem;
     }
 
-    /* Grilles */
+    /*
+       GRID RESPONSIVE :
+       Sur tablette, on passe de 1 colonne à 2 colonnes.
+       repeat(2, 1fr) est un raccourci pour : 1fr 1fr
+    */
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -665,32 +706,45 @@ a {
     }
 }
 
-/* Grands écrans (min-width: 1024px) */
+/* --- DESKTOP / GRANDS ÉCRANS (min-width: 1024px) --- */
 @media (min-width: 1024px) {
+    
+    /* Services : On passe à 4 colonnes sur les grands écrans */
     .services-grid {
         grid-template-columns: repeat(4, 1fr);
     }
 
+    /* Projets : 3 colonnes, c'est plus élégant pour une galerie */
     .projects-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 
+    /*
+       Footer Complexe :
+       1fr 0.5fr 0.5fr 1fr
+       Cela signifie :
+       - Col 1 (Logo) : Prend 1 part d'espace
+       - Col 2 (Services) : Prend 0.5 part (plus étroit)
+       - Col 3 (Entreprise) : Prend 0.5 part
+       - Col 4 (Contact) : Prend 1 part
+       C'est la puissance de Grid pour faire des mises en page asymétriques !
+    */
     .footer-grid {
         grid-template-columns: 1fr 0.5fr 0.5fr 1fr;
     }
 
-    /* Technologie Split Layout */
+    /* Technologie Split Layout : On passe de vertical à horizontal avec Flexbox */
     .split-layout {
         flex-direction: row;
         align-items: center;
     }
 
     .tech-text {
-        flex: 1;
+        flex: 1; /* Prend 50% de l'espace */
     }
 
     .tech-image-wrapper {
-        flex: 1;
+        flex: 1; /* Prend 50% de l'espace */
     }
 
     .projects-header {

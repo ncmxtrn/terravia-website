@@ -1,26 +1,37 @@
+<!-- HTML5 Boilerplate : La structure de base de toute page web moderne -->
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="utf-8" />
+    <!-- Viewport : Essentiel pour le responsive design sur mobile -->
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Terravia Geomatics</title>
     
     <link rel="stylesheet" href="style.css">
 
+    <!-- Chargement des polices depuis Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <!-- Icônes Material Symbols de Google -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 </head>
+<!--
+    La classe 'is-loading' est utilisée pour l'animation d'entrée (voir script.js et CSS).
+    C'est une technique courante pour éviter le "FOUC" (Flash of Unstyled Content).
+-->
 <body class="is-loading">
     <div class="site-wrapper">
         
+        <!-- Header sémantique : Contient la navigation et le logo -->
         <header class="site-header">
+            <!-- .container : Une classe utilitaire pour centrer le contenu et gérer les marges -->
             <div class="container header-content">
                 <div class="logo">
                     <span class="material-symbols-outlined logo-icon">flight</span>
                     <h2>Terravia</h2>
                 </div>
                 
+                <!-- Navigation principale -->
                 <nav class="main-nav">
                     <a href="#services">Services</a>
                     <a href="#technologie">Technologie</a>
@@ -30,6 +41,7 @@
                 
                 <div class="header-actions">
                     <button class="btn btn-primary">Demander une soumission</button>
+                    <!-- Bouton burger pour mobile (caché sur desktop via CSS) -->
                     <button class="menu-toggle">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
@@ -38,7 +50,13 @@
         </header>
 
         <main>
+            <!-- Section Hero : La première chose que l'utilisateur voit -->
             <section class="hero-section">
+                <!--
+                    Technique d'arrière-plan :
+                    On sépare l'image et l'overlay (filtre sombre) du contenu texte.
+                    Cela permet de gérer l'opacité de l'image sans affecter la lisibilité du texte.
+                -->
                 <div class="hero-background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWeqVyL8VDPCEoVDcurPS_F93LisAMvxD_YIKsQCp1nrPirWp1gL7xTCCR3ePEa1gLINaz4lWGOqCsPswesWSOPLhhbDpEOxGPLm5RbsRkDbp08U9CQ4d9KRsn-l-GBw-ebG-fUnYUXeZVw90DbK1BQb6zhYZV_mYCIyaZ-lc_EwZJZVYnefqJkogn_4vvKuTLOEG2fcX_VXPNvuT_6yAviU6eWkwtzxLZPheSiP1Pl3UCG73-nS7ZvAnJPOHJa_1vNMnI9REjFbU");'></div>
                 <div class="hero-overlay"></div>
                 
@@ -54,6 +72,10 @@
                 </div>
             </section>
 
+            <!--
+                Section Services :
+                C'est ici qu'on va utiliser CSS Grid pour aligner les cartes.
+            -->
             <section class="services-section" id="services">
                 <div class="container">
                     <div class="section-header center">
@@ -62,7 +84,9 @@
                         <p class="subtitle">Des technologies adaptées aux exigences rigoureuses des arpenteurs-géomètres et ingénieurs civils.</p>
                     </div>
 
+                    <!-- Grille des services (voir .services-grid dans le CSS) -->
                     <div class="services-grid">
+                        <!-- Carte 1 -->
                         <div class="service-card">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">grid_4x4</span>
@@ -74,6 +98,7 @@
                             <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
+                        <!-- Carte 2 -->
                         <div class="service-card">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">imagesmode</span>
@@ -85,6 +110,7 @@
                             <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
+                        <!-- Carte 3 -->
                         <div class="service-card">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">content_paste_search</span>
@@ -96,6 +122,7 @@
                             <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
+                        <!-- Carte 4 -->
                         <div class="service-card">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">deployed_code</span>
@@ -112,6 +139,7 @@
 
             <section class="tech-section" id="technologie">
                 <div class="container">
+                    <!-- Layout divisé (Split Layout) : Texte à gauche, Image à droite -->
                     <div class="split-layout">
                         <div class="tech-text">
                             <div class="label-tech">Plateforme Intelligente</div>
@@ -129,6 +157,7 @@
                         
                         <div class="tech-image-wrapper">
                             <div class="image-container" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'></div>
+                            <!-- UI Flottante : Ajoute de la profondeur au design -->
                             <div class="floating-ui">
                                 <div class="file-info">
                                     <span class="material-symbols-outlined">description</span>
@@ -151,6 +180,7 @@
                         <a href="#" class="link-view-all">Voir tout le portfolio <span class="material-symbols-outlined">arrow_forward</span></a>
                     </div>
 
+                    <!-- Autre utilisation de Grid pour la galerie de projets -->
                     <div class="projects-grid">
                         <article class="project-card">
                             <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4ula1grEpGV8QlJldq5I7LU6y9m-Ed_RoPBC0VPaEPOz7SEnqZ6fUIX4ucea9VEKNvhICeu0t7gWZXygJYS8c0V6rO1KYcExEvMPdZicozQGNK_SynpbeZWsKInG2HRwneJ59Cj-pkIhBfNvB8dXNBG_p1FnXHWwknFdejUvzsfnB7bzi3JkVnCXf4D83w3VpWt7pE5PLm_sehGnoH1dRyyuscP-Ef-JZZolZLYHkAnqy-yOXi-_WnZCeMd3oeyuh4TwMQAwLqIE");'></div>
@@ -188,6 +218,7 @@
 
         <footer class="site-footer" id="contact">
             <div class="container">
+                <!-- Grid Footer : Structure complexe gérée facilement avec Grid -->
                 <div class="footer-grid">
                     <div class="footer-brand">
                         <div class="logo">

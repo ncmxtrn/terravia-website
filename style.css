@@ -367,7 +367,7 @@ a {
     transition: transform 0.2s;
 }
 
-.service-card:hover .link-arrow span {
+.link-arrow:hover span {
     transform: translateX(5px);
 }
 

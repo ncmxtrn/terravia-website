@@ -9,4 +9,21 @@ window.addEventListener("load", () => {
     setTimeout(() => {
         document.body.classList.remove("is-loading");
     }, 100);
+
+    // --- Animation au scroll (Intersection Observer) ---
+    // Cela permet de détecter quand un élément entre dans l'écran
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Ajoute la classe .visible qui lance la transition CSS
+                entry.target.classList.add('visible');
+                // On arrête d'observer une fois animé (pour ne pas le rejouer en remontant)
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 }); // Se déclenche quand 50% de l'élément est visible
+
+    // On cible le badge ET les nouveaux éléments animés
+    const elementsToAnimate = document.querySelectorAll('.badge, .animate-on-scroll');
+    elementsToAnimate.forEach(el => observer.observe(el));
 });

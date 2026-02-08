@@ -17,7 +17,7 @@
     --color-gray-light: #e5e7eb;
 
     /* Typographie */
-    --font-main: 'Inter', sans-serif;
+    --font-main: 'Montserrat', sans-serif;
 
     /* Espacements standards */
     --spacing-container: 1rem;
@@ -130,9 +130,11 @@ a {
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: rgba(248, 252, 248, 0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #e7f3e7;
+    /* Design amélioré : Effet "Glassmorphism" plus moderne et ombre portée */
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(26, 60, 52, 0.05);
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
     height: 80px;
     display: flex;
     align-items: center;
@@ -170,13 +172,33 @@ a {
 }
 
 .main-nav a {
-    margin: 0 1rem;
-    font-weight: 500;
-    font-size: 0.9rem;
+    margin: 0 1.25rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-forest);
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+/* Animation de soulignement élégante */
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-primary);
+    transition: width 0.3s ease;
 }
 
 .main-nav a:hover {
-    color: var(--color-primary-dark);
+    /* L'animation se fait via le ::after, on garde le texte stable */
+    color: var(--color-forest);
+}
+
+.main-nav a:hover::after {
+    width: 100%;
 }
 
 .header-actions {
@@ -590,6 +612,10 @@ a {
     padding: 4rem 0 2rem;
 }
 
+.site-footer .logo {
+    color: var(--color-white);
+}
+
 /*
    Le footer est l'exemple parfait pour Grid car on veut souvent des
    colonnes de tailles inégales (ex: logo large, liens étroits).
@@ -647,6 +673,10 @@ a {
 .footer-contact .icon {
     color: var(--color-primary);
     font-size: 1.25rem;
+}
+
+.footer-contact address {
+    font-style: normal;
 }
 
 .footer-bottom {

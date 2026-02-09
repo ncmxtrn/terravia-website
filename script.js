@@ -1,29 +1,64 @@
-// On attend que toute la page soit chargée (images, styles, scripts)
+// 👋 Coucou ! Bienvenue dans le cerveau du site.
+// C'est ici qu'on gère tout ce qui bouge et qui est interactif.
+
+// On attend gentiment que TOUTE la page (images, textes, styles) soit chargée avant de commencer.
 window.addEventListener("load", () => {
     
-    // Petite astuce UX (Expérience Utilisateur) :
-    // On ajoute une classe "is-loading" au <body> dans le HTML qui cache tout (opacity: 0).
-    // Une fois que tout est prêt, on retire cette classe pour faire apparaître le site en douceur (Fade-in).
-    // Cela évite de voir les éléments "sauter" pendant le chargement.
-    
+    // 🎭 Le rideau s'ouvre !
+    // Au début, on a mis une classe "is-loading" sur le body qui rendait tout invisible.
+    // Maintenant que tout est prêt, on l'enlève pour faire apparaître le site.
     setTimeout(() => {
         document.body.classList.remove("is-loading");
-    }, 100);
+    }, 100); // On attend un tout petit peu (100ms) pour être sûr que ça soit fluide.
 
-    // --- Animation au scroll (Intersection Observer) ---
-    // Cela permet de détecter quand un élément entre dans l'écran
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Ajoute la classe .visible qui lance la transition CSS
-                entry.target.classList.add('visible');
-                // On arrête d'observer une fois animé (pour ne pas le rejouer en remontant)
-                observer.unobserve(entry.target);
+    // --- 👀 L'Espion du Scroll (Intersection Observer) ---
+    // Cet outil surveille quand les éléments entrent dans l'écran de l'utilisateur.
+    // C'est pour faire les animations d'apparition quand on descend dans la page.
+    const espion = new IntersectionObserver((lesElementsVus) => {
+        lesElementsVus.forEach(elementVu => {
+            // Si l'élément est visible à l'écran...
+            if (elementVu.isIntersecting) {
+                // ... on lui ajoute la classe "visible".
+                // Le CSS va voir ça et lancer l'animation (faire monter l'élément en fondu).
+                elementVu.target.classList.add('visible');
+                
+                // Une fois qu'on l'a vu, on arrête de l'espionner.
+                // Comme ça, l'animation ne se joue qu'une seule fois.
+                espion.unobserve(elementVu.target);
             }
         });
-    }, { threshold: 0.5 }); // Se déclenche quand 50% de l'élément est visible
+    }, { threshold: 0.5 }); // On déclenche quand 50% de l'élément est visible.
 
-    // On cible le badge ET les nouveaux éléments animés
-    const elementsToAnimate = document.querySelectorAll('.badge, .animate-on-scroll');
-    elementsToAnimate.forEach(el => observer.observe(el));
+    // On dit à notre espion de surveiller tous les éléments qui ont la classe ".badge" ou ".animate-on-scroll"
+    const elementsAAnimer = document.querySelectorAll('.badge, .animate-on-scroll');
+    elementsAAnimer.forEach(el => espion.observe(el));
+
+    // --- 🍔 Le Menu Burger (Mobile) ---
+    // On récupère le bouton (les 3 barres) et le menu (la liste de liens).
+    const boutonMenu = document.querySelector('.menu-toggle');
+    const menuNavigation = document.querySelector('.main-nav');
+    
+    // On vérifie que ces éléments existent bien sur la page pour éviter les erreurs
+    if (boutonMenu && menuNavigation) {
+        
+        // Quand on clique sur le bouton...
+        boutonMenu.addEventListener('click', () => {
+            // On ajoute ou on enlève la classe "is-open" au menu.
+            // (Si elle est là, on l'enlève. Si elle n'est pas là, on l'ajoute).
+            const estOuvert = menuNavigation.classList.toggle('is-open');
+            
+            // On anime aussi le bouton lui-même (pour qu'il se transforme en croix).
+            boutonMenu.classList.toggle('is-active', estOuvert);
+        });
+
+        // Petite amélioration : Quand on clique sur un lien du menu, on veut que le menu se ferme tout seul.
+        const liensDuMenu = menuNavigation.querySelectorAll('a');
+        liensDuMenu.forEach(lien => {
+            lien.addEventListener('click', () => {
+                // On ferme tout !
+                menuNavigation.classList.remove('is-open');
+                boutonMenu.classList.remove('is-active');
+            });
+        });
+    }
 });

@@ -1,33 +1,37 @@
-/* =========================================
-   1. VARIABLES & RESET
-   ========================================= */
-/*
-   Les variables CSS (Custom Properties) sont essentielles pour la maintenance.
-   Si tu veux changer le vert principal partout, tu le changes juste ici !
+/* 
+   👋 Bienvenue dans le fichier de Style (CSS) !
+   C'est ici qu'on fait la peinture et la décoration.
+   Sans ce fichier, le site ressemblerait à une page Word des années 90 : tout triste.
 */
+
+/* =========================================
+   1. LA BOÎTE À OUTILS (Variables)
+   ========================================= */
 :root {
-    /* Palette de couleurs Terravia */
-    --color-primary: #4ADE80;       /* Le vert néon */
-    --color-primary-dark: #22c55e;
-    --color-forest: #1A3C34;        /* Le vert foncé */
+    /* 
+       🎨 Nos pots de peinture.
+       Si demain on veut changer le vert partout, on change juste le code ici !
+    */
+    --color-primary: #4ADE80;       /* Le vert néon flashy */
+    --color-primary-dark: #22c55e;  /* Le même vert, un peu plus sombre */
+    --color-forest: #1A3C34;        /* Le vert très foncé élégant */
     --color-forest-light: #234e44;
-    --color-bg-light: #f8fcf8;
+    --color-bg-light: #f8fcf8;      /* Un blanc cassé très léger */
     --color-text-dark: #1A3C34;
     --color-white: #ffffff;
     --color-gray-light: #e5e7eb;
 
-    /* Typographie */
+    /* 🅰️ La police d'écriture qu'on utilise */
     --font-main: 'Montserrat', sans-serif;
 
-    /* Espacements standards */
-    --spacing-container: 1rem;
-    --width-max: 1280px; /* Équivalent au max-w-7xl de Tailwind */
+    /* 📏 La largeur maximum du site pour pas que ça s'étire trop sur les grands écrans */
+    --width-max: 1280px; 
 }
 
-/*
-   Box-sizing: border-box est crucial !
-   Cela fait en sorte que le padding et la bordure sont inclus dans la largeur totale.
-   Sans ça, les calculs de taille deviennent un enfer.
+/* 
+   📦 Une règle d'or en CSS !
+   Ça dit : "Si je dis qu'une boîte fait 20cm, alors elle fait 20cm, point barre."
+   (Sinon, les bordures s'ajoutent à la taille et ça casse tout).
 */
 * {
     box-sizing: border-box;
@@ -36,26 +40,31 @@
 }
 
 body {
-    /* Transition pour l'effet de chargement en douceur */
+    /* On commence invisible pour apparaître en douceur (voir le script.js) */
     opacity: 1;
     transition: opacity 1s ease-in-out;
     
     font-family: var(--font-main);
     color: var(--color-text-dark);
     background-color: var(--color-bg-light);
-    line-height: 1.5; /* Bon pour la lisibilité */
+    line-height: 1.5; /* On aère le texte pour que ce soit agréable à lire */
 }
 
+/* Pour que le défilement soit doux quand on clique sur un lien */
 html {
     scroll-behavior: smooth;
 }
 
-/* Correction du décalage des ancres dû au header fixe */
+/* 
+   Petite correction mathématique :
+   Quand on clique sur un lien, le titre ne doit pas se cacher sous la barre de menu fixe.
+   Donc on ajoute une marge invisible au-dessus.
+*/
 section[id], footer[id] {
-    scroll-margin-top: 80px; /* Correspond exactement à la hauteur du header (80px) */
+    scroll-margin-top: 80px;
 }
 
-/* Classe utilitaire pour l'état de chargement */
+/* La classe qu'on met au début pour cacher le site */
 body.is-loading {
     opacity: 0;
     transition: none !important;
@@ -63,23 +72,29 @@ body.is-loading {
 }
 
 /*
-   .container : Le pilier de la mise en page centrée.
-   Il empêche le site de s'étirer à l'infini sur les écrans géants.
+   🏠 Le Conteneur Principal.
+   C'est comme une boîte qui garde tout le contenu bien centré au milieu de l'écran.
 */
 .container {
     max-width: var(--width-max);
-    margin: 0 auto; /* Centre le bloc horizontalement */
-    padding: 0 var(--spacing-container); /* Marge interne de sécurité sur mobile */
+    margin: 0 auto; /* Hop, centré ! */
+    padding: 0 1.5rem; /* Un peu d'espace sur les côtés pour pas coller aux bords */
     width: 100%;
 }
 
-/* Images responsives : Empêche les images de déborder de leur parent */
+@media (max-width: 380px) {
+    .container {
+        padding: 0 1.25rem; /* Sur les tout petits écrans, on réduit un peu les marges */
+    }
+}
+
+/* On s'assure que les images ne dépassent jamais de leur cadre */
 img {
     max-width: 100%;
     display: block;
 }
 
-/* Liens par défaut */
+/* On enlève le soulignement moche des liens par défaut */
 a {
     text-decoration: none;
     color: inherit;
@@ -87,25 +102,27 @@ a {
 }
 
 /* =========================================
-   2. COMPOSANTS (Boutons, Badges)
+   2. LES BOUTONS (Les trucs cliquables)
    ========================================= */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-family: inherit; /* Force l'héritage de la police du body */
-    font-weight: 700;
+    padding: 0.75rem 1.5rem; /* De l'espace à l'intérieur du bouton */
+    border-radius: 0.5rem;   /* Les coins arrondis */
+    font-family: inherit;
+    font-weight: 700;        /* Texte en gras */
     font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    cursor: pointer;         /* Le curseur devient une main */
+    transition: all 0.3s ease; /* Animation fluide quand on passe la souris */
     border: none;
 }
 
+/* Le bouton principal (Vert) */
 .btn-primary {
     background-color: var(--color-primary);
     color: var(--color-forest);
+    /* Une petite lueur verte autour */
     box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
 }
 
@@ -113,11 +130,12 @@ a {
     background-color: var(--color-primary-dark);
 }
 
+/* Le bouton transparent avec bordure blanche */
 .btn-outline-white {
     background-color: transparent;
     border: 2px solid rgba(255, 255, 255, 0.2);
     color: var(--color-white);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px); /* Effet verre dépoli */
 }
 
 .btn-outline-white:hover {
@@ -134,19 +152,20 @@ a {
 }
 
 /* =========================================
-   3. EN-TÊTE (HEADER)
+   3. L'EN-TÊTE (Header) - Le chapeau du site
    ========================================= */
 .site-header {
-    position: fixed;
+    position: fixed; /* Il reste collé en haut même quand on descend */
     width: 100%;
     left: 0;
     top: 0;
-    z-index: 100;
-    /* Design amélioré : Effet "Glassmorphism" plus moderne et ombre portée */
+    z-index: 100; /* Il passe par-dessus tout le reste */
+    
+    /* Effet "Verre givré" très moderne */
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
+    
     border-bottom: 1px solid rgba(26, 60, 52, 0.05);
-    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
     height: 80px;
     display: flex;
     align-items: center;
@@ -154,8 +173,9 @@ a {
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Écarte les éléments au maximum */
     align-items: center;
+    transition: all 0.5s;
 }
 
 .logo {
@@ -163,32 +183,71 @@ a {
     align-items: center;
     gap: 0.5rem;
     color: var(--color-forest);
+    transition: margin 0.5s;
 }
 
+/* On change la couleur du logo avec des filtres (magie noire CSS pour manipuler les SVG) */
 .logo-icon {
     height: 40px;
     width: auto;
     transition: filter 0.3s ease;
-    /* Transformation en vert forêt (#1A3C34) pour correspondre au menu */
     filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
 }
 
 .site-footer .logo-icon {
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(1); /* Dans le footer, on le veut blanc */
 }
 
 .logo h2,
 .logo h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Orbitron', sans-serif; /* Police futuriste pour le logo */
     font-weight: 700;
     font-size: 1.25rem;
     letter-spacing: 0.5px;
 }
 
-/* Navigation desktop */
+/* Sur mobile, on cache le texte du logo pour gagner de la place */
+.logo h2 {
+    display: none;
+}
+
+/* 
+   MENU DE NAVIGATION
+   Par défaut (sur mobile), le menu est caché.
+*/
 .main-nav {
     display: none;
-    /* Caché sur mobile par défaut */
+}
+
+/* Quand on ouvre le menu sur mobile (via le bouton burger) */
+.main-nav.is-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%; /* Juste en dessous du header */
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(26, 60, 52, 0.1);
+    animation: slideDown 0.3s ease-out forwards; /* Il descend du plafond */
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.main-nav.is-open a {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(26, 60, 52, 0.05);
+    width: 100%;
+    text-align: center;
+}
+
+.main-nav.is-open a:last-child {
+    border-bottom: none;
 }
 
 .main-nav a {
@@ -200,11 +259,14 @@ a {
     padding: 0.5rem 0;
 }
 
-/* Animation de soulignement élégante */
+/* 
+   La petite ligne verte qui apparaît sous le lien quand on passe la souris.
+   C'est un élément invisible (::after) qu'on fait grandir.
+*/
 .main-nav a::after {
     content: '';
     position: absolute;
-    width: 0;
+    width: 0; /* Au début, largeur 0 */
     height: 2px;
     bottom: 0;
     left: 0;
@@ -213,58 +275,159 @@ a {
 }
 
 .main-nav a:hover {
-    /* L'animation se fait via le ::after, on garde le texte stable */
     color: var(--color-forest);
 }
 
 .main-nav a:hover::after {
-    width: 100%;
+    width: 100%; /* Hop, largeur 100% au survol ! */
 }
 
 .header-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-shrink: 0;
+    transition: margin 0.5s;
 }
 
+/* 
+   📱 MISE EN PAGE MOBILE (< 840px)
+   C'est un peu technique ici. On utilise une grille pour placer :
+   1. Le Logo à gauche
+   2. Le Bouton au milieu
+   3. Le Burger à droite
+*/
+@media (max-width: 840px) {
+    .header-content {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: 0 1.5rem;
+    }
+    
+    .logo {
+        justify-self: start;
+        margin-left: 0;
+    }
+    
+    .header-actions {
+        display: contents; /* Astuce : fait comme si ce conteneur n'existait pas */
+    }
+
+    .header-actions > .btn {
+        grid-column: 2; /* Milieu */
+        justify-self: center;
+        width: auto;
+        margin: 0;
+    }
+
+    .menu-toggle {
+        grid-column: 3; /* Droite */
+        justify-self: end;
+        margin-right: 0;
+        position: static;
+    }
+}
+
+@media (max-width: 380px) {
+    .header-content {
+        padding: 0 1rem;
+    }
+    /* Si l'écran est vraiment minuscule, on réduit le bouton */
+    .header-actions > .btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* LE BOUTON BURGER (Les 3 petites barres) */
 .menu-toggle {
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--color-forest);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeInScale 0.4s ease-out forwards;
+}
+
+/* On dessine les barres du burger nous-mêmes avec des <span> */
+.burger-icon {
+    width: 28px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.burger-icon span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--color-forest);
+    border-radius: 3px;
+    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6); /* Effet "rebond" sympa */
+    transform-origin: center;
+}
+
+/* 
+   ANIMATION "TRANSFORMERS" DU BURGER
+   Quand on clique (.is-active) :
+   - La barre 1 tourne et descend
+   - La barre 2 disparaît
+   - La barre 3 tourne et monte
+   Ça forme une croix (X) !
+*/
+.menu-toggle.is-active .burger-icon span:nth-of-type(1) {
+    width: 100%;
+    transform: translateY(8.5px) rotate(45deg);
+}
+
+.menu-toggle.is-active .burger-icon span:nth-of-type(2) {
+    width: 0;
+    opacity: 0;
+}
+
+.menu-toggle.is-active .burger-icon span:nth-of-type(3) {
+    width: 100%;
+    transform: translateY(-8.5px) rotate(-45deg);
+}
+
+/* Petite animation d'apparition */
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 /* =========================================
-   4. SECTION HÉROS (HERO)
+   4. SECTION HÉROS (L'accueil)
    ========================================= */
 .hero-section {
     position: relative;
-    min-height: 100vh; /* Prend 100% de la hauteur de la fenêtre */
-    display: flex;     /* Active Flexbox */
-    align-items: center; /* Centre le contenu verticalement */
-    padding: 6rem 0;   /* Garde un peu d'espace de sécurité */
+    min-height: 100vh; /* Prend TOUTE la hauteur de l'écran */
+    display: flex;
+    align-items: center;
+    padding: 6rem 0;
     color: var(--color-white);
-    /* Pour s'assurer que le texte est au-dessus du fond */
     isolation: isolate;
 }
 
-/* Gestion du fond */
+/* L'image de fond */
 .hero-background {
     position: absolute;
-    inset: 0;
-    /* Raccourci pour top:0, right:0, bottom:0, left:0 */
+    inset: 0; /* Colle aux 4 bords */
     background-size: cover;
     background-position: center;
-    z-index: -2;
+    z-index: -2; /* Tout au fond */
 }
 
+/* Le filtre sombre par-dessus l'image pour qu'on puisse lire le texte */
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background-color: var(--color-forest);
-    opacity: 0.85;
-    /* Ajustement pour lisibilité */
-    /* Dégradé subtil */
     background: linear-gradient(to right, rgba(26, 60, 52, 0.9), rgba(26, 60, 52, 0.7));
     z-index: -1;
 }
@@ -278,7 +441,7 @@ a {
 }
 
 .text-highlight {
-    color: var(--color-primary);
+    color: var(--color-primary); /* Le texte en vert fluo */
 }
 
 .lead-text {
@@ -290,39 +453,39 @@ a {
 
 .hero-buttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Empilés sur mobile */
     gap: 1rem;
 }
 
 /* =========================================
-   5. SECTION SERVICES (GRID EXAMPLE)
+   5. SECTION SERVICES (Avec le fond quadrillé)
    ========================================= */
 .services-section {
     padding: 5rem 0;
     position: relative;
-    /* Dégradé blanc vers le bas : Assure une transition invisible avec la section suivante */
     background: linear-gradient(to bottom, rgba(255,255,255,0) 85%, #ffffff 100%);
-    /* Le fond est géré par le pseudo-élément ::before pour permettre le fade-out */
 }
 
+/* 
+   Le fond "Papier Millimétré".
+   C'est un peu de la sorcellerie CSS avec des dégradés (gradients) qui créent des lignes.
+*/
 .services-section::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
     
-    /* VARIANT : PAPIER MILLIMÉTRÉ (Major/Minor Grid) */
-    /* Crée un effet de plan technique avec des lignes principales et secondaires */
     background-image:
-        /* Lignes Majeures (tous les 100px) - un peu plus visibles */
+        /* Les grosses lignes */
         linear-gradient(to right, rgba(26, 60, 52, 0.06) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(26, 60, 52, 0.06) 1px, transparent 1px),
-        /* Lignes Mineures (tous les 20px) - très subtiles */
+        /* Les petites lignes */
         linear-gradient(to right, rgba(26, 60, 52, 0.03) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(26, 60, 52, 0.03) 1px, transparent 1px);
     background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
 
-    /* FADE OUT : Le motif disparaît progressivement vers le bas */
+    /* On fait disparaître le quadrillage vers le bas */
     -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
@@ -333,79 +496,69 @@ a {
 
 .section-header.center {
     text-align: center;
-    /* Flexbox est super pour centrer des éléments empilés verticalement */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Styles décoratifs pour les titres et badges... */
+/* Le petit badge "Nos Expertises" avec l'effet brillant */
 .badge {
     display: inline-block;
-    background-color: rgba(74, 222, 128, 0.15); /* Fond vert très pâle et translucide */
-    color: var(--color-forest); /* Texte foncé pour une lisibilité parfaite */
-    padding: 0.5rem 1.25rem 0.5rem 2rem; /* Padding gauche plus grand pour le point */
-    border-radius: 50px; /* Bords totalement ronds (Pill shape) */
-    border: 1px solid rgba(74, 222, 128, 0.25); /* Bordure fine pour la définition */
+    background-color: rgba(74, 222, 128, 0.15);
+    color: var(--color-forest);
+    padding: 0.5rem 1.25rem 0.5rem 2rem;
+    border-radius: 50px;
+    border: 1px solid rgba(74, 222, 128, 0.25);
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em; /* Espacement modéré pour rester compact */
+    letter-spacing: 0.1em;
     margin-bottom: 1.5rem;
-    position: relative; /* Pour positionner le point pulsant */
-    overflow: hidden; /* Important : empêche le reflet de sortir du badge */
+    position: relative;
+    overflow: hidden; /* Important pour l'effet brillant */
     
-    /* --- Animation d'entrée (Scroll Reveal) --- */
-    opacity: 0; /* Caché au départ */
-    transform: translateY(20px); /* Décalé vers le bas */
-    filter: blur(5px); /* Flou */
-    transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s ease-out;
+    /* Au début, il est caché et descendu un peu plus bas */
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(5px);
+    transition: opacity 0.8s ease-out, transform 0.8s, filter 0.8s;
 }
 
-/* Classe ajoutée par le Javascript quand l'élément est visible */
+/* Quand il devient visible (ajouté par le JS) */
 .badge.visible {
     opacity: 1;
     transform: translateY(0);
     filter: blur(0);
 }
 
-/* Effet Shimmer (Reflet métallique) */
+/* L'effet "Shimmer" (le reflet de lumière qui passe) */
 .badge::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%; /* Départ hors champ à gauche */
-    width: 50%; /* Largeur du faisceau lumineux */
+    left: -100%;
+    width: 50%;
     height: 100%;
-    /* Dégradé transparent -> blanc -> transparent */
-    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%); /* Opacité réduite (0.4) pour ne pas éblouir */
-    transform: skewX(-25deg); /* Inclinaison pour l'effet de vitesse */
-    /* L'animation est retirée ici pour ne pas tourner en boucle */
+    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+    transform: skewX(-25deg);
 }
 
-/* L'animation se lance UNE SEULE FOIS quand l'élément devient visible */
 .badge.visible::before {
-    animation: shimmer 2s ease-out forwards; /* Durée 2s : plus fluide et visible */
+    animation: shimmer 2s ease-out forwards;
 }
 
 @keyframes shimmer {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 200%;
-    }
+    0% { left: -100%; }
+    100% { left: 200%; }
 }
 
-/* =========================================
-   ANIMATIONS D'APPARITION (SCROLL REVEAL)
-   ========================================= */
-/* Classe générique pour faire apparaître les éléments en douceur */
+/* 
+   ANIMATION D'APPARITION GÉNÉRIQUE
+   Tous les éléments avec cette classe vont monter doucement quand on scrolle.
+*/
 .animate-on-scroll {
     opacity: 0;
-    /* Style "Pro Tech" : Montée verticale nette, sans flou ni zoom, pour un rendu aéré */
     transform: translateY(30px);
-    /* Courbe de Bézier soignée pour une arrivée fluide mais décidée (Ease Out Cubic) */
     transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
     will-change: opacity, transform;
 }
@@ -415,11 +568,9 @@ a {
     transform: translateY(0);
 }
 
-/* Séquençage (Cascade) : Pour que les éléments n'arrivent pas tous en même temps */
+/* On décale un peu l'arrivée des éléments pour faire un effet "domino" */
 .section-header h2.animate-on-scroll { transition-delay: 0.1s; }
 .section-header .subtitle.animate-on-scroll { transition-delay: 0.2s; }
-
-/* Cascade (Stagger) : Les cartes arrivent une par une pour un effet rythmé et élégant */
 .services-grid .service-card:nth-child(1) { transition-delay: 0.1s; }
 .services-grid .service-card:nth-child(2) { transition-delay: 0.2s; }
 .services-grid .service-card:nth-child(3) { transition-delay: 0.3s; }
@@ -431,6 +582,7 @@ a {
     margin-bottom: 1rem;
 }
 
+/* Texte dégradé (Vert forêt -> Vert clair) */
 .text-gradient {
     background: linear-gradient(to right, var(--color-forest), var(--color-primary-dark));
     -webkit-background-clip: text;
@@ -444,48 +596,40 @@ a {
     opacity: 0.7;
 }
 
-/*
-   GRID LAYOUT - Le cœur du sujet !
-   --------------------------------
-   On commence en mobile-first : 1 colonne par défaut.
-   Voir la section "Media Queries" plus bas pour voir comment ça passe à 2 puis 4 colonnes.
+/* 
+   LA GRILLE DES SERVICES
+   Sur mobile, c'est une seule colonne (les cartes les unes sous les autres).
 */
 .services-grid {
     display: grid;
-    /* 1fr signifie "1 fraction de l'espace disponible". Ici, 1 seule colonne qui prend tout. */
     grid-template-columns: 1fr;
-    gap: 1.5rem; /* Espace entre les cases de la grille */
+    gap: 1.5rem;
 }
 
 .service-card {
     background: white;
-    border: 1px solid rgba(26, 60, 52, 0.08); /* Bordure plus subtile et pro */
-    border-radius: 1rem; /* Arrondi un peu plus prononcé */
-    padding: 2rem; /* PLUS d'espace interne (le secret du design épuré) */
-    /*
-       On utilise Flexbox à l'INTÉRIEUR d'une cellule de Grid pour organiser le contenu de la carte.
-       Grid pour la structure globale, Flex pour le contenu interne.
-    */
+    border: 1px solid rgba(26, 60, 52, 0.08);
+    border-radius: 1rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* Espace plus grand entre l'icône, le texte et le lien */
-    align-items: center; /* Centre l'icône et le bouton horizontalement */
-    text-align: center;  /* Centre le texte (titre et paragraphe) */
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .service-card:hover {
-    transform: translateY(-5px); /* Petit effet de levitation au survol */
-    /* Ombre plus douce et diffuse */
+    transform: translateY(-5px); /* Hop, ça monte un peu ! */
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
     border-color: var(--color-primary);
 }
 
 .icon-box {
-    width: 3.5rem; /* Icône légèrement plus grande */
+    width: 3.5rem;
     height: 3.5rem;
     background-color: rgba(26, 60, 52, 0.05);
-    border-radius: 50%; /* Le cercle est plus moderne et "friendly" que le carré */
+    border-radius: 50%; /* Un rond parfait */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -494,11 +638,11 @@ a {
 }
 
 .service-card:hover .icon-box {
-    background-color: var(--color-primary);
+    background-color: var(--color-primary); /* L'icône devient verte au survol */
 }
 
 .card-content h3 {
-    font-size: 1.35rem; /* Titre un peu plus affirmé */
+    font-size: 1.35rem;
     color: var(--color-forest);
     margin-bottom: 0.75rem;
 }
@@ -519,6 +663,7 @@ a {
     font-size: 0.9rem;
 }
 
+/* La petite flèche bouge quand on survole le lien */
 .link-arrow span {
     font-size: 1.1rem;
     margin-left: 0.25rem;
@@ -539,7 +684,7 @@ a {
 
 .split-layout {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Empilé sur mobile */
     gap: 4rem;
     align-items: center;
 }
@@ -551,7 +696,7 @@ a {
 }
 
 .check-list {
-    list-style: none;
+    list-style: none; /* On enlève les puces moches par défaut */
     margin: 1.5rem 0;
 }
 
@@ -581,6 +726,7 @@ a {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+/* L'élément qui flotte par-dessus l'image */
 .floating-ui {
     position: absolute;
     bottom: 1.5rem;
@@ -652,10 +798,6 @@ a {
     transform: translateX(5px);
 }
 
-/*
-   Autre exemple de Grid
-   Encore une fois, on commence simple (1 colonne) pour mobile.
-*/
 .projects-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -666,15 +808,12 @@ a {
     position: relative;
     border-radius: 0.75rem;
     overflow: hidden;
-    /*
-       Aspect-ratio est magique : il maintient les proportions de la carte
-       quelle que soit sa largeur. Ici 4/3 (comme une vieille télé).
-    */
-    aspect-ratio: 4/3;
+    aspect-ratio: 4/3; /* Garde toujours les mêmes proportions */
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
 
+/* L'image de fond du projet qui zoome au survol */
 .project-bg {
     position: absolute;
     inset: 0;
@@ -717,11 +856,11 @@ a {
     color: #d1d5db;
     margin-top: 0.5rem;
     opacity: 0;
-    /* Caché par défaut */
     transform: translateY(10px);
     transition: all 0.3s;
 }
 
+/* Le détail apparaît quand on passe la souris */
 .project-card:hover .project-detail {
     opacity: 1;
     transform: translateY(0);
@@ -740,11 +879,6 @@ a {
     color: var(--color-white);
 }
 
-/*
-   Le footer est l'exemple parfait pour Grid car on veut souvent des
-   colonnes de tailles inégales (ex: logo large, liens étroits).
-   Voir les media queries pour la configuration complexe.
-*/
 .footer-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -812,41 +946,54 @@ a {
 }
 
 /* =========================================
-   9. MEDIA QUERIES (RESPONSIVE)
+   9. ADAPTATION AUX GRANDS ÉCRANS (Responsive)
    ========================================= */
-/*
-   C'est ici que la magie Responsive opère !
-   On utilise des "breakpoints" (points de rupture).
-   Tout ce qui est au-dessus s'applique par défaut au mobile (Mobile-First).
-   Ici, on surcharge les règles pour les écrans plus grands.
-*/
 
-/* --- TABLETTES (min-width: 768px) --- */
-@media (min-width: 768px) {
+/* --- TABLETTES (Plus large que 839px) --- */
+@media (min-width: 839px) {
+    .container {
+        padding: 0 2rem;
+    }
 
-    /* Header : On cache le bouton burger et on affiche les liens normaux */
+    /* Le header redevient une ligne droite */
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .logo {
+        margin-left: 0;
+    }
+    
+    .header-actions {
+        margin-right: 0;
+        justify-content: flex-end;
+    }
+
+    /* On cache le burger et on montre le vrai menu */
     .menu-toggle {
         display: none;
     }
 
     .main-nav {
         display: block;
+        animation: fadeIn 0.5s ease-out forwards;
     }
 
-    /* Hero : Les boutons passent côte à côte au lieu d'empilés */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
     .hero-buttons {
-        flex-direction: row;
+        flex-direction: row; /* Boutons côte à côte */
     }
 
     .hero-content h1 {
         font-size: 3.5rem;
     }
 
-    /*
-       GRID RESPONSIVE :
-       Sur tablette, on passe de 1 colonne à 2 colonnes.
-       repeat(2, 1fr) est un raccourci pour : 1fr 1fr
-    */
+    /* 2 colonnes pour les grilles */
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -860,45 +1007,48 @@ a {
     }
 }
 
-/* --- DESKTOP / GRANDS ÉCRANS (min-width: 1024px) --- */
-@media (min-width: 1024px) {
+/* --- ORDI (Plus large que 950px) --- */
+@media (min-width: 950px) {
+
+    .menu-toggle {
+        display: none;
+    }
+
+    .main-nav {
+        display: block;
+    }
+
+    .logo h2 {
+        display: block; /* On réaffiche le nom du site dans le logo */
+    }
     
-    /* Services : On passe à 4 colonnes sur les grands écrans */
+    /* 4 colonnes pour les services */
     .services-grid {
         grid-template-columns: repeat(4, 1fr);
     }
 
-    /* Projets : 3 colonnes, c'est plus élégant pour une galerie */
+    /* 3 colonnes pour les projets */
     .projects-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    /*
-       Footer Complexe :
-       1fr 0.5fr 0.5fr 1fr
-       Cela signifie :
-       - Col 1 (Logo) : Prend 1 part d'espace
-       - Col 2 (Services) : Prend 0.5 part (plus étroit)
-       - Col 3 (Entreprise) : Prend 0.5 part
-       - Col 4 (Contact) : Prend 1 part
-       C'est la puissance de Grid pour faire des mises en page asymétriques !
-    */
+    /* Footer asymétrique (Logo gros, liens petits) */
     .footer-grid {
         grid-template-columns: 1fr 0.5fr 0.5fr 1fr;
     }
 
-    /* Technologie Split Layout : On passe de vertical à horizontal avec Flexbox */
+    /* Texte et Image côte à côte */
     .split-layout {
         flex-direction: row;
         align-items: center;
     }
 
     .tech-text {
-        flex: 1; /* Prend 50% de l'espace */
+        flex: 1;
     }
 
     .tech-image-wrapper {
-        flex: 1; /* Prend 50% de l'espace */
+        flex: 1;
     }
 
     .projects-header {

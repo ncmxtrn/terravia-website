@@ -62,28 +62,31 @@ window.addEventListener("load", () => {
         });
     }
 
-    // --- 👀 Gestion du bouton "Demander une soumission" ---
-    const heroStartButton = document.getElementById('hero-start-btn');
-    const headerQuoteButton = document.getElementById('header-quote-btn');
-
-    if (heroStartButton && headerQuoteButton) {
-        const header = document.querySelector('.site-header');
-        const headerHeight = header ? header.offsetHeight : 0;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                // Si le bouton "Démarrer un projet" est visible à l'écran
-                if (entry.isIntersecting) {
-                    headerQuoteButton.classList.add('is-hidden');
-                } else {
-                    headerQuoteButton.classList.remove('is-hidden');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: `-${headerHeight}px 0px 0px 0px`
-        });
-
-        observer.observe(heroStartButton);
-    }
+    // --- ✨ Animation du Header au Scroll ---
+        // Le but est d'ajouter une classe "is-scrolled" au header
+        // dès que le bouton principal du héros n'est plus visible.
+        const heroPrimaryButton = document.getElementById('hero-start-btn');
+        const siteHeader = document.querySelector('.site-header');
+    
+        if (heroPrimaryButton && siteHeader) {
+            const observerOptions = {
+                rootMargin: "-80px 0px 0px 0px", // On considère que l'élément disparaît 80px (hauteur du header) avant qu'il ne sorte vraiment de l'écran.
+                threshold: 0 // Se déclenche dès que l'élément n'est plus du tout visible.
+            };
+    
+            const headerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // entry.isIntersecting est un booléen :
+                    // - true si le bouton est visible
+                    // - false s'il est invisible
+                    
+                    // On veut la classe "is-scrolled" UNIQUEMENT quand le bouton N'EST PAS visible.
+                    // Donc, on ajoute la classe si "isIntersecting" est "false".
+                    siteHeader.classList.toggle('is-scrolled', !entry.isIntersecting);
+                });
+            }, observerOptions);
+    
+            // On demande à notre observateur de surveiller le bouton du héros.
+            headerObserver.observe(heroPrimaryButton);
+        }
 });

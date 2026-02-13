@@ -126,8 +126,17 @@ a {
     box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
 }
 
+/* .btn-primary:hover no longer needed for the header button, but kept for others */
 .btn-primary:hover {
     background-color: var(--color-primary-dark);
+}
+
+#header-quote-btn {
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+#header-quote-btn:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 0 18px rgba(74, 222, 128, 0.4);
 }
 
 /* Le bouton transparent avec bordure blanche */
@@ -166,7 +175,7 @@ a {
     display: flex;
     justify-content: space-between; /* Écarte les éléments au maximum */
     align-items: center;
-    transition: all 0.5s;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo {
@@ -174,7 +183,7 @@ a {
     align-items: center;
     gap: 0.5rem;
     color: var(--color-forest);
-    transition: margin 0.5s;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* On change la couleur du logo avec des filtres (magie noire CSS pour manipuler les SVG) */
@@ -199,7 +208,19 @@ a {
 
 /* Sur mobile, on cache le texte du logo pour gagner de la place */
 .logo h2 {
-    display: none;
+    display: block; /* On affiche par défaut */
+    transition: opacity 0.4s ease-out, max-width 0.5s ease-out;
+    opacity: 1;
+    max-width: 100px; /* Assez grand pour "Terravia" */
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* État mobile scrollé : on cache le texte du logo */
+.site-header.is-scrolled .logo h2 {
+    opacity: 0;
+    max-width: 0;
+    margin-left: -0.5rem; /* Compense le gap */
 }
 
 /* 
@@ -208,6 +229,8 @@ a {
 */
 .main-nav {
     display: none;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(0);
 }
 
 /* Quand on ouvre le menu sur mobile (via le bouton burger) */
@@ -281,16 +304,18 @@ a {
     transition: margin 0.5s;
 }
 
-.header-actions .btn {
+#header-quote-btn {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0.4s;
+    visibility: visible;
 }
 
-.header-actions .btn.is-hidden {
+.site-header:not(.is-scrolled) #header-quote-btn {
     opacity: 0;
     transform: translateY(-10px);
     pointer-events: none;
+    visibility: hidden;
 }
 
 /*
@@ -302,33 +327,77 @@ a {
 */
 @media (max-width: 840px) {
     .header-content {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        padding: 0 1.5rem;
-    }
+            display: grid;
+            /* On s'assure que la colonne du milieu ne grandit pas trop */
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 0 1.5rem;
+            width: 100%; /* S'assurer que le conteneur prend toute la largeur */
+        }
     
     .logo {
-        justify-self: start;
-        margin-left: 0;
-    }
+            grid-column: 1;
+            justify-self: start;
+            margin-left: 0;
+        }
+    
+        /* Quand le bouton du header est caché, on centre le logo */
+        .site-header:not(.is-scrolled) .logo {
+            grid-column: 1 / 2; /* Reste à gauche */
+            justify-self: start;
+            margin-left: 0;
+            z-index: 5;
+        }
+    
+        /* Quand on scrolle, le logo retourne à gauche */
+        /* Plus besoin de règles spécifiques pour le scroll car c'est le défaut */
     
     .header-actions {
         display: contents; /* Astuce : fait comme si ce conteneur n'existait pas */
     }
 
-    .header-actions > .btn {
-        grid-column: 2; /* Milieu */
-        justify-self: center;
-        width: auto;
-        margin: 0;
-    }
+    #header-quote-btn {
+                grid-column: 2; /* Milieu */
+                justify-self: center;
+                /* S'assure que le bouton ne dépasse pas l'espace disponible */
+                max-width: 100%;
+                white-space: nowrap; /* Empêche le texte du bouton de se couper */
+                margin: 0;
+                transform-origin: center;
+                /* On gère la visibilité et la présence dans le layout */
+                display: grid; /* Ou 'flex' */
+                visibility: visible;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow: hidden;
+            }
 
     .menu-toggle {
-        grid-column: 3; /* Droite */
-        justify-self: end;
-        margin-right: 0;
-        position: static;
+            grid-column: 3; /* Droite */
+            justify-self: end;
+            margin-right: 0;
+            position: static;
+            /* S'assurer que le menu burger est toujours au premier plan */
+            z-index: 10;
+        }
+
+    /* En haut de page, le bouton du header est caché */
+    .site-header:not(.is-scrolled) #header-quote-btn {
+        opacity: 0;
+        transform: scale(0.9);
+        pointer-events: none;
+        /* Au lieu de display: none qui casse l'animation, on réduit sa largeur à 0 */
+        max-width: 0;
+        margin: 0;
+        padding: 0; /* On enlève le padding pour qu'il disparaisse vraiment */
+    }
+
+    /* Quand on scrolle, le bouton apparaît */
+    .site-header.is-scrolled #header-quote-btn {
+        opacity: 1;
+        transform: scale(1);
+        max-width: 250px; /* Une largeur suffisante pour contenir le bouton */
+        /* On rétablit le padding d'origine (défini plus haut dans .btn) */
+        padding: 0.75rem 1.5rem;
     }
 }
 
@@ -969,9 +1038,40 @@ a {
     }
     
     .header-actions {
-        margin-right: 0;
-        justify-content: flex-end;
-    }
+            margin-right: 0;
+            justify-content: flex-end;
+        }
+    
+        /* --- Animations Header Desktop --- */
+    
+        /* État par défaut (scrolled) */
+        .main-nav {
+            transform: translateX(0);
+        }
+        #header-quote-btn {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    
+        /* État haut de page (non-scrollé) */
+        .site-header:not(.is-scrolled) .main-nav {
+            /* On décale le menu vers la droite de la moitié de la largeur du bouton + le gap */
+            /* On ajuste le calcul pour qu'il soit dynamique en fonction de la taille du bouton */
+            transform: translateX(calc( (100% + 1rem) / 2));
+        }
+        .site-header:not(.is-scrolled) #header-quote-btn {
+            opacity: 0;
+            transform: translateX(10px);
+            pointer-events: none;
+            width: auto; /* On laisse la largeur s'ajuster au contenu */
+            white-space: nowrap; /* On empêche le texte de passer à la ligne */
+        }
+    
+        #header-quote-btn {
+            width: auto;
+            white-space: nowrap;
+            transition: opacity 0.4s ease-out, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
     /* On cache le burger et on montre le vrai menu */
     .menu-toggle {
@@ -1018,12 +1118,21 @@ a {
     }
 
     .main-nav {
-        display: block;
-    }
+            display: flex; /* Utiliser flex pour l'alignement */
+            align-items: center;
+            justify-content: center;
+        }
 
     .logo h2 {
-        display: block; /* On réaffiche le nom du site dans le logo */
-    }
+            display: block; /* On réaffiche le nom du site dans le logo */
+        }
+    
+        /* Sur Desktop, on ne cache jamais le nom du logo */
+        .site-header.is-scrolled .logo h2 {
+            opacity: 1;
+            max-width: 100px;
+            margin-left: 0;
+        }
     
     /* 4 colonnes pour les services */
     .services-grid {

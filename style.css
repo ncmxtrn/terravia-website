@@ -281,7 +281,19 @@ a {
     transition: margin 0.5s;
 }
 
-/* 
+.header-actions .btn {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.header-actions .btn.is-hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+/*
    📱 MISE EN PAGE MOBILE (< 840px)
    C'est un peu technique ici. On utilise une grille pour placer :
    1. Le Logo à gauche

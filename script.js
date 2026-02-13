@@ -61,4 +61,29 @@ window.addEventListener("load", () => {
             });
         });
     }
+
+    // --- 👀 Gestion du bouton "Demander une soumission" ---
+    const heroStartButton = document.getElementById('hero-start-btn');
+    const headerQuoteButton = document.getElementById('header-quote-btn');
+
+    if (heroStartButton && headerQuoteButton) {
+        const header = document.querySelector('.site-header');
+        const headerHeight = header ? header.offsetHeight : 0;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Si le bouton "Démarrer un projet" est visible à l'écran
+                if (entry.isIntersecting) {
+                    headerQuoteButton.classList.add('is-hidden');
+                } else {
+                    headerQuoteButton.classList.remove('is-hidden');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: `-${headerHeight}px 0px 0px 0px`
+        });
+
+        observer.observe(heroStartButton);
+    }
 });

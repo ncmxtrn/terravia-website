@@ -142,15 +142,6 @@ a {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.btn-dark {
-    background-color: var(--color-forest);
-    color: var(--color-white);
-}
-
-.btn-dark:hover {
-    background-color: var(--color-forest-light);
-}
-
 /* =========================================
    3. L'EN-TÊTE (Header) - Le chapeau du site
    ========================================= */

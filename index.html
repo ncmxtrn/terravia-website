@@ -14,8 +14,8 @@
         Elle dit au navigateur : "Hey, adapte-toi à la largeur de l'écran, ne dézoome pas comme un fou".
     -->
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Terravia</title>
-    
+    <title>Solutions Terravia</title>
+
     <!-- Ici, on fait le lien avec notre fichier de décoration (CSS) -->
     <link rel="stylesheet" href="style.css">
 
@@ -23,9 +23,12 @@
         🎨 On va chercher de jolies polices d'écriture chez Google.
         C'est comme commander des meubles sur catalogue pour qu'ils soient livrés sur notre page.
     -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
+        rel="stylesheet" />
     <!-- Et là, on récupère une bibliothèque de petits dessins (icônes) -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
 </head>
 
 <!-- 
@@ -33,9 +36,10 @@
     On lui met une petite étiquette "is-loading" au début pour lui dire :
     "Attends un peu avant de t'afficher, le temps qu'on se fasse beau".
 -->
+
 <body class="is-loading">
     <div class="site-wrapper">
-        
+
         <!-- 
             🎩 Le Header, c'est le chapeau du site.
             Il reste souvent en haut et contient le logo et le menu.
@@ -47,20 +51,20 @@
                     <img src="assets/logo-noir.svg" alt="Terravia Logo" class="logo-icon">
                     <h2>Terravia</h2>
                 </a>
-                
+
                 <!-- 
                     🧭 La boussole du site (Menu de navigation).
                     C'est ici qu'on met les liens pour aller aux différents endroits de la page.
                 -->
                 <nav class="main-nav">
                     <a href="#services">Services</a>
-                    <a href="#technologie">Technologie</a>
+                    <a>Espace client</a>
                     <a href="#projets">Projets</a>
                     <a href="#contact">Contact</a>
                 </nav>
-                
+
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="header-quote-btn">Demander une soumission</button>
+                    <button class="btn btn-primary" id="header-quote-btn">Contactez-nous</button>
                     <!-- 
                         🍔 Le fameux menu "Hamburger" !
                         Sur ordinateur, on le cache. Sur téléphone, c'est le bouton qui ouvre le menu.
@@ -84,17 +88,20 @@
             -->
             <section class="hero-section">
                 <!-- On met l'image en fond dans une boîte à part pour pouvoir mettre un filtre sombre par-dessus -->
-                <div class="hero-background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWeqVyL8VDPCEoVDcurPS_F93LisAMvxD_YIKsQCp1nrPirWp1gL7xTCCR3ePEa1gLINaz4lWGOqCsPswesWSOPLhhbDpEOxGPLm5RbsRkDbp08U9CQ4d9KRsn-l-GBw-ebG-fUnYUXeZVw90DbK1BQb6zhYZV_mYCIyaZ-lc_EwZJZVYnefqJkogn_4vvKuTLOEG2fcX_VXPNvuT_6yAviU6eWkwtzxLZPheSiP1Pl3UCG73-nS7ZvAnJPOHJa_1vNMnI9REjFbU");'></div>
+                <div class="hero-background"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWeqVyL8VDPCEoVDcurPS_F93LisAMvxD_YIKsQCp1nrPirWp1gL7xTCCR3ePEa1gLINaz4lWGOqCsPswesWSOPLhhbDpEOxGPLm5RbsRkDbp08U9CQ4d9KRsn-l-GBw-ebG-fUnYUXeZVw90DbK1BQb6zhYZV_mYCIyaZ-lc_EwZJZVYnefqJkogn_4vvKuTLOEG2fcX_VXPNvuT_6yAviU6eWkwtzxLZPheSiP1Pl3UCG73-nS7ZvAnJPOHJa_1vNMnI9REjFbU");'>
+                </div>
                 <div class="hero-overlay"></div>
-                
+
                 <div class="container hero-content">
                     <h1>La Précision Géomatique <span class="text-highlight">par Drone</span></h1>
                     <p class="lead-text">
-                        Acquisition de données haute fidélité pour ingénieurs et arpenteurs. Transformez le réel en données exploitables.
+                        Acquisition de données haute fidélité pour ingénieurs et arpenteurs. Transformez le réel en
+                        données exploitables.
                     </p>
                     <div class="hero-buttons">
-                        <button class="btn btn-primary" id="hero-start-btn">Démarrer un projet</button>
-                        <button class="btn btn-outline-white">Découvrir nos services</button>
+                        <button class="btn btn-primary" id="hero-start-btn">Contactez-nous</button>
+                        <a href="#services" class="btn btn-outline-white">Découvrir nos services</a>
                     </div>
                 </div>
             </section>
@@ -108,8 +115,10 @@
                     <div class="section-header center">
                         <div class="badge">Nos Expertises</div>
                         <!-- "animate-on-scroll" : c'est notre code secret pour dire "Apparais doucement quand on te voit" -->
-                        <h2 class="animate-on-scroll">Solutions de pointe pour <span class="text-gradient">l'ingénierie</span></h2>
-                        <p class="subtitle animate-on-scroll">Des technologies adaptées aux exigences rigoureuses des arpenteurs-géomètres et ingénieurs civils.</p>
+                        <h2 class="animate-on-scroll">Solutions de pointe pour <span
+                                class="text-gradient">l'ingénierie</span></h2>
+                        <p class="subtitle animate-on-scroll">Des technologies adaptées aux exigences rigoureuses des
+                            arpenteurs-géomètres et ingénieurs civils.</p>
                     </div>
 
                     <!-- Une grille pour ranger nos cartes bien alignées -->
@@ -121,9 +130,11 @@
                             </div>
                             <div class="card-content">
                                 <h3>LiDAR</h3>
-                                <p>Relevés topographiques de haute précision pénétrant la végétation dense pour des modèles de terrain (MNT) exacts.</p>
+                                <p>Relevés topographiques de haute précision pénétrant la végétation dense pour des
+                                    modèles de terrain (MNT) exacts.</p>
                             </div>
-                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                            <a class="link-arrow">En savoir plus <span
+                                    class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
                         <!-- Carte 2 : Photogrammétrie -->
@@ -133,9 +144,11 @@
                             </div>
                             <div class="card-content">
                                 <h3>Photogrammétrie</h3>
-                                <p>Modélisation 3D photoréaliste et orthophotos géoréférencées à haute résolution pour la cartographie urbaine.</p>
+                                <p>Modélisation 3D photoréaliste et orthophotos géoréférencées à haute résolution pour
+                                    la cartographie urbaine.</p>
                             </div>
-                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                            <a href="#" class="link-arrow">En savoir plus <span
+                                    class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
                         <!-- Carte 3 : Inspection -->
@@ -145,9 +158,11 @@
                             </div>
                             <div class="card-content">
                                 <h3>Inspection</h3>
-                                <p>Inspection visuelle détaillée et thermographique d'infrastructures critiques, ponts, tours et barrages.</p>
+                                <p>Inspection visuelle détaillée et thermographique d'infrastructures critiques, ponts,
+                                    tours et barrages.</p>
                             </div>
-                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                            <a href="#" class="link-arrow">En savoir plus <span
+                                    class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
                         <!-- Carte 4 : Volumétrie -->
@@ -157,9 +172,11 @@
                             </div>
                             <div class="card-content">
                                 <h3>Volumétrie</h3>
-                                <p>Calculs de volumes précis et suivis de stocks pour carrières, sites miniers et chantiers de construction.</p>
+                                <p>Calculs de volumes précis et suivis de stocks pour carrières, sites miniers et
+                                    chantiers de construction.</p>
                             </div>
-                            <a href="#" class="link-arrow">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                            <a href="#" class="link-arrow">En savoir plus <span
+                                    class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
                     </div>
                 </div>
@@ -176,17 +193,24 @@
                             <div class="label-tech">Plateforme Intelligente</div>
                             <h2>Visualisez et analysez vos données</h2>
                             <p>
-                                Accédez à notre application interne dédiée pour visualiser et exploiter tout le potentiel de vos données. Explorez vos nuages de points LiDAR et modèles photogrammétriques.
+                                Accédez à notre application interne dédiée pour visualiser et exploiter tout le
+                                potentiel de vos données. Explorez vos nuages de points LiDAR et modèles
+                                photogrammétriques.
                             </p>
                             <ul class="check-list">
-                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Visualisation interactive LiDAR et 3D</li>
-                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Comparaison des relevés historiques</li>
-                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Suivi d'évolution par photo aérienne</li>
+                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Visualisation
+                                    interactive LiDAR et 3D</li>
+                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Comparaison
+                                    des relevés historiques</li>
+                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Suivi
+                                    d'évolution par photo aérienne</li>
                             </ul>
                         </div>
-                        
+
                         <div class="tech-image-wrapper">
-                            <div class="image-container" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'></div>
+                            <div class="image-container"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'>
+                            </div>
                             <!-- Un petit élément flottant par-dessus l'image pour faire "Tech" -->
                             <div class="floating-ui">
                                 <div class="file-info">
@@ -211,12 +235,15 @@
                             <h2>Projets Récents</h2>
                             <p>Découvrez comment nos données transforment la planification de projets.</p>
                         </div>
-                        <a href="#" class="link-view-all">Voir tout le portfolio <span class="material-symbols-outlined">arrow_forward</span></a>
+                        <a href="#" class="link-view-all">Voir tout le portfolio <span
+                                class="material-symbols-outlined">arrow_forward</span></a>
                     </div>
 
                     <div class="projects-grid">
                         <article class="project-card">
-                            <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4ula1grEpGV8QlJldq5I7LU6y9m-Ed_RoPBC0VPaEPOz7SEnqZ6fUIX4ucea9VEKNvhICeu0t7gWZXygJYS8c0V6rO1KYcExEvMPdZicozQGNK_SynpbeZWsKInG2HRwneJ59Cj-pkIhBfNvB8dXNBG_p1FnXHWwknFdejUvzsfnB7bzi3JkVnCXf4D83w3VpWt7pE5PLm_sehGnoH1dRyyuscP-Ef-JZZolZLYHkAnqy-yOXi-_WnZCeMd3oeyuh4TwMQAwLqIE");'></div>
+                            <div class="project-bg"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4ula1grEpGV8QlJldq5I7LU6y9m-Ed_RoPBC0VPaEPOz7SEnqZ6fUIX4ucea9VEKNvhICeu0t7gWZXygJYS8c0V6rO1KYcExEvMPdZicozQGNK_SynpbeZWsKInG2HRwneJ59Cj-pkIhBfNvB8dXNBG_p1FnXHWwknFdejUvzsfnB7bzi3JkVnCXf4D83w3VpWt7pE5PLm_sehGnoH1dRyyuscP-Ef-JZZolZLYHkAnqy-yOXi-_WnZCeMd3oeyuh4TwMQAwLqIE");'>
+                            </div>
                             <div class="project-overlay"></div>
                             <div class="project-info">
                                 <span class="project-category">Volumétrie</span>
@@ -226,7 +253,9 @@
                         </article>
 
                         <article class="project-card">
-                            <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAq5q63pIWqzAooSxqgkupd4LuhDeeWMsyPAkg1RVpmasKJL8srYtUzfMdGEbcs7USTLHghe3I74oiH_cZ5hzqZol7fxWU77Bo5cwDPRj_9tWQIWoJ-Il635aG-Dqk2lIkBgYw0RVsMgrYvrWZD0PH2vlSZPvmwgcczguT50EaL5i2ogyK1Tooe1-M_fqbiA6k452kTiZ_QnG9_fHIP0Z2HGN2DA6PGEyLrsRL4Q8N6OjaE_2uDwOW0H8yFjss0G_hHSbL1jeA_LA");'></div>
+                            <div class="project-bg"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAq5q63pIWqzAooSxqgkupd4LuhDeeWMsyPAkg1RVpmasKJL8srYtUzfMdGEbcs7USTLHghe3I74oiH_cZ5hzqZol7fxWU77Bo5cwDPRj_9tWQIWoJ-Il635aG-Dqk2lIkBgYw0RVsMgrYvrWZD0PH2vlSZPvmwgcczguT50EaL5i2ogyK1Tooe1-M_fqbiA6k452kTiZ_QnG9_fHIP0Z2HGN2DA6PGEyLrsRL4Q8N6OjaE_2uDwOW0H8yFjss0G_hHSbL1jeA_LA");'>
+                            </div>
                             <div class="project-overlay"></div>
                             <div class="project-info">
                                 <span class="project-category">LiDAR</span>
@@ -236,7 +265,9 @@
                         </article>
 
                         <article class="project-card">
-                            <div class="project-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4KIQbMnyZSMMLGYh0SfiQyWUm8RUh9xKWxV_-qCSiVAmKXiIvVh2sxAqMN_yAcbDVNp9M7jqZg7pKQBmuvcRWWT-5aBgAYuUzILM6Bc6FqLH52rpYlmU5YjZrY_uQ3s-_Zj8jKc3W18o4yKdfSaxcTw3EGEFbrzfcGw21IU_V9bmasx5Vzl8ecikI4Gmc7OiAPzSL-yfWLKq8dyNksNiX_TEJC5oqeQXgiAtdTu3kYn8tWHaCsix1p_9YCUWT0hHzNWrh96r975g");'></div>
+                            <div class="project-bg"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4KIQbMnyZSMMLGYh0SfiQyWUm8RUh9xKWxV_-qCSiVAmKXiIvVh2sxAqMN_yAcbDVNp9M7jqZg7pKQBmuvcRWWT-5aBgAYuUzILM6Bc6FqLH52rpYlmU5YjZrY_uQ3s-_Zj8jKc3W18o4yKdfSaxcTw3EGEFbrzfcGw21IU_V9bmasx5Vzl8ecikI4Gmc7OiAPzSL-yfWLKq8dyNksNiX_TEJC5oqeQXgiAtdTu3kYn8tWHaCsix1p_9YCUWT0hHzNWrh96r975g");'>
+                            </div>
                             <div class="project-overlay"></div>
                             <div class="project-info">
                                 <span class="project-category">Suivi de Chantier</span>
@@ -263,7 +294,7 @@
                         </div>
                         <p>L'excellence en acquisition de données géospatiales par drone.</p>
                     </div>
-                    
+
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
@@ -292,7 +323,7 @@
                                     Montréal, QC H2J 1X2
                                 </address>
                             </li>
-                            <li><span class="material-symbols-outlined icon">call</span> +1 (XXX) XXX-XXXX</li>
+                            <li><span class="material-symbols-outlined icon">call</span> +1 (999) 999-9999</li>
                             <li><span class="material-symbols-outlined icon">mail</span> info@solutionsterravia.com</li>
                         </ul>
                     </div>
@@ -310,4 +341,5 @@
     -->
     <script src="script.js"></script>
 </body>
+
 </html>

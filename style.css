@@ -649,7 +649,7 @@ a {
 .services-grid .service-card:nth-child(4) { transition-delay: 0.4s; }
 
 .section-header h2 {
-    font-size: 2rem;
+    font-size: 3rem;
     color: var(--color-forest);
     margin-bottom: 1rem;
 }

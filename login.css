@@ -1,0 +1,339 @@
+/* 
+    Styles spécifiques pour la page de connexion (Espace Client).
+    On reproduit ici le style de la modale "feat-login-modale" pour l'adapter 
+    en pleine page, de manière cohérente avec le design system (style.css).
+*/
+
+/* Variables spécifiques ajoutées pour la modale sur la branche feat-login-modale */
+:root {
+    --color-forest-60: rgba(26, 60, 52, 0.6);
+    --color-forest-30: rgba(26, 60, 52, 0.3);
+    --color-forest-05: rgba(26, 60, 52, 0.05);
+    --font-logo: 'Orbitron', sans-serif;
+    --shadow-glow: 0 0 15px rgba(74, 222, 128, 0.3);
+    --shadow-glow-hover: 0 0 18px rgba(74, 222, 128, 0.4);
+    
+    /* Ombre multicouche très élégante et subtile pour l'effet 3D */
+    --shadow-card: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.03), 
+        0 10px 15px -3px rgba(0, 0, 0, 0.05),
+        0 25px 50px -12px rgba(26, 60, 52, 0.1);
+    
+    /* Variables d'espacement ajoutées pour structurer clairement les éléments */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2.5rem;
+}
+
+/* Structure de la section pleine page */
+.login-main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-light);
+    padding: 2rem 1rem;
+    position: relative;
+    isolation: isolate;
+}
+
+/* Le fond "Papier Millimétré" exact de la page d'accueil (section services) pour une cohérence parfaite */
+.login-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+        /* Lignes épaisses */
+        linear-gradient(to right, rgba(26, 60, 52, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(26, 60, 52, 0.06) 1px, transparent 1px),
+        /* Lignes fines */
+        linear-gradient(to right, rgba(26, 60, 52, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(26, 60, 52, 0.03) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    
+    /* Disparaît doucement sur les bords (radial fade) */
+    -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+    mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+}
+
+/* Conteneur principal qui limite la largeur et anime l'arrivée */
+.login-container {
+    width: 100%;
+    max-width: 36rem;
+    margin: 0 auto;
+    
+    /* Animation d'arrivée douce */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 
+    Styles du formulaire de connexion, adaptés depuis modale_style.css 
+*/
+.login-wrapper {
+    width: 100%;
+    padding: 0;
+}
+
+/* Le Header avec logo au dessus du formulaire */
+.brand-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    color: var(--color-forest); /* Couleur adaptée car on est sur fond clair */
+}
+
+.brand-link:hover .logo-icon {
+    transform: scale(1.05);
+}
+
+/* Le logo prend sa couleur noire normale (pas de filtre blanc car on n'est plus dans la modale sombre) */
+.brand-header .logo-icon {
+    height: 3rem;
+    width: auto;
+    transition: transform 0.2s;
+    /* Le logo est noir avec une teinte verte (similaire au header principal) */
+    filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
+}
+
+.brand-title {
+    font-family: var(--font-logo);
+    font-size: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--color-forest); /* Texte foncé sur fond clair */
+}
+
+.brand-subtitle {
+    color: var(--color-forest-60); /* Texte assombri sur fond clair */
+    margin-top: var(--spacing-md);
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Le texte et lien du pied de formulaire */
+.brand-footer-text {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--color-forest) !important;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.brand-footer-link {
+    color: var(--color-forest) !important;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    transition: color 0.3s;
+}
+
+.brand-footer-link:hover {
+    color: var(--color-primary-dark) !important;
+    opacity: 1;
+}
+
+/* La carte blanche du formulaire, reprenant EXACTEMENT le style .service-card de l'accueil */
+.login-card {
+    position: relative;
+    background-color: var(--color-white);
+    border: 1px solid rgba(26, 60, 52, 0.08);
+    border-radius: 1rem;
+    
+    /* L'ombre signature de la page d'accueil, statutaire mais douce */
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+        
+    padding: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .login-card {
+        padding: 3rem;
+    }
+}
+
+/* Groupes et inputs du formulaire */
+.form-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.input-group {
+    display: block;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-forest);
+    margin-bottom: var(--spacing-xs);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-forest-30);
+    font-size: 1.25rem;
+    user-select: none;
+    transition: color 0.5s ease;
+}
+
+/* L'icône prend la couleur du texte dès qu'on écrit quelque chose */
+.input-wrapper:has(.form-input:not(:placeholder-shown)) .input-icon {
+    color: var(--color-forest);
+}
+
+.form-input {
+    width: 100%;
+    height: 3.5rem;
+    padding: 0 3rem 0 2.75rem;
+    background-color: rgba(248, 252, 248, 0.5);
+    border: 1px solid rgba(26, 60, 52, 0.1);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    font-family: inherit;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+}
+
+/* Mots de passe et liens d'oubli */
+.forgot-password-link {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    transition: text-decoration 0.2s;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Case à cocher "Se souvenir" */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-input {
+    height: 1rem;
+    width: 1rem;
+    accent-color: var(--color-primary);
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(26, 60, 52, 0.7);
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Bouton pleine largeur */
+.login-card .btn-primary {
+    width: 100%;
+    padding: 0.875rem;
+    gap: 0.5rem;
+    box-shadow: var(--shadow-glow);
+}
+
+.login-card .btn-primary:hover {
+    box-shadow: var(--shadow-glow-hover);
+    transform: translateY(-1px);
+}
+
+/* Transition douce de page (depuis le body) */
+.page-transition {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.page-transition.fade-out {
+    opacity: 0;
+}
+
+/* Sélection de texte et style champ de mot de passe spécifiques */
+::selection {
+    background-color: var(--color-forest-30);
+    color: var(--color-forest);
+}
+
+.form-input[type="password"] {
+    /* Espacement réduit (plus dense) comme sur les sites "pro" (ex: Apple, Google) */
+    letter-spacing: 0.12em;
+    /* Une taille très légèrement supérieure au texte normal pour des points bien visibles, mais pas énormes */
+    font-size: 1.1rem;
+    /* L'utilisation d'une police standard/système garantit que le navigateur affichera les "gros points ronds" natifs parfaits */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Bouton oeil pour afficher le mot de passe */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-forest-30);
+    transition: color 0.3s ease;
+    padding: 0;
+    display: flex;
+}
+
+.password-toggle:hover {
+    color: var(--color-forest);
+}
+
+.input-wrapper:has(.password-toggle) .form-input {
+    padding-right: 3rem;
+}

@@ -296,6 +296,27 @@ a {
     width: 100%; /* Hop, largeur 100% au survol ! */
 }
 
+/* Lien spécifique "Espace client" avec son icône d'ouverture */
+.client-link {
+    display: inline-flex !important; /* Force l'alignement sur une ligne avec l'icône */
+    align-items: center;
+}
+
+.client-icon {
+    font-size: 1.1rem !important; /* Taille ajustée pour coller au texte */
+    margin-left: 0.2rem;
+    color: var(--color-primary); /* Même vert que le trait de soulignement */
+    opacity: 0; /* Caché par défaut */
+    transform: translate(-5px, 5px) scale(0.5); /* Part d'en bas à gauche en plus petit */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animation avec léger rebond */
+}
+
+/* Quand on survole le lien Espace client, l'icône apparaît */
+.client-link:hover .client-icon {
+    opacity: 1;
+    transform: translate(0, 0) scale(1); /* Arrive à sa place normale */
+}
+
 .header-actions {
     display: flex;
     align-items: center;

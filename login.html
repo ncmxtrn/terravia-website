@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Espace Client - Terravia</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="is-loading page-transition">
+    <div class="site-wrapper">
+
+        <main class="login-main">
+            <!-- Nous reproduisons ici la structure exacte du login-wrapper de la modale, mais sur fond blanc sans overlay sombre -->
+            <div class="login-container">
+                <div class="login-wrapper">
+                    <div class="brand-header">
+                        <a class="brand-link transition-link" href="index.html">
+                            <img alt="Terravia Logo" class="logo-icon" src="assets/logo-noir.svg" />
+                            <h1 class="brand-title">Terravia</h1>
+                        </a>
+                        <p class="brand-subtitle">Connectez-vous à votre compte</p>
+                    </div>
+
+                    <div class="login-card">
+                        <form action="#" class="form-stack" method="POST">
+                            <div class="input-group">
+                                <label class="input-label" for="email">Email</label>
+                                <div class="input-wrapper">
+                                    <span class="material-symbols-outlined input-icon">person</span>
+                                    <input class="form-input" id="email" name="email" placeholder="votre@email.com"
+                                        required="" type="email" />
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="flex-between">
+                                    <label class="input-label" for="password">Mot de passe</label>
+                                    <a class="forgot-password-link" href="#">Oublié ?</a>
+                                </div>
+                                <div class="input-wrapper">
+                                    <span class="material-symbols-outlined input-icon">lock</span>
+                                    <input class="form-input" id="password" name="password" placeholder="••••••••"
+                                        required="" type="password" />
+                                    <button type="button" class="password-toggle" title="Maintenir pour afficher" aria-label="Maintenir pour afficher le mot de passe">
+                                        <span class="material-symbols-outlined">visibility_off</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input class="checkbox-input" id="remember-me" name="remember-me" type="checkbox" />
+                                <label class="checkbox-label" for="remember-me">
+                                    Se souvenir de moi
+                                </label>
+                            </div>
+
+                            <button class="btn btn-primary" type="submit">
+                                Accéder à la plateforme
+                                <span class="material-symbols-outlined">login</span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <p class="footer-text brand-footer-text">
+                        Pas encore de compte ?
+                        <a class="footer-link brand-footer-link transition-link" href="index.html#contact">Contactez-nous</a>
+                    </p>
+                </div>
+            </div>
+        </main>
+
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Script spécifique pour l'œil du mot de passe (maintenir pour afficher)
+        const passwordToggle = document.querySelector('.password-toggle');
+        const passwordInput = document.getElementById('password');
+        
+        if(passwordToggle && passwordInput) {
+            const icon = passwordToggle.querySelector('span');
+
+            const showPassword = (e) => {
+                // Empêche le bouton de prendre le focus (le curseur reste dans l'input)
+                if(e) e.preventDefault(); 
+                
+                passwordInput.setAttribute('type', 'text');
+                icon.textContent = 'visibility'; // L'œil s'ouvre car le texte est visible
+                
+                // Petit délai pour laisser le navigateur changer le type avant de replacer le curseur à la fin
+                setTimeout(() => {
+                    passwordInput.focus();
+                    const length = passwordInput.value.length;
+                    passwordInput.setSelectionRange(length, length);
+                }, 10);
+            };
+
+            const hidePassword = (e) => {
+                // Ne rien faire si ce n'est pas déjà un texte
+                if(passwordInput.getAttribute('type') === 'password') return;
+                
+                passwordInput.setAttribute('type', 'password');
+                icon.textContent = 'visibility_off'; // L'œil se ferme car le texte est caché
+                
+                // Petit délai pour laisser le navigateur changer le type avant de replacer le curseur à la fin
+                setTimeout(() => {
+                    passwordInput.focus();
+                    const length = passwordInput.value.length;
+                    passwordInput.setSelectionRange(length, length);
+                }, 10);
+            };
+
+            // Événements souris
+            passwordToggle.addEventListener('mousedown', showPassword);
+            passwordToggle.addEventListener('mouseup', hidePassword);
+            passwordToggle.addEventListener('mouseleave', hidePassword); // Sécurité si on glisse hors du bouton
+
+            // Événements tactiles (téléphones)
+            passwordToggle.addEventListener('touchstart', showPassword, {passive: false});
+            passwordToggle.addEventListener('touchend', hidePassword);
+            passwordToggle.addEventListener('touchcancel', hidePassword);
+        }
+    </script>
+</body>
+
+</html>

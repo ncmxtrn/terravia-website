@@ -37,7 +37,7 @@
     "Attends un peu avant de t'afficher, le temps qu'on se fasse beau".
 -->
 
-<body class="is-loading">
+<body class="is-loading page-transition">
     <div class="site-wrapper">
 
         <!-- 
@@ -47,7 +47,7 @@
         <header class="site-header">
             <div class="container header-content">
                 <!-- Le logo : quand on clique dessus, on revient à la maison (en haut) -->
-                <a href="#" class="logo">
+                <a href="index.html" class="logo transition-link">
                     <img src="assets/logo-noir.svg" alt="Terravia Logo" class="logo-icon">
                     <h2>Terravia</h2>
                 </a>
@@ -57,10 +57,13 @@
                     C'est ici qu'on met les liens pour aller aux différents endroits de la page.
                 -->
                 <nav class="main-nav">
-                    <a href="#services">Services</a>
-                    <a>Espace client</a>
-                    <a href="#projets">Projets</a>
-                    <a href="#contact">Contact</a>
+                    <a href="#services" class="transition-link">Services</a>
+                    <a href="login.html" class="transition-link client-link">
+                        Espace client
+                        <span class="material-symbols-outlined client-icon">arrow_outward</span>
+                    </a>
+                    <a href="#projets" class="transition-link">Projets</a>
+                    <a href="#contact" class="transition-link">Contact</a>
                 </nav>
 
                 <div class="header-actions">
@@ -133,7 +136,7 @@
                                 <p>Relevés topographiques de haute précision pénétrant la végétation dense pour des
                                     modèles de terrain (MNT) exacts.</p>
                             </div>
-                            <a class="link-arrow">En savoir plus <span
+                            <a href="#" class="link-arrow">En savoir plus <span
                                     class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 

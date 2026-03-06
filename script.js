@@ -93,6 +93,30 @@ window.addEventListener("load", () => {
 
 
 //-----------------------------------------------------------------------------------------
+
+// --- 🌊 Transition Fluide entre les pages (Smooth Page Transition) ---
+const transitionLinks = document.querySelectorAll('.transition-link');
+
+transitionLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        const targetUrl = this.getAttribute('href');
+        
+        // Gérer correctement les liens qui incluent un hash (ex: index.html#contact)
+        const isSamePageAnchor = targetUrl.startsWith('#');
+        // Si c'est un lien vers la page actuelle avec une ancre (ex: on est sur index.html et on clique sur index.html#contact)
+        const isCurrentPageAnchor = targetUrl.includes('#') && targetUrl.split('#')[0] === window.location.pathname.split('/').pop();
+        
+        if (targetUrl && !isSamePageAnchor && !isCurrentPageAnchor) {
+            e.preventDefault();
+            document.body.classList.add('fade-out');
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 500);
+        }
+    });
+});
+//-----------------------------------------------------------------------------------------
 // On sélectionne tous les éléments qui ont la classe .link-arrow
 const linksEnConstruction = document.querySelectorAll('.link-arrow');
 

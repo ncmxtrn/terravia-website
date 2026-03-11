@@ -306,15 +306,29 @@ a {
     font-size: 1.1rem !important; /* Taille ajustée pour coller au texte */
     margin-left: 0.2rem;
     color: var(--color-primary); /* Même vert que le trait de soulignement */
-    opacity: 0; /* Caché par défaut */
-    transform: translate(-5px, 5px) scale(0.5); /* Part d'en bas à gauche en plus petit */
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animation avec léger rebond */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animation fluide */
+    opacity: 1; /* Visible par défaut pour mobile/tablette */
+    transform: translate(0, 0) scale(1);
+    white-space: nowrap;
 }
 
-/* Quand on survole le lien Espace client, l'icône apparaît */
-.client-link:hover .client-icon {
-    opacity: 1;
-    transform: translate(0, 0) scale(1); /* Arrive à sa place normale */
+/* Appliqué uniquement sur les appareils avec une souris (PC) */
+@media (hover: hover) and (pointer: fine) {
+    .client-icon {
+        opacity: 0;
+        max-width: 0;
+        margin-left: 0;
+        transform: translate(-5px, 5px) scale(0.5);
+        overflow: hidden; /* Empêche l'icône de déborder ou de prendre de l'espace */
+    }
+
+    /* Quand on survole le lien Espace client sur PC, l'icône grandit et repousse les autres liens */
+    .client-link:hover .client-icon {
+        opacity: 1;
+        max-width: 30px; /* Laisse assez de place pour l'icône à son apparition */
+        margin-left: 0.2rem;
+        transform: translate(0, 0) scale(1);
+    }
 }
 
 .header-actions {

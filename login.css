@@ -63,7 +63,7 @@
 /* Conteneur principal qui limite la largeur et anime l'arrivée */
 .login-container {
     width: 100%;
-    max-width: 36rem;
+    max-width: 33rem;
     margin: 0 auto;
     
     /* Animation d'arrivée douce */
@@ -96,43 +96,46 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 2.5rem;
 }
 
-.brand-link {
-    display: flex;
+.logo-link {
+    display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    text-decoration: none;
-    color: var(--color-forest); /* Couleur adaptée car on est sur fond clair */
+    justify-content: center;
+    margin-bottom: 0.5rem; /* Réduction de l'espace sous le logo */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.brand-link:hover .logo-icon {
-    transform: scale(1.05);
+.logo-link:hover {
+    transform: translateY(-3px) scale(1.05);
 }
 
-/* Le logo prend sa couleur noire normale (pas de filtre blanc car on n'est plus dans la modale sombre) */
+/* Le logo prend sa couleur normale */
 .brand-header .logo-icon {
-    height: 3rem;
+    height: 7rem; /* Logo bien plus grand */
     width: auto;
-    transition: transform 0.2s;
-    /* Le logo est noir avec une teinte verte (similaire au header principal) */
+    display: block;
     filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
 }
 
-.brand-title {
-    font-family: var(--font-logo);
-    font-size: 1.875rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: var(--color-forest); /* Texte foncé sur fond clair */
+.login-title {
+    font-family: var(--font-main);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-forest);
+    margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .brand-subtitle {
-    color: var(--color-forest-60); /* Texte assombri sur fond clair */
-    margin-top: var(--spacing-md);
+    color: var(--color-forest-60);
     text-align: center;
     font-weight: 500;
+    font-size: 0.95rem;
+    max-width: 280px; /* Force le texte sur 2 lignes pour un bloc bien compact */
+    line-height: 1.4;
 }
 
 /* Le texte et lien du pied de formulaire */
@@ -163,17 +166,23 @@
     position: relative;
     background-color: var(--color-white);
     border: 1px solid rgba(26, 60, 52, 0.08);
-    border-radius: 1rem;
+    border-radius: 2rem; /* Coins plus arrondis (24px) */
     
-    /* L'ombre signature de la page d'accueil, statutaire mais douce */
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+    /* Ombre multicouche très élégante pour l'effet 3D flottant */
+    box-shadow: var(--shadow-card);
         
-    padding: 2.5rem;
+    padding: 1.5rem; /* Padding réduit sur mobile pour maximiser l'espace */
+}
+
+@media (min-width: 576px) {
+    .login-card {
+        padding: 2.5rem; /* Padding confortable sur écran moyen */
+    }
 }
 
 @media (min-width: 768px) {
     .login-card {
-        padding: 3rem;
+        padding: 3rem; /* Padding maximal sur ordinateur */
     }
 }
 
@@ -182,6 +191,12 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
+}
+
+.inputs-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); /* Espace réduit (0.75rem) entre l'email et le mot de passe */
 }
 
 .input-group {
@@ -216,10 +231,17 @@
     color: var(--color-forest);
 }
 
+/* La bordure du champ prend la couleur du texte dès qu'on écrit quelque chose, SAUF quand on est en train de cliquer dedans (focus) */
+.input-wrapper:has(.form-input:not(:placeholder-shown)) .form-input:not(:focus) {
+    border-color: var(--color-forest);
+}
+
 .form-input {
     width: 100%;
-    height: 3.5rem;
-    padding: 0 3rem 0 2.75rem;
+    height: 3.175rem;
+    /* L'ordre du padding : HAUT | DROITE | BAS | GAUCHE */
+    /* Modifiez la DERNIÈRE valeur (3.25rem) pour gérer l'écart avec l'icône de gauche */
+    padding: 0 2.5rem 0 2.8rem;
     background-color: rgba(248, 252, 248, 0.5);
     border: 1px solid rgba(26, 60, 52, 0.1);
     border-radius: 0.5rem;
@@ -233,6 +255,12 @@
     border-color: var(--color-primary);
     outline: none;
     box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+}
+
+/* On force la couleur des placeholders pour qu'ils soient identiques à la couleur par défaut des icônes */
+.form-input::placeholder {
+    color: var(--color-forest-30);
+    opacity: 1; /* Par sécurité pour Safari/Firefox qui peuvent appliquer une transparence */
 }
 
 /* Mots de passe et liens d'oubli */
@@ -250,6 +278,15 @@
 .flex-between {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+    flex-wrap: wrap; /* Permet le passage à la ligne sur très petits écrans */
+    gap: 0.5rem;
+}
+
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: var(--spacing-xs);
 }
@@ -307,18 +344,24 @@
 }
 
 .form-input[type="password"] {
-    /* Espacement réduit (plus dense) comme sur les sites "pro" (ex: Apple, Google) */
-    letter-spacing: 0.12em;
-    /* Une taille très légèrement supérieure au texte normal pour des points bien visibles, mais pas énormes */
-    font-size: 1.1rem;
-    /* L'utilisation d'une police standard/système garantit que le navigateur affichera les "gros points ronds" natifs parfaits */
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Style MacOS pour les points de mot de passe caché */
+    font-size: 1.5rem; /* Augmente la taille globale des points */
+    font-weight: 900; /* Rend les points au maximum de leur épaisseur (thick) */
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* Le texte du placeholder doit rester normal et lisible */
+.form-input[type="password"]::placeholder {
+    letter-spacing: normal;
+    font-size: 1rem;
+    font-weight: normal; /* Annule l'épaisseur pour le placeholder */
+    font-family: var(--font-main);
 }
 
 /* Bouton oeil pour afficher le mot de passe */
 .password-toggle {
     position: absolute;
-    right: 1rem;
+    right: 0.25rem; /* Ajusté pour le padding de 44px */
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -328,6 +371,10 @@
     transition: color 0.3s ease;
     padding: 0;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 44px; /* Zone tactile optimale (Apple/Google guidelines) */
+    height: 44px; /* Zone tactile optimale */
 }
 
 .password-toggle:hover {
@@ -335,5 +382,5 @@
 }
 
 .input-wrapper:has(.password-toggle) .form-input {
-    padding-right: 3rem;
+    padding-right: 2.75rem; /* Espace pour le bouton */
 }

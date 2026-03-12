@@ -23,57 +23,61 @@
             <!-- Nous reproduisons ici la structure exacte du login-wrapper de la modale, mais sur fond blanc sans overlay sombre -->
             <div class="login-container">
                 <div class="login-wrapper">
-                    <div class="brand-header">
-                        <a class="brand-link transition-link" href="index.html">
-                            <img alt="Terravia Logo" class="logo-icon" src="assets/logo-noir.svg" />
-                            <h1 class="brand-title">Terravia</h1>
-                        </a>
-                        <p class="brand-subtitle">Connectez-vous à votre compte</p>
-                    </div>
-
                     <div class="login-card">
+                        <div class="brand-header">
+                            <a class="logo-link transition-link" href="index.html">
+                                <img alt="Terravia Logo" class="logo-icon" src="assets/logo-noir.svg" />
+                            </a>
+                            <h1 class="login-title">Bienvenue !</h1>
+                            <p class="brand-subtitle">Saisissez vos identifiants pour accéder à votre espace.</p>
+                        </div>
+
                         <form action="#" class="form-stack" method="POST">
-                            <div class="input-group">
-                                <label class="input-label" for="email">Email</label>
-                                <div class="input-wrapper">
-                                    <span class="material-symbols-outlined input-icon">person</span>
-                                    <input class="form-input" id="email" name="email" placeholder="votre@email.com"
-                                        required="" type="email" />
+                            <div class="inputs-wrapper">
+                                <div class="input-group">
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">person</span>
+                                        <input class="form-input" id="email" name="email" placeholder="votre@email.com"
+                                            required="" type="email" aria-label="Email" />
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">lock</span>
+                                        <input class="form-input" id="password" name="password" placeholder="Mot de passe"
+                                            required="" type="password" aria-label="Mot de passe" />
+                                        <button type="button" class="password-toggle" title="Maintenir pour afficher" aria-label="Maintenir pour afficher le mot de passe">
+                                            <span class="material-symbols-outlined">visibility_off</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="input-group">
-                                <div class="flex-between">
-                                    <label class="input-label" for="password">Mot de passe</label>
-                                    <a class="forgot-password-link" href="#">Oublié ?</a>
+                            <div class="flex-between" style="margin-bottom: 0; margin-top: -0.5rem; padding: 0 0.5rem;">
+                                <div class="checkbox-group">
+                                    <input class="checkbox-input" id="remember-me" name="remember-me" type="checkbox" />
+                                    <label class="checkbox-label" for="remember-me">
+                                        Se souvenir de moi
+                                    </label>
                                 </div>
-                                <div class="input-wrapper">
-                                    <span class="material-symbols-outlined input-icon">lock</span>
-                                    <input class="form-input" id="password" name="password" placeholder="••••••••"
-                                        required="" type="password" />
-                                    <button type="button" class="password-toggle" title="Maintenir pour afficher" aria-label="Maintenir pour afficher le mot de passe">
-                                        <span class="material-symbols-outlined">visibility_off</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="checkbox-group">
-                                <input class="checkbox-input" id="remember-me" name="remember-me" type="checkbox" />
-                                <label class="checkbox-label" for="remember-me">
-                                    Se souvenir de moi
-                                </label>
+                                <a class="forgot-password-link" href="#">Oublié ?</a>
                             </div>
 
                             <button class="btn btn-primary" type="submit">
                                 Accéder à la plateforme
                                 <span class="material-symbols-outlined">login</span>
                             </button>
+                            
+                            <p class="footer-text brand-footer-text">
+                                Pas encore de compte ?
+                                <a class="footer-link brand-footer-link transition-link" href="index.html#contact">Contactez-nous</a>
+                            </p>
                         </form>
                     </div>
                     
-                    <p class="footer-text brand-footer-text">
-                        Pas encore de compte ?
-                        <a class="footer-link brand-footer-link transition-link" href="index.html#contact">Contactez-nous</a>
+                    <p class="copyright-text" style="text-align: center; color: var(--color-forest-60); font-size: 0.8rem; margin-top: 2rem;">
+                        © 2026 Terravia. Tous droits réservés.
                     </p>
                 </div>
             </div>

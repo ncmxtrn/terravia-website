@@ -208,11 +208,15 @@ a {
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.logo:hover .logo-icon {
+    transform: scale(1.05);
+}
+
 /* On change la couleur du logo avec des filtres (magie noire CSS pour manipuler les SVG) */
 .logo-icon {
     height: 40px;
     width: auto;
-    transition: filter 0.3s ease;
+    transition: filter 0.3s ease, transform 0.3s ease;
     filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
 }
 

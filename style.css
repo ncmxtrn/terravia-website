@@ -709,10 +709,10 @@ a {
 /* On décale un peu l'arrivée des éléments pour faire un effet "domino" */
 .section-header h2.animate-on-scroll { transition-delay: 0.1s; }
 .section-header .subtitle.animate-on-scroll { transition-delay: 0.2s; }
-.services-grid .service-card:nth-child(1) { transition-delay: 0.1s; }
-.services-grid .service-card:nth-child(2) { transition-delay: 0.2s; }
-.services-grid .service-card:nth-child(3) { transition-delay: 0.3s; }
-.services-grid .service-card:nth-child(4) { transition-delay: 0.4s; }
+.services-grid .service-card:nth-child(1):not(.visible) { transition-delay: 0.1s; }
+.services-grid .service-card:nth-child(2):not(.visible) { transition-delay: 0.2s; }
+.services-grid .service-card:nth-child(3):not(.visible) { transition-delay: 0.3s; }
+.services-grid .service-card:nth-child(4):not(.visible) { transition-delay: 0.4s; }
 
 .section-header h2 {
     font-size: 3rem;

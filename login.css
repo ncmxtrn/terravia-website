@@ -60,6 +60,58 @@
     mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
 }
 
+/* Lien retour au site */
+.back-link {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-forest-60);
+    transition: color 0.2s, gap 0.2s;
+}
+
+.back-link:hover {
+    color: var(--color-forest);
+    gap: 0.6rem;
+}
+
+.back-link .material-symbols-outlined {
+    font-size: 1.1rem;
+}
+
+/* Bannière d'erreur */
+.error-banner {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #b91c1c;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.error-banner.visible {
+    display: flex !important;
+}
+
+/* États d'erreur sur les inputs */
+.form-input.has-error {
+    border-color: rgba(239, 68, 68, 0.6);
+}
+
+.form-input.has-error:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 /* Conteneur principal qui limite la largeur et anime l'arrivée */
 .login-container {
     width: 100%;
@@ -166,11 +218,11 @@
     position: relative;
     background-color: var(--color-white);
     border: 1px solid rgba(26, 60, 52, 0.08);
-    border-radius: 2rem; /* Coins plus arrondis (24px) */
-    
+    border-radius: 1rem; /* Cohérent avec le design system (service-card) */
+
     /* Ombre multicouche très élégante pour l'effet 3D flottant */
     box-shadow: var(--shadow-card);
-        
+
     padding: 1.5rem; /* Padding réduit sur mobile pour maximiser l'espace */
 }
 
@@ -344,10 +396,8 @@
 }
 
 .form-input[type="password"] {
-    /* Style MacOS pour les points de mot de passe caché */
-    font-size: 1.5rem; /* Augmente la taille globale des points */
-    font-weight: 900; /* Rend les points au maximum de leur épaisseur (thick) */
     font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    letter-spacing: 0.15em;
 }
 
 /* Le texte du placeholder doit rester normal et lisible */

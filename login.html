@@ -20,6 +20,10 @@
     <div class="site-wrapper">
 
         <main class="login-main">
+            <a href="index.html" class="back-link transition-link">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Retour au site
+            </a>
             <!-- Nous reproduisons ici la structure exacte du login-wrapper de la modale, mais sur fond blanc sans overlay sombre -->
             <div class="login-container">
                 <div class="login-wrapper">
@@ -28,11 +32,12 @@
                             <a class="logo-link transition-link" href="index.html">
                                 <img alt="Terravia Logo" class="logo-icon" src="assets/logo-noir.svg" />
                             </a>
-                            <h1 class="login-title">Bienvenue !</h1>
+                            <h1 class="login-title">Connectez-vous</h1>
                             <p class="brand-subtitle">Saisissez vos identifiants pour accéder à votre espace.</p>
                         </div>
 
-                        <form action="#" class="form-stack" method="POST">
+                        <form action="#" class="form-stack" method="POST" novalidate>
+                            <div class="error-banner" id="error-banner" role="alert" aria-live="polite"></div>
                             <div class="inputs-wrapper">
                                 <div class="input-group">
                                     <div class="input-wrapper">
@@ -47,7 +52,7 @@
                                         <span class="material-symbols-outlined input-icon">lock</span>
                                         <input class="form-input" id="password" name="password" placeholder="Mot de passe"
                                             required="" type="password" aria-label="Mot de passe" />
-                                        <button type="button" class="password-toggle" title="Maintenir pour afficher" aria-label="Maintenir pour afficher le mot de passe">
+                                        <button type="button" class="password-toggle" title="Afficher le mot de passe" aria-label="Afficher le mot de passe" aria-pressed="false">
                                             <span class="material-symbols-outlined">visibility_off</span>
                                         </button>
                                     </div>
@@ -61,7 +66,7 @@
                                         Se souvenir de moi
                                     </label>
                                 </div>
-                                <a class="forgot-password-link" href="#">Oublié ?</a>
+                                <a class="forgot-password-link" href="#">Mot de passe oublié ?</a>
                             </div>
 
                             <button class="btn btn-primary" type="submit">
@@ -76,9 +81,6 @@
                         </form>
                     </div>
                     
-                    <p class="copyright-text" style="text-align: center; color: var(--color-forest-60); font-size: 0.8rem; margin-top: 2rem;">
-                        © 2026 Terravia. Tous droits réservés.
-                    </p>
                 </div>
             </div>
         </main>
@@ -86,52 +88,75 @@
     </div>
     <script src="script.js"></script>
     <script>
-        // Script spécifique pour l'œil du mot de passe (maintenir pour afficher)
+        // Toggle mot de passe (click pour afficher/cacher)
         const passwordToggle = document.querySelector('.password-toggle');
         const passwordInput = document.getElementById('password');
-        
-        if(passwordToggle && passwordInput) {
+
+        if (passwordToggle && passwordInput) {
             const icon = passwordToggle.querySelector('span');
 
-            const showPassword = (e) => {
-                // Empêche le bouton de prendre le focus (le curseur reste dans l'input)
-                if(e) e.preventDefault(); 
-                
-                passwordInput.setAttribute('type', 'text');
-                icon.textContent = 'visibility'; // L'œil s'ouvre car le texte est visible
-                
-                // Petit délai pour laisser le navigateur changer le type avant de replacer le curseur à la fin
-                setTimeout(() => {
-                    passwordInput.focus();
-                    const length = passwordInput.value.length;
-                    passwordInput.setSelectionRange(length, length);
-                }, 10);
-            };
+            passwordToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isHidden = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+                icon.textContent = isHidden ? 'visibility' : 'visibility_off';
+                passwordToggle.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+                passwordInput.focus();
+            });
+        }
 
-            const hidePassword = (e) => {
-                // Ne rien faire si ce n'est pas déjà un texte
-                if(passwordInput.getAttribute('type') === 'password') return;
-                
-                passwordInput.setAttribute('type', 'password');
-                icon.textContent = 'visibility_off'; // L'œil se ferme car le texte est caché
-                
-                // Petit délai pour laisser le navigateur changer le type avant de replacer le curseur à la fin
-                setTimeout(() => {
-                    passwordInput.focus();
-                    const length = passwordInput.value.length;
-                    passwordInput.setSelectionRange(length, length);
-                }, 10);
-            };
+        // Validation du formulaire
+        const submitBtn = document.querySelector('.form-stack .btn-primary[type="submit"]');
+        const errorBanner = document.getElementById('error-banner');
+        const emailInput = document.getElementById('email');
+        const passInput = document.getElementById('password');
 
-            // Événements souris
-            passwordToggle.addEventListener('mousedown', showPassword);
-            passwordToggle.addEventListener('mouseup', hidePassword);
-            passwordToggle.addEventListener('mouseleave', hidePassword); // Sécurité si on glisse hors du bouton
+        if (submitBtn && errorBanner) {
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
 
-            // Événements tactiles (téléphones)
-            passwordToggle.addEventListener('touchstart', showPassword, {passive: false});
-            passwordToggle.addEventListener('touchend', hidePassword);
-            passwordToggle.addEventListener('touchcancel', hidePassword);
+                [emailInput, passInput].forEach(i => i.classList.remove('has-error'));
+                errorBanner.classList.remove('visible');
+
+                const emailEmpty = !emailInput.value.trim();
+                const passEmpty = !passInput.value.trim();
+                const emailInvalid = !emailEmpty && !emailInput.validity.valid;
+
+                let message = '';
+
+                if (emailEmpty && passEmpty) {
+                    emailInput.classList.add('has-error');
+                    passInput.classList.add('has-error');
+                    message = 'Veuillez remplir tous les champs.';
+                } else if (emailEmpty) {
+                    emailInput.classList.add('has-error');
+                    message = 'Veuillez saisir votre adresse email.';
+                } else if (passEmpty) {
+                    passInput.classList.add('has-error');
+                    message = 'Veuillez saisir votre mot de passe.';
+                } else if (emailInvalid) {
+                    emailInput.classList.add('has-error');
+                    message = 'Adresse email invalide.';
+                }
+
+                if (message) {
+                    errorBanner.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.1rem;vertical-align:middle">error</span> ' + message;
+                    errorBanner.classList.add('visible');
+                    return;
+                }
+
+                // Pas d'erreur : logique de connexion ici
+            });
+
+            // Retire l'état d'erreur dès que l'utilisateur retape
+            [emailInput, passInput].forEach(input => {
+                input.addEventListener('input', () => {
+                    input.classList.remove('has-error');
+                    if (![emailInput, passInput].some(i => i.classList.contains('has-error'))) {
+                        errorBanner.classList.remove('visible');
+                    }
+                });
+            });
         }
     </script>
 </body>

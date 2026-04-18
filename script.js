@@ -9,6 +9,7 @@ window.addEventListener("load", () => {
     // Maintenant que tout est prêt, on l'enlève pour faire apparaître le site.
     setTimeout(() => {
         document.body.classList.remove("is-loading");
+        document.getElementById('email')?.focus();
     }, 100); // On attend un tout petit peu (100ms) pour être sûr que ça soit fluide.
 
     // --- 👀 L'Espion du Scroll (Intersection Observer) ---

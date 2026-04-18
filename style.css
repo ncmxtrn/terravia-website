@@ -749,71 +749,117 @@ a {
 }
 
 .service-card {
+    position: relative;
     background: white;
     border: 1px solid rgba(26, 60, 52, 0.08);
     border-radius: 1rem;
-    padding: 2rem;
+    padding: 1.75rem 1.75rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     align-items: center;
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
 }
 
 .service-card:hover {
-    transform: translateY(-5px); /* Hop, ça monte un peu ! */
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -18px rgba(26, 60, 52, 0.22);
+    border-color: rgba(74, 222, 128, 0.45);
 }
 
+/* Icône sans cadre — barre d'accent sous l'icône */
 .icon-box {
-    width: 3.5rem;
-    height: 3.5rem;
-    background-color: rgba(26, 60, 52, 0.05);
-    border-radius: 50%; /* Un rond parfait */
+    width: auto;
+    height: auto;
+    background: none;
+    border: none;
+    border-radius: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.7rem;
     color: var(--color-forest);
-    transition: background-color 0.3s;
+    padding-top: 0.25rem;
+    transition: color 0.35s ease;
+}
+
+.icon-box .material-symbols-outlined {
+    font-size: 2rem;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* La petite barre d'accent verte sous l'icône */
+.icon-box::after {
+    content: '';
+    display: block;
+    width: 1.75rem;
+    height: 2px;
+    background: var(--color-primary);
+    border-radius: 2px;
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                background 0.35s ease;
 }
 
 .service-card:hover .icon-box {
-    background-color: var(--color-primary); /* L'icône devient verte au survol */
+    color: var(--color-primary-dark);
+}
+
+.service-card:hover .icon-box::after {
+    width: 2.75rem;
+    background: var(--color-primary-dark);
+}
+
+.card-content {
+    width: 100%;
 }
 
 .card-content h3 {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     color: var(--color-forest);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .card-content p {
     font-size: 0.9rem;
     color: var(--color-forest);
-    opacity: 0.7;
+    opacity: 0.68;
     line-height: 1.6;
 }
 
 .link-arrow {
     margin-top: auto;
-    display: flex;
+    padding-top: 1rem;
+    width: 100%;
+    border-top: 1px solid rgba(26, 60, 52, 0.08);
+    display: inline-flex;
     align-items: center;
-    color: var(--color-primary-dark);
-    font-weight: 700;
-    font-size: 0.9rem;
+    justify-content: center;
+    color: var(--color-forest);
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: color 0.3s ease;
 }
 
-/* La petite flèche bouge quand on survole le lien */
 .link-arrow span {
-    font-size: 1.1rem;
-    margin-left: 0.25rem;
-    transition: transform 0.2s;
+    font-size: 1rem;
+    margin-left: 0.4rem;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.link-arrow:hover span {
-    transform: translateX(5px);
+.service-card:hover .link-arrow {
+    color: var(--color-primary-dark);
+}
+
+.service-card:hover .link-arrow span {
+    transform: translateX(4px);
 }
 
 /* =========================================
@@ -953,16 +999,26 @@ a {
 .projects-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.75rem;
+    counter-reset: project;
 }
 
 .project-card {
+    counter-increment: project;
     position: relative;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     overflow: hidden;
-    aspect-ratio: 4/3; /* Garde toujours les mêmes proportions */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    aspect-ratio: 4/3;
+    box-shadow: 0 10px 25px -8px rgba(26, 60, 52, 0.2);
     cursor: pointer;
+    isolation: isolate;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.5s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 28px 48px -16px rgba(26, 60, 52, 0.35);
 }
 
 /* L'image de fond du projet qui zoome au survol */
@@ -971,17 +1027,44 @@ a {
     inset: 0;
     background-size: cover;
     background-position: center;
-    transition: transform 0.7s;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .project-card:hover .project-bg {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .project-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(26, 60, 52, 0.9), transparent);
+    background:
+        linear-gradient(to top, rgba(26, 60, 52, 0.95) 0%, rgba(26, 60, 52, 0.55) 40%, transparent 75%);
+    transition: opacity 0.5s ease;
+}
+
+/* Index numéroté en haut à droite — cohérent avec les service-card */
+.project-card::after {
+    content: "0" counter(project);
+    position: absolute;
+    top: 1.25rem;
+    right: 1.5rem;
+    z-index: 2;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 0.35rem 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    background: rgba(26, 60, 52, 0.2);
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.project-card:hover::after {
+    color: var(--color-primary);
+    border-color: rgba(74, 222, 128, 0.5);
 }
 
 .project-info {
@@ -989,33 +1072,47 @@ a {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 1.4rem;
     color: white;
+    z-index: 2;
+}
+
+.project-info h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
 }
 
 .project-category {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--color-forest);
+    background: var(--color-primary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.12em;
+    display: inline-block;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
 }
 
 .project-detail {
-    font-size: 0.875rem;
-    color: #d1d5db;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.78);
     margin-top: 0.5rem;
+    line-height: 1.5;
     opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s;
+    max-height: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), max-height 0.4s ease;
 }
 
 /* Le détail apparaît quand on passe la souris */
 .project-card:hover .project-detail {
     opacity: 1;
     transform: translateY(0);
+    max-height: 4rem;
 }
 
 /* Sur touch, le détail est toujours visible */
@@ -1023,6 +1120,7 @@ a {
     .project-detail {
         opacity: 1;
         transform: translateY(0);
+        max-height: 4rem;
     }
 }
 

@@ -82,6 +82,28 @@ body.is-loading {
     width: 100%;
 }
 
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 1.9rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .section-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .split-layout {
+        gap: 2rem;
+    }
+
+    .project-card {
+        aspect-ratio: 16/9;
+    }
+}
+
 @media (max-width: 380px) {
     .container {
         padding: 0 1.25rem; /* Sur les tout petits écrans, on réduit un peu les marges */
@@ -253,11 +275,32 @@ a {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+.main-nav.is-closing {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(26, 60, 52, 0.1);
+    animation: slideUp 0.3s ease-in forwards;
+    pointer-events: none;
+}
+
 .main-nav.is-open a {
     padding: 1rem 2rem;
     border-bottom: 1px solid rgba(26, 60, 52, 0.05);
     width: 100%;
     text-align: center;
+    justify-content: center;
 }
 
 .main-nav.is-open a:last-child {
@@ -312,22 +355,10 @@ a {
     white-space: nowrap;
 }
 
-/* Appliqué uniquement sur les appareils avec une souris (PC) */
+/* Sur desktop, légère animation au survol mais l'icône reste toujours visible */
 @media (hover: hover) and (pointer: fine) {
-    .client-icon {
-        opacity: 0;
-        max-width: 0;
-        margin-left: 0;
-        transform: translate(-5px, 5px) scale(0.5);
-        overflow: hidden; /* Empêche l'icône de déborder ou de prendre de l'espace */
-    }
-
-    /* Quand on survole le lien Espace client sur PC, l'icône grandit et repousse les autres liens */
     .client-link:hover .client-icon {
-        opacity: 1;
-        max-width: 30px; /* Laisse assez de place pour l'icône à son apparition */
-        margin-left: 0.2rem;
-        transform: translate(0, 0) scale(1);
+        transform: translate(2px, -2px) scale(1.1);
     }
 }
 
@@ -796,6 +827,16 @@ a {
     align-items: center;
 }
 
+.label-tech {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.5rem;
+}
+
 .tech-text h2 {
     font-size: 2rem;
     color: var(--color-forest);
@@ -973,6 +1014,14 @@ a {
     transform: translateY(0);
 }
 
+/* Sur touch, le détail est toujours visible */
+@media (hover: none) {
+    .project-detail {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* =========================================
    8. PIED DE PAGE (FOOTER)
    ========================================= */
@@ -1114,7 +1163,8 @@ a {
     }
 
     .main-nav {
-        display: block;
+        display: flex;
+        align-items: center;
         animation: fadeIn 0.5s ease-out forwards;
     }
 

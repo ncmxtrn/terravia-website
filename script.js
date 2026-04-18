@@ -41,23 +41,30 @@ window.addEventListener("load", () => {
     // On vérifie que ces éléments existent bien sur la page pour éviter les erreurs
     if (boutonMenu && menuNavigation) {
 
+        const fermerMenu = () => {
+            menuNavigation.classList.add('is-closing');
+            boutonMenu.classList.remove('is-active');
+            setTimeout(() => {
+                menuNavigation.classList.remove('is-open');
+                menuNavigation.classList.remove('is-closing');
+            }, 300);
+        };
+
         // Quand on clique sur le bouton...
         boutonMenu.addEventListener('click', () => {
-            // On ajoute ou on enlève la classe "is-open" au menu.
-            // (Si elle est là, on l'enlève. Si elle n'est pas là, on l'ajoute).
-            const estOuvert = menuNavigation.classList.toggle('is-open');
-
-            // On anime aussi le bouton lui-même (pour qu'il se transforme en croix).
-            boutonMenu.classList.toggle('is-active', estOuvert);
+            if (menuNavigation.classList.contains('is-open')) {
+                fermerMenu();
+            } else {
+                menuNavigation.classList.add('is-open');
+                boutonMenu.classList.add('is-active');
+            }
         });
 
-        // Petite amélioration : Quand on clique sur un lien du menu, on veut que le menu se ferme tout seul.
+        // Quand on clique sur un lien du menu, on ferme avec animation (seulement si le menu mobile est ouvert).
         const liensDuMenu = menuNavigation.querySelectorAll('a');
         liensDuMenu.forEach(lien => {
             lien.addEventListener('click', () => {
-                // On ferme tout !
-                menuNavigation.classList.remove('is-open');
-                boutonMenu.classList.remove('is-active');
+                if (menuNavigation.classList.contains('is-open')) fermerMenu();
             });
         });
     }

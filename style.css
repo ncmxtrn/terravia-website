@@ -1000,11 +1000,9 @@ a {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.75rem; /* intentional: between --space-lg and --space-xl */
-    counter-reset: project;
 }
 
 .project-card {
-    counter-increment: project;
     position: relative;
     border-radius: var(--radius-xl);
     overflow: hidden;
@@ -1042,30 +1040,7 @@ a {
     transition: opacity 0.5s ease;
 }
 
-/* Index numéroté en haut à droite — cohérent avec les service-card */
-.project-card::after {
-    content: "0" counter(project);
-    position: absolute;
-    top: 1.25rem;
-    right: 1.5rem;
-    z-index: 2;
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    color: rgba(255, 255, 255, 0.75);
-    padding: 0.35rem 0.6rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    backdrop-filter: blur(8px);
-    background: var(--forest-20);
-    transition: color var(--duration-base) ease, border-color var(--duration-base) ease;
-}
 
-.project-card:hover::after {
-    color: var(--color-primary);
-    border-color: var(--border-hover);
-}
 
 .project-info {
     position: absolute;

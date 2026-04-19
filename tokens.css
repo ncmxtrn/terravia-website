@@ -1,0 +1,244 @@
+/**
+ * Terravia Design System — Color & Typography Tokens
+ * Source: terravia-website/style.css + login.css
+ * Fonts: Montserrat (body/UI), Orbitron (logo/display), Material Symbols Outlined (icons)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300,0&display=swap');
+
+/* ============================================================
+   BASE COLOR PRIMITIVES
+   ============================================================ */
+:root {
+  /* — Brand greens — */
+  --green-50:  #f0fdf4;
+  --green-100: #dcfce7;
+  --green-300: #86efac;
+  --green-400: #4ADE80;   /* primary accent */
+  --green-500: #22c55e;   /* primary dark / hover */
+  --green-900: #14532d;
+
+  /* — Forest palette — */
+  --forest-900: #1A3C34;   /* brand dark */
+  --forest-800: #234e44;   /* forest light */
+  --forest-60:  rgba(26, 60, 52, 0.60);
+  --forest-30:  rgba(26, 60, 52, 0.30);
+  --forest-10:  rgba(26, 60, 52, 0.10);
+  --forest-08:  rgba(26, 60, 52, 0.08);
+  --forest-06:  rgba(26, 60, 52, 0.06);
+  --forest-05:  rgba(26, 60, 52, 0.05);
+  --forest-03:  rgba(26, 60, 52, 0.03);
+
+  /* — Neutrals — */
+  --white:       #ffffff;
+  --bg-light:    #f8fcf8;   /* page background */
+  --gray-200:    #e5e7eb;
+
+  /* — Semantic: state — */
+  --error-bg:    rgba(239, 68, 68, 0.08);
+  --error-border:rgba(239, 68, 68, 0.25);
+  --error-text:  #b91c1c;
+  --success:     var(--green-400);
+
+  /* ============================================================
+     SEMANTIC ALIASES
+     ============================================================ */
+  --color-primary:      var(--green-400);
+  --color-primary-dark: var(--green-500);
+  --color-forest:       var(--forest-900);
+  --color-forest-light: var(--forest-800);
+  --color-bg-light:     var(--bg-light);
+  --color-white:        var(--white);
+  --color-gray-light:   var(--gray-200);
+
+  /* Text roles */
+  --fg1:   var(--forest-900);          /* primary text, headings */
+  --fg2:   var(--forest-60);           /* secondary text, captions */
+  --fg3:   var(--forest-30);           /* placeholders, disabled */
+  --fg-on-dark: #ffffff;               /* text on forest/dark bg */
+  --fg-on-dark-muted: rgba(255,255,255,0.60);
+
+  /* Surface roles */
+  --surface-page:   var(--bg-light);
+  --surface-card:   var(--white);
+  --surface-dark:   var(--forest-900);
+  --surface-header: rgba(255, 255, 255, 0.85);
+
+  /* Border roles */
+  --border-subtle:  var(--forest-08);
+  --border-default: var(--forest-10);
+  --border-hover:   rgba(74, 222, 128, 0.45);
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+  --font-main:    'Montserrat', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --font-icons:   'Material Symbols Outlined';
+
+  /* Type scale — desktop */
+  --text-hero:    clamp(2.5rem, 5vw, 3.5rem);   /* H1 hero */
+  --text-h2:      clamp(2rem, 4vw, 3rem);        /* Section H2 */
+  --text-h2-sm:   2rem;                           /* Tech section H2 */
+  --text-h3:      1.2rem;                         /* Card headings */
+  --text-lead:    1.125rem;                       /* Hero subtext */
+  --text-body:    1rem;                           /* Body paragraph */
+  --text-sm:      0.9rem;                         /* Small body / footer */
+  --text-xs:      0.8rem;                         /* Badges, labels */
+  --text-xxs:     0.75rem;                        /* Footnotes, tiny labels */
+  --text-logo:    1.25rem;                        /* Logo wordmark */
+
+  /* Weight scale */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-extrabold:800;
+  --weight-black:   900;
+
+  /* Line heights */
+  --leading-tight:   1.1;
+  --leading-snug:    1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.6;
+
+  /* Letter spacing */
+  --tracking-logo:   0.5px;
+  --tracking-badge:  0.1em;
+  --tracking-link:   0.08em;
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+
+  /* ============================================================
+     SPACING SCALE
+     ============================================================ */
+  --space-xs:  0.5rem;   /*  8px */
+  --space-sm:  0.75rem;  /* 12px */
+  --space-md:  1rem;     /* 16px */
+  --space-lg:  1.5rem;   /* 24px */
+  --space-xl:  2rem;     /* 32px */
+  --space-2xl: 2.5rem;   /* 40px */
+  --space-3xl: 4rem;     /* 64px */
+  --space-4xl: 5rem;     /* 80px */
+  --space-5xl: 6rem;     /* 96px */
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  --width-max:       1280px;
+  --header-height:   80px;
+  --container-px:    1.5rem;
+  --container-px-md: 2rem;
+
+  /* ============================================================
+     BORDER RADIUS
+     ============================================================ */
+  --radius-sm:   0.25rem;   /* status badges */
+  --radius-md:   0.5rem;    /* buttons, inputs */
+  --radius-lg:   0.75rem;   /* floating UI */
+  --radius-xl:   1rem;      /* cards */
+  --radius-pill: 999px;     /* category tags, badge pills */
+
+  /* ============================================================
+     SHADOWS
+     ============================================================ */
+  --shadow-card-hover:    0 24px 40px -18px rgba(26, 60, 52, 0.22);
+  --shadow-project-hover: 0 28px 48px -16px rgba(26, 60, 52, 0.35);
+  --shadow-card-float:
+    0 4px 6px -1px rgba(0, 0, 0, 0.03),
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 25px 50px -12px rgba(26, 60, 52, 0.10);
+  --shadow-glow:       0 0 15px rgba(74, 222, 128, 0.30);
+  --shadow-glow-hover: 0 0 18px rgba(74, 222, 128, 0.40);
+  --shadow-glass:      none;
+
+  /* ============================================================
+     ANIMATION TOKENS
+     ============================================================ */
+  --ease-card:     cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-scroll:   cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  --duration-fast:   0.2s;
+  --duration-base:   0.3s;
+  --duration-medium: 0.4s;
+  --duration-slow:   0.6s;
+  --duration-reveal: 0.8s;
+}
+
+/* ============================================================
+   SEMANTIC HTML ELEMENT DEFAULTS
+   Apply by importing this file and resetting in your stylesheet.
+   ============================================================ */
+
+body {
+  font-family: var(--font-main);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  color: var(--fg1);
+  background-color: var(--surface-page);
+}
+
+h1 {
+  font-size: var(--text-hero);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-tight);
+  color: var(--fg1);
+}
+
+h2 {
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  color: var(--fg1);
+}
+
+h3 {
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+
+p {
+  line-height: var(--leading-normal);
+  color: var(--fg1);
+}
+
+p.lead {
+  font-size: var(--text-lead);
+  color: var(--fg2);
+}
+
+small, .text-sm {
+  font-size: var(--text-sm);
+}
+
+/* Badge / label style */
+.label-upper {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-badge);
+  color: var(--fg1);
+}
+
+/* Display / logo font */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Text highlight (green on dark backgrounds) */
+.text-highlight {
+  color: var(--color-primary);
+}
+
+/* Text gradient (headings on light backgrounds) */
+.text-gradient {
+  background: linear-gradient(to right, var(--color-forest), var(--color-primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

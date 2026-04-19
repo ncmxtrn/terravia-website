@@ -298,7 +298,7 @@
     border: 1px solid rgba(26, 60, 52, 0.1);
     border-radius: 0.5rem;
     font-size: 1rem;
-    color: var(--color-text-dark);
+    color: var(--fg1);
     font-family: inherit;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }

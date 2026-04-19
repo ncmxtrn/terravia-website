@@ -7,26 +7,8 @@
 /* =========================================
    1. LA BOÎTE À OUTILS (Variables)
    ========================================= */
-:root {
-    /* 
-       🎨 Nos pots de peinture.
-       Si demain on veut changer le vert partout, on change juste le code ici !
-    */
-    --color-primary: #4ADE80;       /* Le vert néon flashy */
-    --color-primary-dark: #22c55e;  /* Le même vert, un peu plus sombre */
-    --color-forest: #1A3C34;        /* Le vert très foncé élégant */
-    --color-forest-light: #234e44;
-    --color-bg-light: #f8fcf8;      /* Un blanc cassé très léger */
-    --color-text-dark: #1A3C34;
-    --color-white: #ffffff;
-    --color-gray-light: #e5e7eb;
-
-    /* 🅰️ La police d'écriture qu'on utilise */
-    --font-main: 'Montserrat', sans-serif;
-
-    /* 📏 La largeur maximum du site pour pas que ça s'étire trop sur les grands écrans */
-    --width-max: 1280px; 
-}
+/* Tous les tokens (couleurs, polices, espacements…) sont dans tokens.css.
+   C'est le design system — c'est là qu'on change les couleurs globalement. */
 
 /* 
    📦 Une règle d'or en CSS !
@@ -45,7 +27,7 @@ body {
     transition: opacity 1s ease-in-out;
     
     font-family: var(--font-main);
-    color: var(--color-text-dark);
+    color: var(--fg1);
     background-color: var(--color-bg-light);
     line-height: 1.5; /* On aère le texte pour que ce soit agréable à lire */
 }
@@ -1082,6 +1064,7 @@ a {
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.25;
+    color: inherit;
 }
 
 .project-category {
@@ -1135,6 +1118,11 @@ a {
 
 .site-footer .logo {
     color: var(--color-white);
+}
+
+.site-footer .logo h2,
+.site-footer .logo h3 {
+    color: inherit;
 }
 
 .footer-grid {

@@ -13,17 +13,19 @@
 :root {
   /* — Brand greens — */
   --green-50:  #f0fdf4;
-  --green-100: #dcfce7;
-  --green-300: #86efac;
   --green-400: #4ADE80;   /* primary accent */
   --green-500: #22c55e;   /* primary dark / hover */
-  --green-900: #14532d;
 
   /* — Forest palette — */
   --forest-900: #1A3C34;   /* brand dark */
   --forest-800: #234e44;   /* forest light */
+  --forest-95:  rgba(26, 60, 52, 0.95);
+  --forest-90:  rgba(26, 60, 52, 0.90);
+  --forest-55:  rgba(26, 60, 52, 0.55);
+  --forest-70:  rgba(26, 60, 52, 0.70);
   --forest-60:  rgba(26, 60, 52, 0.60);
   --forest-30:  rgba(26, 60, 52, 0.30);
+  --forest-20:  rgba(26, 60, 52, 0.20);
   --forest-10:  rgba(26, 60, 52, 0.10);
   --forest-08:  rgba(26, 60, 52, 0.08);
   --forest-06:  rgba(26, 60, 52, 0.06);
@@ -36,10 +38,12 @@
   --gray-200:    #e5e7eb;
 
   /* — Semantic: state — */
-  --error-bg:    rgba(239, 68, 68, 0.08);
-  --error-border:rgba(239, 68, 68, 0.25);
-  --error-text:  #b91c1c;
-  --success:     var(--green-400);
+  --error:              #ef4444;
+  --error-bg:           rgba(239, 68, 68, 0.08);
+  --error-border:       rgba(239, 68, 68, 0.25);
+  --error-border-strong:rgba(239, 68, 68, 0.60);
+  --error-focus-ring:   0 0 0 3px rgba(239, 68, 68, 0.10);
+  --error-text:         #b91c1c;
 
   /* ============================================================
      SEMANTIC ALIASES
@@ -69,6 +73,8 @@
   --border-subtle:  var(--forest-08);
   --border-default: var(--forest-10);
   --border-hover:   rgba(74, 222, 128, 0.45);
+  --badge-bg:       rgba(74, 222, 128, 0.12);
+  --badge-border:   rgba(74, 222, 128, 0.28);
 
   /* ============================================================
      TYPOGRAPHY
@@ -80,13 +86,12 @@
   /* Type scale — desktop */
   --text-hero:    clamp(2.5rem, 5vw, 3.5rem);   /* H1 hero */
   --text-h2:      clamp(2rem, 4vw, 3rem);        /* Section H2 */
-  --text-h2-sm:   2rem;                           /* Tech section H2 */
+  --text-h2-sm:   2rem;                           /* Tech / projects H2 */
   --text-h3:      1.2rem;                         /* Card headings */
   --text-lead:    1.125rem;                       /* Hero subtext */
   --text-body:    1rem;                           /* Body paragraph */
   --text-sm:      0.9rem;                         /* Small body / footer */
   --text-xs:      0.8rem;                         /* Badges, labels */
-  --text-xxs:     0.75rem;                        /* Footnotes, tiny labels */
   --text-logo:    1.25rem;                        /* Logo wordmark */
 
   /* Weight scale */
@@ -145,13 +150,13 @@
      ============================================================ */
   --shadow-card-hover:    0 24px 40px -18px rgba(26, 60, 52, 0.22);
   --shadow-project-hover: 0 28px 48px -16px rgba(26, 60, 52, 0.35);
-  --shadow-card-float:
+  --shadow-card:
     0 4px 6px -1px rgba(0, 0, 0, 0.03),
     0 10px 15px -3px rgba(0, 0, 0, 0.05),
     0 25px 50px -12px rgba(26, 60, 52, 0.10);
   --shadow-glow:       0 0 15px rgba(74, 222, 128, 0.30);
   --shadow-glow-hover: 0 0 18px rgba(74, 222, 128, 0.40);
-  --shadow-glass:      none;
+  --focus-ring:        0 0 0 3px rgba(74, 222, 128, 0.10);
 
   /* ============================================================
      ANIMATION TOKENS

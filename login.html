@@ -61,7 +61,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex-between" style="margin-bottom: 0; margin-top: -0.5rem; padding: 0 0.5rem;">
+                            <div class="flex-between form-options">
                                 <div class="checkbox-group">
                                     <input class="checkbox-input" id="remember-me" name="remember-me" type="checkbox" />
                                     <label class="checkbox-label" for="remember-me">
@@ -142,7 +142,7 @@
                 }
 
                 if (message) {
-                    errorBanner.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.1rem;vertical-align:middle">error</span> ' + message;
+                    errorBanner.innerHTML = '<span class="material-symbols-outlined error-icon">error</span> ' + message;
                     errorBanner.classList.add('visible');
                     return;
                 }

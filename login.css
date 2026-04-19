@@ -4,28 +4,7 @@
     en pleine page, de manière cohérente avec le design system (style.css).
 */
 
-/* Variables spécifiques ajoutées pour la modale sur la branche feat-login-modale */
-:root {
-    --color-forest-60: rgba(26, 60, 52, 0.6);
-    --color-forest-30: rgba(26, 60, 52, 0.3);
-    --color-forest-05: rgba(26, 60, 52, 0.05);
-    --font-logo: 'Orbitron', sans-serif;
-    --shadow-glow: 0 0 15px rgba(74, 222, 128, 0.3);
-    --shadow-glow-hover: 0 0 18px rgba(74, 222, 128, 0.4);
-    
-    /* Ombre multicouche très élégante et subtile pour l'effet 3D */
-    --shadow-card: 
-        0 4px 6px -1px rgba(0, 0, 0, 0.03), 
-        0 10px 15px -3px rgba(0, 0, 0, 0.05),
-        0 25px 50px -12px rgba(26, 60, 52, 0.1);
-    
-    /* Variables d'espacement ajoutées pour structurer clairement les éléments */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 0.75rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2.5rem;
-}
+/* Tous les tokens sont dans tokens.css — aucune redéfinition ici. */
 
 /* Structure de la section pleine page */
 .login-main {
@@ -48,11 +27,11 @@
     z-index: -1;
     background-image:
         /* Lignes épaisses */
-        linear-gradient(to right, rgba(26, 60, 52, 0.06) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(26, 60, 52, 0.06) 1px, transparent 1px),
+        linear-gradient(to right, var(--forest-06) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--forest-06) 1px, transparent 1px),
         /* Lignes fines */
-        linear-gradient(to right, rgba(26, 60, 52, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(26, 60, 52, 0.03) 1px, transparent 1px);
+        linear-gradient(to right, var(--forest-03) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--forest-03) 1px, transparent 1px);
     background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     
     /* Disparaît doucement sur les bords (radial fade) */
@@ -69,9 +48,9 @@
     align-items: center;
     gap: 0.4rem;
     font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-forest-60);
-    transition: color 0.2s, gap 0.2s;
+    font-weight: var(--weight-semibold);
+    color: var(--fg2);
+    transition: color var(--duration-fast), gap var(--duration-fast);
 }
 
 .back-link:hover {
@@ -88,14 +67,14 @@
     display: none;
     align-items: center;
     gap: 0.5rem;
-    background-color: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.25);
-    color: #b91c1c;
-    border-radius: 0.5rem;
+    background-color: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+    border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
+    font-weight: var(--weight-medium);
+    margin-bottom: var(--space-md);
 }
 
 .error-banner.visible {
@@ -104,12 +83,12 @@
 
 /* États d'erreur sur les inputs */
 .form-input.has-error {
-    border-color: rgba(239, 68, 68, 0.6);
+    border-color: var(--error-border-strong);
 }
 
 .form-input.has-error:focus {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    border-color: var(--error);
+    box-shadow: var(--error-focus-ring);
 }
 
 /* Conteneur principal qui limite la largeur et anime l'arrivée */
@@ -148,7 +127,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: var(--space-2xl);
 }
 
 .logo-link {
@@ -156,7 +135,7 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 0.5rem; /* Réduction de l'espace sous le logo */
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform var(--duration-base) cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .logo-link:hover {
@@ -174,7 +153,7 @@
 .login-title {
     font-family: var(--font-main);
     font-size: 1.75rem;
-    font-weight: 800;
+    font-weight: var(--weight-extrabold);
     letter-spacing: -0.02em;
     color: var(--color-forest);
     margin-bottom: 0.5rem;
@@ -182,9 +161,9 @@
 }
 
 .brand-subtitle {
-    color: var(--color-forest-60);
+    color: var(--fg2);
     text-align: center;
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     font-size: 0.95rem;
     max-width: 280px; /* Force le texte sur 2 lignes pour un bloc bien compact */
     line-height: 1.4;
@@ -201,11 +180,11 @@
 
 .brand-footer-link {
     color: var(--color-forest) !important;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     text-decoration: underline;
     text-underline-offset: 4px;
     text-decoration-thickness: 1px;
-    transition: color 0.3s;
+    transition: color var(--duration-base);
 }
 
 .brand-footer-link:hover {
@@ -217,8 +196,8 @@
 .login-card {
     position: relative;
     background-color: var(--color-white);
-    border: 1px solid rgba(26, 60, 52, 0.08);
-    border-radius: 1rem; /* Cohérent avec le design system (service-card) */
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
 
     /* Ombre multicouche très élégante pour l'effet 3D flottant */
     box-shadow: var(--shadow-card);
@@ -242,13 +221,13 @@
 .form-stack {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--space-lg);
 }
 
 .inputs-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm); /* Espace réduit (0.75rem) entre l'email et le mot de passe */
+    gap: var(--space-sm); /* Espace réduit (0.75rem) entre l'email et le mot de passe */
 }
 
 .input-group {
@@ -258,9 +237,9 @@
 .input-label {
     display: block;
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--color-forest);
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--space-xs);
 }
 
 .input-wrapper {
@@ -272,10 +251,10 @@
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-forest-30);
+    color: var(--fg3);
     font-size: 1.25rem;
     user-select: none;
-    transition: color 0.5s ease;
+    transition: color var(--duration-medium) ease;
 }
 
 /* L'icône prend la couleur du texte dès qu'on écrit quelque chose */
@@ -295,32 +274,32 @@
     /* Modifiez la DERNIÈRE valeur (3.25rem) pour gérer l'écart avec l'icône de gauche */
     padding: 0 2.5rem 0 2.8rem;
     background-color: rgba(248, 252, 248, 0.5);
-    border: 1px solid rgba(26, 60, 52, 0.1);
-    border-radius: 0.5rem;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
     font-size: 1rem;
     color: var(--fg1);
     font-family: inherit;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color var(--duration-base) ease, box-shadow var(--duration-base) ease;
 }
 
 .form-input:focus {
     border-color: var(--color-primary);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+    box-shadow: var(--focus-ring);
 }
 
 /* On force la couleur des placeholders pour qu'ils soient identiques à la couleur par défaut des icônes */
 .form-input::placeholder {
-    color: var(--color-forest-30);
+    color: var(--fg3);
     opacity: 1; /* Par sécurité pour Safari/Firefox qui peuvent appliquer une transparence */
 }
 
 /* Mots de passe et liens d'oubli */
 .forgot-password-link {
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     color: var(--color-primary-dark);
-    transition: text-decoration 0.2s;
+    transition: text-decoration var(--duration-fast);
 }
 
 .forgot-password-link:hover {
@@ -331,16 +310,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--space-xs);
     flex-wrap: wrap; /* Permet le passage à la ligne sur très petits écrans */
     gap: 0.5rem;
+}
+
+.form-options {
+    margin-bottom: 0;
+    margin-top: calc(var(--space-xs) * -1);
+    padding: 0 var(--space-xs);
 }
 
 .flex-end {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--space-xs);
 }
 
 /* Case à cocher "Se souvenir" */
@@ -360,8 +345,8 @@
 .checkbox-label {
     margin-left: 0.5rem;
     font-size: 0.875rem;
-    color: rgba(26, 60, 52, 0.7);
-    font-weight: 500;
+    color: var(--forest-70);
+    font-weight: var(--weight-medium);
     cursor: pointer;
     user-select: none;
 }
@@ -391,7 +376,7 @@
 
 /* Sélection de texte et style champ de mot de passe spécifiques */
 ::selection {
-    background-color: var(--color-forest-30);
+    background-color: var(--fg3);
     color: var(--color-forest);
 }
 
@@ -408,6 +393,11 @@
     font-family: var(--font-main);
 }
 
+.error-icon {
+    font-size: 1.1rem;
+    vertical-align: middle;
+}
+
 /* Bouton oeil pour afficher le mot de passe */
 .password-toggle {
     position: absolute;
@@ -417,8 +407,8 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--color-forest-30);
-    transition: color 0.3s ease;
+    color: var(--fg3);
+    transition: color var(--duration-base) ease;
     padding: 0;
     display: flex;
     justify-content: center;

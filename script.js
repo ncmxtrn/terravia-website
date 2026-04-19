@@ -71,31 +71,17 @@ window.addEventListener("load", () => {
     }
 
     // --- ✨ Animation du Header au Scroll ---
-    // Le but est d'ajouter une classe "is-scrolled" au header
-    // dès que le bouton principal du héros n'est plus visible.
-    const heroPrimaryButton = document.getElementById('hero-start-btn');
+    const heroSection = document.querySelector('.hero-section');
     const siteHeader = document.querySelector('.site-header');
 
-    if (heroPrimaryButton && siteHeader) {
-        const observerOptions = {
-            rootMargin: "-80px 0px 0px 0px", // On considère que l'élément disparaît 80px (hauteur du header) avant qu'il ne sorte vraiment de l'écran.
-            threshold: 0 // Se déclenche dès que l'élément n'est plus du tout visible.
-        };
-
+    if (heroSection && siteHeader) {
         const headerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // entry.isIntersecting est un booléen :
-                // - true si le bouton est visible
-                // - false s'il est invisible
-
-                // On veut la classe "is-scrolled" UNIQUEMENT quand le bouton N'EST PAS visible.
-                // Donc, on ajoute la classe si "isIntersecting" est "false".
                 siteHeader.classList.toggle('is-scrolled', !entry.isIntersecting);
             });
-        }, observerOptions);
+        }, { threshold: 0 });
 
-        // On demande à notre observateur de surveiller le bouton du héros.
-        headerObserver.observe(heroPrimaryButton);
+        headerObserver.observe(heroSection);
     }
 });
 

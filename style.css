@@ -159,20 +159,27 @@ a {
    3. L'EN-TÊTE (Header) - Le chapeau du site
    ========================================= */
 .site-header {
-    position: fixed; /* Il reste collé en haut même quand on descend */
+    position: fixed;
     width: 100%;
     left: 0;
     top: 0;
-    z-index: 100; /* Il passe par-dessus tout le reste */
-    
-    /* Effet "Verre givré" très moderne */
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    
-    border-bottom: 1px solid rgba(26, 60, 52, 0.05);
+    z-index: 100;
+
+    background-color: rgba(255, 255, 255, 1);
+    backdrop-filter: blur(0px);
+    border-bottom: 1px solid rgba(26, 60, 52, 0.08);
     height: 80px;
     display: flex;
     align-items: center;
+    transition: background-color 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.site-header.is-scrolled {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom-color: rgba(26, 60, 52, 0.08);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 .header-content {
@@ -627,25 +634,36 @@ a {
 
 /* Le petit badge "Nos Expertises" avec l'effet brillant */
 .badge {
-    display: inline-block;
-    background-color: rgba(74, 222, 128, 0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    background-color: rgba(74, 222, 128, 0.12);
     color: var(--color-forest);
-    padding: 0.5rem 1.25rem 0.5rem 2rem;
-    border-radius: 50px;
-    border: 1px solid rgba(74, 222, 128, 0.25);
-    font-size: 0.8rem;
+    padding: 7px 16px 7px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(74, 222, 128, 0.28);
+    font-size: 0.73rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 1.5rem;
     position: relative;
-    overflow: hidden; /* Important pour l'effet brillant */
-    
+    overflow: hidden;
+
     /* Au début, il est caché et descendu un peu plus bas */
     opacity: 0;
     transform: translateY(20px);
     filter: blur(5px);
     transition: opacity 0.8s ease-out, transform 0.8s, filter 0.8s;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    flex-shrink: 0;
 }
 
 /* Quand il devient visible (ajouté par le JS) */

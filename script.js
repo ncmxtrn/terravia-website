@@ -1,83 +1,91 @@
-// 👋 Coucou ! Bienvenue dans le cerveau du site.
-// C'est ici qu'on gère tout ce qui bouge et qui est interactif.
+/**
+ * script.js — Cerveau interactif du site Terravia
+ *
+ * Ce fichier gère TOUTE l'interactivité du site.
+ * Aucun JS ne doit être écrit dans les fichiers HTML.
+ *
+ * Structure :
+ *   SECTION 1 — Initialisation  (toutes les pages)
+ *   SECTION 2 — Navigation      (transitions, liens en construction)
+ *   SECTION 3 — Page de connexion (login.html uniquement)
+ */
 
-// On attend gentiment que TOUTE la page (images, textes, styles) soit chargée avant de commencer.
+
+/* =============================================================
+   SECTION 1 — INITIALISATION (s'exécute sur toutes les pages)
+   ============================================================= */
+
 window.addEventListener("load", () => {
 
-    // 🎭 Le rideau s'ouvre !
-    // Au début, on a mis une classe "is-loading" sur le body qui rendait tout invisible.
-    // Maintenant que tout est prêt, on l'enlève pour faire apparaître le site.
+    // Révélation de la page
+    // La classe "is-loading" sur le body la gardait invisible pendant le chargement.
+    // On l'enlève maintenant que tout est prêt, pour l'animation d'entrée.
     setTimeout(() => {
         document.body.classList.remove("is-loading");
-        document.getElementById('email')?.focus();
-    }, 100); // On attend un tout petit peu (100ms) pour être sûr que ça soit fluide.
+    }, 100);
 
-    // --- 👀 L'Espion du Scroll (Intersection Observer) ---
-    // Cet outil surveille quand les éléments entrent dans l'écran de l'utilisateur.
-    // C'est pour faire les animations d'apparition quand on descend dans la page.
-    const espion = new IntersectionObserver((lesElementsVus) => {
-        lesElementsVus.forEach(elementVu => {
-            // Si l'élément est visible à l'écran...
-            if (elementVu.isIntersecting) {
-                // ... on lui ajoute la classe "visible".
-                // Le CSS va voir ça et lancer l'animation (faire monter l'élément en fondu).
-                elementVu.target.classList.add('visible');
 
-                // Une fois qu'on l'a vu, on arrête de l'espionner.
-                // Comme ça, l'animation ne se joue qu'une seule fois.
-                espion.unobserve(elementVu.target);
+    // --- Animations au scroll (IntersectionObserver) ---
+    // Surveille les éléments .badge et .animate-on-scroll.
+    // Dès qu'un élément est visible à 50 %, on lui ajoute la classe "visible"
+    // (le CSS prend le relais pour l'animation d'apparition).
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                scrollObserver.unobserve(entry.target); // une seule fois
             }
         });
-    }, { threshold: 0.5 }); // On déclenche quand 50% de l'élément est visible.
+    }, { threshold: 0.5 });
 
-    // On dit à notre espion de surveiller tous les éléments qui ont la classe ".badge" ou ".animate-on-scroll"
-    const elementsAAnimer = document.querySelectorAll('.badge, .animate-on-scroll');
-    elementsAAnimer.forEach(el => espion.observe(el));
+    document.querySelectorAll(".badge, .animate-on-scroll")
+        .forEach(el => scrollObserver.observe(el));
 
-    // --- 🍔 Le Menu Burger (Mobile) ---
-    // On récupère le bouton (les 3 barres) et le menu (la liste de liens).
-    const boutonMenu = document.querySelector('.menu-toggle');
-    const menuNavigation = document.querySelector('.main-nav');
 
-    // On vérifie que ces éléments existent bien sur la page pour éviter les erreurs
+    // --- Menu burger (mobile) ---
+    // Gère l'ouverture / fermeture du menu navigation sur petits écrans.
+    const boutonMenu = document.querySelector(".menu-toggle");
+    const menuNavigation = document.querySelector(".main-nav");
+
     if (boutonMenu && menuNavigation) {
 
         const fermerMenu = () => {
-            menuNavigation.classList.add('is-closing');
-            boutonMenu.classList.remove('is-active');
+            menuNavigation.classList.add("is-closing");
+            boutonMenu.classList.remove("is-active");
+            // On attend la fin de l'animation CSS avant de retirer is-open
             setTimeout(() => {
-                menuNavigation.classList.remove('is-open');
-                menuNavigation.classList.remove('is-closing');
+                menuNavigation.classList.remove("is-open", "is-closing");
             }, 300);
         };
 
-        // Quand on clique sur le bouton...
-        boutonMenu.addEventListener('click', () => {
-            if (menuNavigation.classList.contains('is-open')) {
+        boutonMenu.addEventListener("click", () => {
+            if (menuNavigation.classList.contains("is-open")) {
                 fermerMenu();
             } else {
-                menuNavigation.classList.add('is-open');
-                boutonMenu.classList.add('is-active');
+                menuNavigation.classList.add("is-open");
+                boutonMenu.classList.add("is-active");
             }
         });
 
-        // Quand on clique sur un lien du menu, on ferme avec animation (seulement si le menu mobile est ouvert).
-        const liensDuMenu = menuNavigation.querySelectorAll('a');
-        liensDuMenu.forEach(lien => {
-            lien.addEventListener('click', () => {
-                if (menuNavigation.classList.contains('is-open')) fermerMenu();
+        // Ferme le menu si on clique sur un lien (navigation mobile)
+        menuNavigation.querySelectorAll("a").forEach(lien => {
+            lien.addEventListener("click", () => {
+                if (menuNavigation.classList.contains("is-open")) fermerMenu();
             });
         });
     }
 
-    // --- ✨ Animation du Header au Scroll ---
-    const heroSection = document.querySelector('.hero-section');
-    const siteHeader = document.querySelector('.site-header');
+
+    // --- Glassmorphisme du header au scroll ---
+    // Observe la section hero. Quand elle sort de l'écran (scroll vers le bas),
+    // on ajoute "is-scrolled" sur le header pour activer l'effet verre dépoli.
+    const heroSection = document.querySelector(".hero-section");
+    const siteHeader = document.querySelector(".site-header");
 
     if (heroSection && siteHeader) {
         const headerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                siteHeader.classList.toggle('is-scrolled', !entry.isIntersecting);
+                siteHeader.classList.toggle("is-scrolled", !entry.isIntersecting);
             });
         }, { threshold: 0 });
 
@@ -86,39 +94,123 @@ window.addEventListener("load", () => {
 });
 
 
-//-----------------------------------------------------------------------------------------
+/* =============================================================
+   SECTION 2 — NAVIGATION
+   ============================================================= */
 
-// --- 🌊 Transition Fluide entre les pages (Smooth Page Transition) ---
-const transitionLinks = document.querySelectorAll('.transition-link');
+// --- Transitions fluides entre les pages ---
+// Sur les liens .transition-link qui pointent vers une autre page,
+// on ajoute "fade-out" sur le body avant de naviguer.
+document.querySelectorAll(".transition-link").forEach(link => {
+    link.addEventListener("click", function (e) {
+        const targetUrl = this.getAttribute("href");
 
-transitionLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-        const targetUrl = this.getAttribute('href');
-        
-        // Gérer correctement les liens qui incluent un hash (ex: index.html#contact)
-        const isSamePageAnchor = targetUrl.startsWith('#');
-        // Si c'est un lien vers la page actuelle avec une ancre (ex: on est sur index.html et on clique sur index.html#contact)
-        const isCurrentPageAnchor = targetUrl.includes('#') && targetUrl.split('#')[0] === window.location.pathname.split('/').pop();
-        
+        const isSamePageAnchor = targetUrl.startsWith("#");
+        // Ancre vers la page courante (ex: index.html#contact depuis index.html)
+        const isCurrentPageAnchor =
+            targetUrl.includes("#") &&
+            targetUrl.split("#")[0] === window.location.pathname.split("/").pop();
+
         if (targetUrl && !isSamePageAnchor && !isCurrentPageAnchor) {
             e.preventDefault();
-            document.body.classList.add('fade-out');
-            
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 500);
+            document.body.classList.add("fade-out");
+            setTimeout(() => { window.location.href = targetUrl; }, 500);
         }
     });
 });
-//-----------------------------------------------------------------------------------------
-// On sélectionne tous les éléments qui ont la classe .link-arrow
-const linksEnConstruction = document.querySelectorAll('.link-arrow');
 
-// On parcourt chaque lien pour lui ajouter l'écouteur de clic
-linksEnConstruction.forEach(link => {
-    link.addEventListener('click', function (event) {
-        event.preventDefault(); // Bloque l'action par défaut
+
+// --- Liens en construction ---
+// Les éléments .link-arrow pointent vers des pages pas encore disponibles.
+// On intercepte le clic pour afficher une alerte au lieu de naviguer.
+document.querySelectorAll(".link-arrow").forEach(link => {
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
         alert("En cours de construction...");
     });
 });
-//-----------------------------------------------------------------------------------------
+
+
+/* =============================================================
+   SECTION 3 — PAGE DE CONNEXION (login.html uniquement)
+   Les guards "if (element)" évitent toute erreur sur les autres pages
+   où ces éléments n'existent pas.
+   ============================================================= */
+
+// --- Auto-focus sur le champ email ---
+document.getElementById("email")?.focus();
+
+
+// --- Toggle visibilité du mot de passe ---
+const passwordToggle = document.querySelector(".password-toggle");
+const passwordInput = document.getElementById("password");
+
+if (passwordToggle && passwordInput) {
+    const icon = passwordToggle.querySelector("span");
+
+    passwordToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isHidden = passwordInput.getAttribute("type") === "password";
+        passwordInput.setAttribute("type", isHidden ? "text" : "password");
+        icon.textContent = isHidden ? "visibility" : "visibility_off";
+        passwordToggle.setAttribute("aria-pressed", isHidden ? "true" : "false");
+        passwordInput.focus();
+    });
+}
+
+
+// --- Validation du formulaire de connexion ---
+const submitBtn = document.querySelector(".form-stack .btn-primary[type='submit']");
+const errorBanner = document.getElementById("error-banner");
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("password");
+
+if (submitBtn && errorBanner) {
+
+    submitBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Réinitialise l'état visuel avant chaque tentative
+        [emailInput, passInput].forEach(i => i.classList.remove("has-error"));
+        errorBanner.classList.remove("visible");
+
+        const emailEmpty = !emailInput.value.trim();
+        const passEmpty = !passInput.value.trim();
+        const emailInvalid = !emailEmpty && !emailInput.validity.valid;
+
+        let message = "";
+
+        if (emailEmpty && passEmpty) {
+            emailInput.classList.add("has-error");
+            passInput.classList.add("has-error");
+            message = "Veuillez remplir tous les champs.";
+        } else if (emailEmpty) {
+            emailInput.classList.add("has-error");
+            message = "Veuillez saisir votre adresse email.";
+        } else if (passEmpty) {
+            passInput.classList.add("has-error");
+            message = "Veuillez saisir votre mot de passe.";
+        } else if (emailInvalid) {
+            emailInput.classList.add("has-error");
+            message = "Adresse email invalide.";
+        }
+
+        if (message) {
+            errorBanner.innerHTML =
+                `<span class="material-symbols-outlined error-icon">error</span> ${message}`;
+            errorBanner.classList.add("visible");
+            return;
+        }
+
+        // Pas d'erreur → logique de connexion à implémenter ici
+    });
+
+    // Retire l'état d'erreur dès que l'utilisateur recommence à taper
+    [emailInput, passInput].forEach(input => {
+        input.addEventListener("input", () => {
+            input.classList.remove("has-error");
+            const stillHasError = [emailInput, passInput].some(i => i.classList.contains("has-error"));
+            if (!stillHasError) errorBanner.classList.remove("visible");
+        });
+    });
+}

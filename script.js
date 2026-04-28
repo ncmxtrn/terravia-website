@@ -90,6 +90,9 @@ window.addEventListener("load", () => {
         }, { threshold: 0 });
 
         headerObserver.observe(heroSection);
+    } else if (siteHeader) {
+        // Pages sans hero (contact, login) : header opaque en permanence.
+        siteHeader.classList.add("is-scrolled");
     }
 });
 
@@ -215,6 +218,75 @@ if (submitBtn && errorBanner) {
             input.classList.remove("has-error");
             const stillHasError = [emailInput, passInput].some(i => i.classList.contains("has-error"));
             if (!stillHasError) errorBanner.classList.remove("visible");
+        });
+    });
+}
+
+
+/* =============================================================
+   SECTION 4 — PAGE CONTACT (contact.html uniquement)
+   Validation client + bannières d'état. Pas de backend pour
+   l'instant : on simule le succès et on reset le formulaire.
+   ============================================================= */
+
+const contactForm = document.getElementById("contact-form");
+
+if (contactForm) {
+    const contactError   = document.getElementById("contact-error");
+    const contactSuccess = document.getElementById("contact-success");
+    const nameInput      = document.getElementById("contact-name");
+    const mailInput      = document.getElementById("contact-email");
+    const msgInput       = document.getElementById("contact-message");
+    const requiredFields = [nameInput, mailInput, msgInput];
+
+    const showError = (message) => {
+        contactSuccess.classList.remove("visible");
+        contactError.innerHTML =
+            `<span class="material-symbols-outlined error-icon">error</span> ${message}`;
+        contactError.classList.add("visible");
+    };
+
+    const clearBanners = () => {
+        contactError.classList.remove("visible");
+        contactSuccess.classList.remove("visible");
+    };
+
+    contactForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        requiredFields.forEach(i => i.classList.remove("has-error"));
+        clearBanners();
+
+        const nameEmpty = !nameInput.value.trim();
+        const mailEmpty = !mailInput.value.trim();
+        const msgEmpty  = !msgInput.value.trim();
+        const mailInvalid = !mailEmpty && !mailInput.validity.valid;
+
+        if (nameEmpty) nameInput.classList.add("has-error");
+        if (mailEmpty || mailInvalid) mailInput.classList.add("has-error");
+        if (msgEmpty) msgInput.classList.add("has-error");
+
+        if (nameEmpty || mailEmpty || msgEmpty) {
+            showError("Veuillez remplir les champs requis.");
+            return;
+        }
+        if (mailInvalid) {
+            showError("Adresse courriel invalide.");
+            return;
+        }
+
+        contactSuccess.innerHTML =
+            `<span class="material-symbols-outlined">check_circle</span> Message reçu — on revient vers vous sous 24 heures ouvrables.`;
+        contactSuccess.classList.add("visible");
+        contactForm.reset();
+        contactSuccess.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    requiredFields.forEach(input => {
+        input.addEventListener("input", () => {
+            input.classList.remove("has-error");
+            const stillHasError = requiredFields.some(i => i.classList.contains("has-error"));
+            if (!stillHasError) contactError.classList.remove("visible");
         });
     });
 }

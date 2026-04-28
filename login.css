@@ -13,54 +13,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-bg-light);
+    background-color: var(--white);
     padding: 2rem 1rem;
-    position: relative;
-    isolation: isolate;
 }
 
-/* Le fond "Papier Millimétré" exact de la page d'accueil (section services) pour une cohérence parfaite */
-.login-main::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image:
-        /* Lignes épaisses */
-        linear-gradient(to right, var(--forest-06) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--forest-06) 1px, transparent 1px),
-        /* Lignes fines */
-        linear-gradient(to right, var(--forest-03) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--forest-03) 1px, transparent 1px);
-    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-    
-    /* Disparaît doucement sur les bords (radial fade) */
-    -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-    mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-}
 
-/* Lien retour au site */
-.back-link {
-    position: absolute;
-    top: 1.5rem;
-    left: 1.5rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.875rem;
-    font-weight: var(--weight-semibold);
-    color: var(--fg2);
-    transition: color var(--duration-fast), gap var(--duration-fast);
-}
-
-.back-link:hover {
-    color: var(--color-forest);
-    gap: 0.6rem;
-}
-
-.back-link .material-symbols-outlined {
-    font-size: 1.1rem;
-}
 
 /* Bannière d'erreur */
 .error-banner {
@@ -94,7 +51,7 @@
 /* Conteneur principal qui limite la largeur et anime l'arrivée */
 .login-container {
     width: 100%;
-    max-width: 33rem;
+    max-width: 30rem;
     margin: 0 auto;
     
     /* Animation d'arrivée douce */
@@ -192,17 +149,9 @@
     opacity: 1;
 }
 
-/* La carte blanche du formulaire, reprenant EXACTEMENT le style .service-card de l'accueil */
 .login-card {
     position: relative;
-    background-color: var(--color-white);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
-
-    /* Ombre multicouche très élégante pour l'effet 3D flottant */
-    box-shadow: var(--shadow-card);
-
-    padding: 1.5rem; /* Padding réduit sur mobile pour maximiser l'espace */
+    padding: 1.5rem;
 }
 
 @media (min-width: 576px) {

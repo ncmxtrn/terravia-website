@@ -138,7 +138,11 @@ document.querySelectorAll(".link-arrow").forEach(link => {
    ============================================================= */
 
 // --- Auto-focus sur le champ email ---
-document.getElementById("email")?.focus();
+// Délai calé sur l'animation d'entrée du login-container (0.2s delay + marge)
+// pour éviter que le focus soit ignoré sur un élément opacity:0
+setTimeout(() => {
+    document.getElementById("email")?.focus();
+}, 300);
 
 
 // --- Toggle visibilité du mot de passe ---

@@ -201,7 +201,7 @@
     top: 50%;
     transform: translateY(-50%);
     color: var(--fg3);
-    font-size: 1.25rem;
+    font-size: var(--icon-lg);
     user-select: none;
     transition: color var(--duration-medium) ease;
 }

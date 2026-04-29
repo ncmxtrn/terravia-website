@@ -123,7 +123,7 @@
     color: var(--color-primary-dark);
     display: grid;
     place-items: center;
-    font-size: 1.4rem;
+    font-size: var(--icon-lg);
     transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
 }
 
@@ -158,7 +158,7 @@
 }
 
 .channel-external {
-    font-size: 1rem;
+    font-size: var(--icon-lg);
     color: var(--fg3);
     transition:
         color var(--duration-base) ease,
@@ -300,7 +300,7 @@ a.channel-card:hover .channel-external {
 
 .services-chevron {
     color: var(--fg3);
-    font-size: 1.25rem;
+    font-size: var(--icon-lg);
     flex-shrink: 0;
     transition: transform var(--duration-base) var(--ease-card);
 }
@@ -384,7 +384,7 @@ a.channel-card:hover .channel-external {
 .service-check {
     opacity: 0;
     color: var(--color-primary-dark);
-    font-size: 1.1rem;
+    font-size: var(--icon-lg);
     transition: opacity var(--duration-fast) ease;
 }
 
@@ -443,7 +443,7 @@ a.channel-card:hover .channel-external {
 }
 
 .service-chip-remove .material-symbols-outlined {
-    font-size: 0.875rem;
+    font-size: var(--icon-xs);
 }
 
 /* =========================================
@@ -478,7 +478,7 @@ a.channel-card:hover .channel-external {
 }
 
 .form-submit .material-symbols-outlined {
-    font-size: 1.1rem;
+    font-size: var(--icon-base);
 }
 
 /* =========================================
@@ -502,7 +502,7 @@ a.channel-card:hover .channel-external {
 }
 
 .success-banner .material-symbols-outlined {
-    font-size: 1.1rem;
+    font-size: var(--icon-base);
 }
 
 /* =========================================
@@ -517,7 +517,7 @@ a.channel-card:hover .channel-external {
 }
 
 .form-reassurance .material-symbols-outlined {
-    font-size: 1rem;
+    font-size: var(--icon-sm);
     color: var(--color-primary);
 }
 

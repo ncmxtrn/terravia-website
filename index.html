@@ -16,21 +16,21 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Solutions Terravia</title>
 
+    <!--
+        🎨 On charge d'abord les polices et icônes de Google.
+        IMPORTANT : Google's CSS doit venir AVANT nos CSS pour qu'on puisse override
+        proprement (sinon le `font-size: 24px` de .material-symbols-outlined gagne par cascade).
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
+        rel="stylesheet" />
+
     <!-- tokens.css = la boîte à outils du design system (couleurs, polices, espacements) -->
     <link rel="stylesheet" href="tokens.css">
     <!-- Ici, on fait le lien avec notre fichier de décoration (CSS) -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- 
-        🎨 On va chercher de jolies polices d'écriture chez Google.
-        C'est comme commander des meubles sur catalogue pour qu'ils soient livrés sur notre page.
-    -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
-        rel="stylesheet" />
-    <!-- Et là, on récupère une bibliothèque de petits dessins (icônes) -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
 </head>
 
 <!-- 
@@ -62,7 +62,7 @@
                     <a href="#services" class="transition-link">Services</a>
                     <a href="login.html" class="transition-link client-link">
                         Espace client
-                        <span class="material-symbols-outlined client-icon">arrow_outward</span>
+                        <span class="material-symbols-outlined client-icon">open_in_new</span>
                     </a>
                     <a href="#projets" class="transition-link">Projets</a>
                     <a href="#contact" class="transition-link">À propos</a>

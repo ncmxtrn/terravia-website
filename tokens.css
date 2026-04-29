@@ -94,6 +94,14 @@
   --text-xs:      0.8rem;                         /* Badges, labels */
   --text-logo:    1.25rem;                        /* Logo wordmark */
 
+  /* Icon scale — Material Symbols */
+  --icon-xs:   0.875rem;  /* 14px — chips, tags */
+  --icon-sm:   1rem;      /* 16px — inline body */
+  --icon-base: 1.1rem;    /* ~17.6px — boutons, bannières */
+  --icon-md:   1.25rem;   /* 20px — footers, dropdowns, inputs */
+  --icon-lg:   1.5rem;    /* 24px — défaut visuel Material */
+  --icon-xl:   2rem;      /* 32px — cartes services */
+
   /* Weight scale */
   --weight-regular: 400;
   --weight-medium:  500;

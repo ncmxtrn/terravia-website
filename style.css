@@ -337,8 +337,8 @@ a {
     align-items: center;
 }
 
-.client-icon {
-    font-size: 1.1rem;
+.material-symbols-outlined.client-icon {
+    font-size: var(--icon-sm);
     margin-left: 0.2rem;
     color: var(--color-primary); /* Même vert que le trait de soulignement */
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animation fluide */
@@ -788,7 +788,7 @@ a {
 }
 
 .icon-box .material-symbols-outlined {
-    font-size: 2rem;
+    font-size: var(--icon-xl);
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1169,7 +1169,7 @@ a {
 
 .footer-contact .icon {
     color: var(--color-primary);
-    font-size: 1.25rem;
+    font-size: var(--icon-md);
 }
 
 .footer-contact address {

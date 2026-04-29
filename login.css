@@ -303,8 +303,8 @@
 /* Bouton pleine largeur */
 .login-card .btn-primary {
     width: 100%;
-    padding: 0.875rem;
-    gap: 0.5rem;
+    padding: var(--space-md);
+    gap: var(--space-xs);
     box-shadow: var(--shadow-glow);
 }
 
@@ -323,12 +323,7 @@
     opacity: 0;
 }
 
-/* Sélection de texte et style champ de mot de passe spécifiques */
-::selection {
-    background-color: var(--fg3);
-    color: var(--color-forest);
-}
-
+/* Style champ de mot de passe spécifique */
 .form-input[type="password"] {
     font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     letter-spacing: 0.15em;

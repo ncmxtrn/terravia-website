@@ -41,7 +41,7 @@
                 </nav>
 
                 <div class="header-actions">
-                    <a href="#contact-form-card" class="btn btn-primary" id="header-quote-btn">Contactez-nous</a>
+                    <a href="#contact-form-card" class="btn btn-primary" id="header-quote-btn" aria-hidden="true" tabindex="-1">Contactez-nous</a>
                     <button class="menu-toggle">
                         <div class="burger-icon">
                             <span></span>
@@ -56,9 +56,8 @@
         <main class="contact-main">
             <div class="container">
                 <section class="contact-intro">
-                    <div class="badge"><span class="badge-dot"></span>Contact</div>
                     <h1 class="animate-on-scroll">Discutons de votre projet</h1>
-                    <p class="lead animate-on-scroll">Téléphone, courriel ou formulaire — choisissez le canal qui vous convient. Réponse sous 24 heures ouvrables.</p>
+                    <p class="lead animate-on-scroll">Téléphone, courriel ou formulaire — choisissez le canal qui vous convient. <span class="contact-intro-reassurance"><span class="material-symbols-outlined">schedule</span> Réponse sous 24 heures ouvrables.</span></p>
                 </section>
 
                 <div class="contact-layout">
@@ -105,69 +104,77 @@
                                 <div id="contact-error" class="error-banner" role="alert" aria-live="polite"></div>
                                 <div id="contact-success" class="success-banner" role="status" aria-live="polite"></div>
 
-                                <div class="inputs-wrapper">
-                                    <div class="input-row">
-                                        <div class="input-group">
-                                            <label class="input-label" for="contact-name">Nom complet</label>
-                                            <div class="input-wrapper">
-                                                <span class="material-symbols-outlined input-icon">person</span>
-                                                <input class="form-input" id="contact-name" name="name" type="text" required placeholder="Prénom Nom" autocomplete="name" />
-                                            </div>
-                                        </div>
-
-                                        <div class="input-group">
-                                            <label class="input-label" for="contact-email">Courriel</label>
-                                            <div class="input-wrapper">
-                                                <span class="material-symbols-outlined input-icon">mail</span>
-                                                <input class="form-input" id="contact-email" name="email" type="email" required placeholder="vous@exemple.com" autocomplete="email" />
-                                            </div>
+                                <div class="input-row">
+                                    <div class="input-group">
+                                        <label class="input-label" for="contact-name">Nom</label>
+                                        <div class="input-wrapper">
+                                            <span class="material-symbols-outlined input-icon">person</span>
+                                            <input class="form-input" id="contact-name" name="name" type="text" required placeholder="Votre nom" autocomplete="name" />
                                         </div>
                                     </div>
 
-                                    <div class="input-row">
-                                        <div class="input-group">
-                                            <label class="input-label" for="contact-phone">Téléphone <span class="input-optional">(facultatif)</span></label>
-                                            <div class="input-wrapper">
-                                                <span class="material-symbols-outlined input-icon">call</span>
-                                                <input class="form-input" id="contact-phone" name="phone" type="tel" placeholder="(514) 555-0123" autocomplete="tel" />
-                                            </div>
-                                        </div>
-
-                                        <div class="input-group">
-                                            <label class="input-label" for="contact-org">Organisation <span class="input-optional">(facultatif)</span></label>
-                                            <div class="input-wrapper">
-                                                <span class="material-symbols-outlined input-icon">business</span>
-                                                <input class="form-input" id="contact-org" name="organization" type="text" placeholder="Nom de l'entreprise" autocomplete="organization" />
-                                            </div>
+                                    <div class="input-group">
+                                        <label class="input-label" for="contact-email">Courriel</label>
+                                        <div class="input-wrapper">
+                                            <span class="material-symbols-outlined input-icon">mail</span>
+                                            <input class="form-input" id="contact-email" name="email" type="email" required placeholder="vous@exemple.com" autocomplete="email" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <fieldset class="services-fieldset">
-                                    <legend class="input-label">Services recherchés <span class="input-optional">(facultatif)</span></legend>
-                                    <div class="checkbox-grid">
-                                        <label class="checkbox-group">
-                                            <input class="checkbox-input" type="checkbox" name="services" value="lidar-aerien" />
-                                            <span class="checkbox-label">Relevé LiDAR aérien</span>
-                                        </label>
-                                        <label class="checkbox-group">
-                                            <input class="checkbox-input" type="checkbox" name="services" value="photogrammetrie" />
-                                            <span class="checkbox-label">Photogrammétrie / orthomosaïque</span>
-                                        </label>
-                                        <label class="checkbox-group">
-                                            <input class="checkbox-input" type="checkbox" name="services" value="inspection-3d" />
-                                            <span class="checkbox-label">Inspection 3D d'infrastructure</span>
-                                        </label>
-                                        <label class="checkbox-group">
-                                            <input class="checkbox-input" type="checkbox" name="services" value="volumetrie-mnt" />
-                                            <span class="checkbox-label">Volumétrie & MNT</span>
-                                        </label>
-                                        <label class="checkbox-group">
-                                            <input class="checkbox-input" type="checkbox" name="services" value="autre" />
-                                            <span class="checkbox-label">Autre besoin</span>
-                                        </label>
+                                <div class="input-group">
+                                    <label class="input-label" for="contact-org">Organisation <span class="input-optional">(facultatif)</span></label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">business</span>
+                                        <input class="form-input" id="contact-org" name="organization" type="text" placeholder="Nom de l'entreprise" autocomplete="organization" />
                                     </div>
-                                </fieldset>
+                                </div>
+
+                                <div class="input-group">
+                                    <label class="input-label" id="services-label">Services recherchés <span class="input-optional">(facultatif)</span></label>
+                                    <div class="services-dropdown" id="services-dropdown">
+                                        <div class="input-wrapper">
+                                            <span class="material-symbols-outlined input-icon">format_list_bulleted</span>
+                                            <button type="button"
+                                                    class="form-input services-trigger"
+                                                    id="services-trigger"
+                                                    aria-haspopup="listbox"
+                                                    aria-expanded="false"
+                                                    aria-labelledby="services-label">
+                                                <span class="services-trigger-text">Sélectionner des services…</span>
+                                                <span class="material-symbols-outlined services-chevron">expand_more</span>
+                                            </button>
+                                        </div>
+                                        <div class="services-panel" role="listbox" aria-multiselectable="true" aria-labelledby="services-label">
+                                            <label class="service-option">
+                                                <input class="checkbox-input" type="checkbox" name="services" value="lidar-aerien" />
+                                                <span class="service-option-label">Relevé LiDAR aérien</span>
+                                                <span class="material-symbols-outlined service-check">check</span>
+                                            </label>
+                                            <label class="service-option">
+                                                <input class="checkbox-input" type="checkbox" name="services" value="photogrammetrie" />
+                                                <span class="service-option-label">Photogrammétrie / orthomosaïque</span>
+                                                <span class="material-symbols-outlined service-check">check</span>
+                                            </label>
+                                            <label class="service-option">
+                                                <input class="checkbox-input" type="checkbox" name="services" value="inspection-3d" />
+                                                <span class="service-option-label">Inspection 3D d'infrastructure</span>
+                                                <span class="material-symbols-outlined service-check">check</span>
+                                            </label>
+                                            <label class="service-option">
+                                                <input class="checkbox-input" type="checkbox" name="services" value="volumetrie-mnt" />
+                                                <span class="service-option-label">Volumétrie & MNT</span>
+                                                <span class="material-symbols-outlined service-check">check</span>
+                                            </label>
+                                            <label class="service-option">
+                                                <input class="checkbox-input" type="checkbox" name="services" value="autre" />
+                                                <span class="service-option-label">Autre besoin</span>
+                                                <span class="material-symbols-outlined service-check">check</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="services-tags" id="services-tags" aria-live="polite"></div>
+                                </div>
 
                                 <div class="input-group">
                                     <label class="input-label" for="contact-message">Décrivez votre projet</label>
@@ -175,14 +182,10 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary form-submit">
-                                    <span class="material-symbols-outlined">send</span>
                                     Envoyer ma demande
+                                    <span class="material-symbols-outlined">send</span>
                                 </button>
 
-                                <p class="form-reassurance">
-                                    <span class="material-symbols-outlined">schedule</span>
-                                    Réponse sous 24 heures ouvrables.
-                                </p>
                             </form>
                         </div>
                     </section>

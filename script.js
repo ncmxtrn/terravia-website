@@ -276,7 +276,7 @@ if (contactForm) {
         }
 
         contactSuccess.innerHTML =
-            `<span class="material-symbols-outlined">check_circle</span> Message reçu — on revient vers vous sous 24 heures ouvrables.`;
+            `<span class="material-symbols-outlined">check_circle</span> Message reçu — on revient vers vous le plus rapidement possible!`;
         contactSuccess.classList.add("visible");
         contactForm.reset();
         contactSuccess.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -289,4 +289,84 @@ if (contactForm) {
             if (!stillHasError) contactError.classList.remove("visible");
         });
     });
+
+    // --- Dropdown services + chips ---
+    const serviceDropdown   = document.getElementById("services-dropdown");
+    const serviceTrigger    = document.getElementById("services-trigger");
+    const tagsContainer     = document.getElementById("services-tags");
+    const serviceCheckboxes = serviceDropdown
+        ? serviceDropdown.querySelectorAll('.checkbox-input[name="services"]')
+        : [];
+
+    const SERVICE_LABELS = {
+        "lidar-aerien":   "LiDAR aérien",
+        "photogrammetrie":"Photogrammétrie",
+        "inspection-3d":  "Inspection 3D",
+        "volumetrie-mnt": "Volumétrie & MNT",
+        "autre":          "Autre",
+    };
+
+    function updateTrigger() {
+        const checked = [...serviceCheckboxes].filter(cb => cb.checked);
+        const textEl  = serviceTrigger.querySelector(".services-trigger-text");
+        if (checked.length === 0) {
+            textEl.textContent = "Sélectionner des services…";
+            serviceTrigger.classList.remove("has-selection");
+        } else {
+            textEl.textContent = checked.length === 1
+                ? SERVICE_LABELS[checked[0].value]
+                : `${checked.length} services sélectionnés`;
+            serviceTrigger.classList.add("has-selection");
+        }
+    }
+
+    function syncChips() {
+        tagsContainer.innerHTML = "";
+        [...serviceCheckboxes].filter(cb => cb.checked).forEach(cb => {
+            const label = SERVICE_LABELS[cb.value] ?? cb.value;
+            const chip  = document.createElement("span");
+            chip.className = "service-chip";
+            chip.innerHTML = `${label}<button type="button" class="service-chip-remove" aria-label="Retirer ${label}"><span class="material-symbols-outlined">close</span></button>`;
+            chip.querySelector(".service-chip-remove").addEventListener("click", () => {
+                cb.checked = false;
+                syncChips();
+                updateTrigger();
+            });
+            tagsContainer.appendChild(chip);
+        });
+    }
+
+    function openDropdown() {
+        serviceDropdown.classList.add("is-open");
+        serviceTrigger.setAttribute("aria-expanded", "true");
+    }
+
+    function closeDropdown() {
+        serviceDropdown.classList.remove("is-open");
+        serviceTrigger.setAttribute("aria-expanded", "false");
+    }
+
+    if (serviceDropdown) {
+        serviceTrigger.addEventListener("click", () => {
+            serviceDropdown.classList.contains("is-open") ? closeDropdown() : openDropdown();
+        });
+
+        serviceCheckboxes.forEach(cb => cb.addEventListener("change", () => {
+            syncChips();
+            updateTrigger();
+        }));
+
+        document.addEventListener("click", (e) => {
+            if (!serviceDropdown.contains(e.target)) closeDropdown();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeDropdown();
+        });
+
+        contactForm.addEventListener("reset", () => requestAnimationFrame(() => {
+            syncChips();
+            updateTrigger();
+        }));
+    }
 }

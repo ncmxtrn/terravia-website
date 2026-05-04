@@ -593,32 +593,6 @@ a {
    ========================================= */
 .services-section {
     padding: 5rem 0;
-    position: relative;
-    background: linear-gradient(to bottom, rgba(255,255,255,0) 85%, var(--white) 100%);
-}
-
-/* 
-   Le fond "Papier Millimétré".
-   C'est un peu de la sorcellerie CSS avec des dégradés (gradients) qui créent des lignes.
-*/
-.services-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    
-    background-image:
-        /* Les grosses lignes */
-        linear-gradient(to right, var(--forest-06) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--forest-06) 1px, transparent 1px),
-        /* Les petites lignes */
-        linear-gradient(to right, var(--forest-03) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--forest-03) 1px, transparent 1px);
-    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-
-    /* On fait disparaître le quadrillage vers le bas */
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
 .section-header {
@@ -1180,8 +1154,11 @@ a {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 2rem;
     text-align: center;
-    color: rgba(255, 255, 255, 0.4);
     font-size: 0.875rem;
+}
+
+.footer-bottom p {
+    color: var(--fg-on-dark);
 }
 
 /* =========================================

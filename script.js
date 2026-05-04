@@ -126,7 +126,7 @@ document.querySelectorAll(".transition-link").forEach(link => {
 // --- Liens en construction ---
 // Les éléments .link-arrow pointent vers des pages pas encore disponibles.
 // On intercepte le clic pour afficher une alerte au lieu de naviguer.
-document.querySelectorAll(".link-arrow").forEach(link => {
+document.querySelectorAll(".link-arrow, .link-placeholder").forEach(link => {
     link.addEventListener("click", (e) => {
         e.preventDefault();
         alert("En cours de construction...");

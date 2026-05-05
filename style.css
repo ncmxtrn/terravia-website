@@ -170,7 +170,13 @@ a {
     height: var(--header-height);
     display: flex;
     align-items: center;
-    transition: background-color var(--duration-medium) ease, backdrop-filter var(--duration-medium) ease, border-color var(--duration-medium) ease, box-shadow var(--duration-medium) ease;
+    transition:
+        transform var(--duration-medium) var(--ease-header),
+        background-color var(--duration-medium) ease,
+        backdrop-filter var(--duration-medium) ease,
+        border-color var(--duration-medium) ease,
+        box-shadow var(--duration-medium) ease,
+        color var(--duration-medium) ease;
 }
 
 .site-header.is-scrolled {
@@ -179,6 +185,85 @@ a {
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-bottom-color: var(--border-subtle);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Mode flottant : le header se pose en transparent sur le hero, texte blanc.
+   Activé tant que scrollY <= 0 sur les pages avec .hero-section. */
+.site-header.is-floating {
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+
+.site-header.is-floating .logo-icon {
+    filter: brightness(0) invert(1);
+}
+
+.site-header.is-floating .logo {
+    color: var(--fg-on-dark);
+}
+
+/* Les h2/h3 ont une couleur directe dans tokens.css qui écrase l'héritage —
+   on doit les cibler explicitement pour les passer en blanc. */
+.site-header.is-floating .logo h2,
+.site-header.is-floating .logo h3 {
+    color: var(--fg-on-dark);
+}
+
+.site-header.is-floating .main-nav a {
+    color: var(--fg-on-dark);
+}
+
+.site-header.is-floating .main-nav a::after {
+    background-color: var(--green-400);
+}
+
+.site-header.is-floating .burger-icon span {
+    background-color: var(--fg-on-dark);
+}
+
+/* Quand le menu burger s'ouvre en mode flottant, le header repasse en style
+   opaque (même apparence que l'état show-cta). */
+.site-header.is-floating.menu-open {
+    background-color: rgba(255, 255, 255, 1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: var(--border-subtle);
+}
+
+.site-header.is-floating.menu-open .logo {
+    color: var(--color-forest);
+}
+
+.site-header.is-floating.menu-open .logo h2,
+.site-header.is-floating.menu-open .logo h3 {
+    color: var(--color-forest);
+}
+
+.site-header.is-floating.menu-open .logo-icon {
+    filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
+}
+
+.site-header.is-floating.menu-open .main-nav a {
+    color: var(--color-forest);
+}
+
+.site-header.is-floating.menu-open .burger-icon span {
+    background-color: var(--color-forest);
+}
+
+/* État caché dérivé : scrollé mais le CTA hero est encore visible.
+   Le header glisse hors écran ; on conserve le style transparent pour éviter
+   un flash blanc pendant le slide. */
+.site-header:not(.is-floating):not(.show-cta) {
+    transform: translateY(-100%);
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+    box-shadow: none;
 }
 
 .header-content {

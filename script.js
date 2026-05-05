@@ -55,6 +55,7 @@ window.addEventListener("load", () => {
             // On attend la fin de l'animation CSS avant de retirer is-open
             setTimeout(() => {
                 menuNavigation.classList.remove("is-open", "is-closing");
+                siteHeader?.classList.remove("menu-open");
             }, 300);
         };
 
@@ -64,6 +65,7 @@ window.addEventListener("load", () => {
             } else {
                 menuNavigation.classList.add("is-open");
                 boutonMenu.classList.add("is-active");
+                siteHeader?.classList.add("menu-open");
             }
         });
 
@@ -77,11 +79,15 @@ window.addEventListener("load", () => {
 
 
     // --- Header au scroll ---
-    // Deux états découplés :
+    // Trois états découplés :
+    //   • "is-floating" → tout en haut (scrollY <= 0) : header transparent,
+    //                     texte blanc, posé sur le hero.
     //   • "show-cta"    → apparition du bouton "Contactez-nous" du header
     //                     déclenchée dès que le CTA de la hero quitte l'écran.
     //   • "is-scrolled" → glassmorphisme du header, déclenché plus tard,
     //                     quand la section hero entière quitte le viewport.
+    // L'état "caché" (slide-up) est dérivé en CSS via
+    // `:not(.is-floating):not(.show-cta)` — pas de classe dédiée.
     const siteHeader = document.querySelector(".site-header");
     const heroCtaBtn = document.querySelector("#hero-start-btn");
     const heroSection = document.querySelector(".hero-section");
@@ -103,6 +109,16 @@ window.addEventListener("load", () => {
                 });
             }, { threshold: 0 });
             headerObserver.observe(heroSection);
+
+            // Mode flottant : tout en haut, le header se pose en transparent
+            // sur le hero (texte blanc). Au moindre scroll, la classe disparaît
+            // et le CSS dérivé (`:not(.is-floating):not(.show-cta)`) le fait
+            // glisser hors écran jusqu'à ce que `show-cta` prenne le relais.
+            const updateFloatingState = () => {
+                siteHeader.classList.toggle("is-floating", window.scrollY <= 0);
+            };
+            window.addEventListener("scroll", updateFloatingState, { passive: true });
+            updateFloatingState();
         } else {
             // Pages sans hero (contact, login) : header opaque + bouton visible.
             siteHeader.classList.add("is-scrolled");

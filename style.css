@@ -725,7 +725,7 @@ a {
 .service-card {
     position: relative;
     background: var(--white);
-    border: 1px solid var(--border-subtle);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-xl);
     padding: 1.75rem 1.75rem 1.5rem;
     display: flex;

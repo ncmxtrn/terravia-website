@@ -402,6 +402,16 @@
     color: var(--fg1);
 }
 
+/* Le trigger est un <button> : :placeholder-shown ne matche jamais, donc les
+   règles "champ rempli" de login.css s'activent à tort. On rétablit l'état vide
+   tant que .has-selection n'est pas présent. */
+.input-wrapper:has(.services-trigger:not(.has-selection)) .services-trigger:not(:focus) {
+    border-color: var(--border-default);
+}
+.input-wrapper:has(.services-trigger:not(.has-selection)) .input-icon {
+    color: var(--fg3);
+}
+
 .services-chevron {
     color: var(--fg3);
     font-size: var(--icon-lg);
@@ -416,31 +426,37 @@
 .services-dropdown.is-open .services-trigger {
     border-color: var(--color-primary);
     box-shadow: var(--focus-ring);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: var(--border-subtle);
 }
 
-/* Panel déroulant */
+/* Panel déroulant — soudé au trigger */
 .services-panel {
     display: none;
     position: absolute;
-    top: calc(100% + 4px);
+    top: 100%;
     left: 0;
     right: 0;
     z-index: 200;
     background-color: var(--surface-card);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--color-primary);
+    border-top: none;
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
     box-shadow: var(--shadow-card-hover);
     overflow: hidden;
 }
 
 .services-dropdown.is-open .services-panel {
     display: block;
+    transform-origin: top center;
     animation: panel-in var(--duration-base) var(--ease-entrance) both;
 }
 
 @keyframes panel-in {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: scaleY(0.85); }
+    to   { opacity: 1; transform: scaleY(1); }
 }
 
 /* Ligne d'option */
@@ -462,10 +478,6 @@
     background-color: var(--forest-05);
 }
 
-.service-option:has(.checkbox-input:checked) {
-    background-color: var(--badge-bg);
-}
-
 /* Masque le checkbox natif — accessible mais invisible */
 .services-panel .checkbox-input {
     position: absolute;
@@ -478,11 +490,11 @@
 .service-option-label {
     flex: 1;
     font-size: var(--text-sm);
-    color: var(--color-forest);
+    color: var(--fg3);
 }
 
 .service-option:has(.checkbox-input:checked) .service-option-label {
-    font-weight: var(--weight-semibold);
+    color: var(--fg1);
 }
 
 .service-check {

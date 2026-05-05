@@ -224,6 +224,63 @@ if (submitBtn && errorBanner) {
 
 
 /* =============================================================
+   SECTION 3.5 — COPIER LES COORDONNÉES (cards .channel-copy)
+   Délégation d'event sur .contact-channels. Crossfade icône
+   content_copy → check, anneau radar, retour après 1.8 s.
+   ============================================================= */
+
+const channelsRoot = document.querySelector(".contact-channels");
+
+if (channelsRoot) {
+    const liveRegion = channelsRoot.querySelector(".channel-copy-live");
+    const timers = new WeakMap();
+
+    const fallbackCopy = (text) => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "absolute";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } finally { ta.remove(); }
+    };
+
+    const markCopied = (button) => {
+        button.classList.remove("is-copied");
+        // reflow pour relancer l'animation de l'anneau si re-clic rapide
+        void button.offsetWidth;
+        button.classList.add("is-copied");
+        if (liveRegion) liveRegion.textContent = "Copié dans le presse-papiers";
+
+        const previous = timers.get(button);
+        if (previous) clearTimeout(previous);
+        const t = setTimeout(() => {
+            button.classList.remove("is-copied");
+            if (liveRegion) liveRegion.textContent = "";
+        }, 1800);
+        timers.set(button, t);
+    };
+
+    channelsRoot.addEventListener("click", (event) => {
+        const button = event.target.closest(".channel-copy");
+        if (!button) return;
+        const text = button.dataset.copy;
+        if (!text) return;
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text)
+                .then(() => markCopied(button))
+                .catch(() => { fallbackCopy(text); markCopied(button); });
+        } else {
+            fallbackCopy(text);
+            markCopied(button);
+        }
+    });
+}
+
+
+/* =============================================================
    SECTION 4 — PAGE CONTACT (contact.html uniquement)
    Validation client + bannières d'état. Pas de backend pour
    l'instant : on simule le succès et on reset le formulaire.

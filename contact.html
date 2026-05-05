@@ -64,30 +64,65 @@
                 <div class="contact-layout">
 
                     <aside class="contact-channels">
-                        <a href="tel:+19999999999" class="channel-card animate-on-scroll">
+                        <div class="channel-card animate-on-scroll">
                             <span class="channel-icon material-symbols-outlined">call</span>
                             <div class="channel-body">
                                 <span class="channel-label">Téléphone</span>
                                 <span class="channel-value">+1 (999) 999-9999</span>
                             </div>
-                        </a>
-                        <a href="mailto:info@solutionsterravia.com" class="channel-card animate-on-scroll">
+                            <div class="channel-actions">
+                                <button type="button"
+                                        class="channel-copy"
+                                        data-copy="+1 (999) 999-9999"
+                                        aria-label="Copier le numéro de téléphone">
+                                    <span class="channel-copy-icon channel-copy-icon--default material-symbols-outlined">content_copy</span>
+                                    <span class="channel-copy-icon channel-copy-icon--done material-symbols-outlined">check</span>
+                                </button>
+                                <a href="tel:+19999999999"
+                                   class="channel-external material-symbols-outlined"
+                                   aria-label="Appeler le +1 (999) 999-9999">arrow_outward</a>
+                            </div>
+                        </div>
+                        <div class="channel-card animate-on-scroll">
                             <span class="channel-icon material-symbols-outlined">mail</span>
                             <div class="channel-body">
                                 <span class="channel-label">Courriel</span>
                                 <span class="channel-value">info@solutionsterravia.com</span>
                             </div>
-                        </a>
-                        <a href="https://www.google.com/maps/search/?api=1&amp;query=936+av+du+Mont-Royal+Est+Montr%C3%A9al+QC"
-                           target="_blank" rel="noopener noreferrer"
-                           class="channel-card channel-card--map animate-on-scroll">
+                            <div class="channel-actions">
+                                <button type="button"
+                                        class="channel-copy"
+                                        data-copy="info@solutionsterravia.com"
+                                        aria-label="Copier l'adresse courriel">
+                                    <span class="channel-copy-icon channel-copy-icon--default material-symbols-outlined">content_copy</span>
+                                    <span class="channel-copy-icon channel-copy-icon--done material-symbols-outlined">check</span>
+                                </button>
+                                <a href="mailto:info@solutionsterravia.com"
+                                   class="channel-external material-symbols-outlined"
+                                   aria-label="Envoyer un courriel à info@solutionsterravia.com">arrow_outward</a>
+                            </div>
+                        </div>
+                        <div class="channel-card animate-on-scroll">
                             <span class="channel-icon material-symbols-outlined">location_on</span>
                             <div class="channel-body">
                                 <span class="channel-label">Bureau</span>
                                 <address>936, av. du Mont-Royal Est<br>Montréal, QC H2J 1X2</address>
                             </div>
-                            <span class="channel-external material-symbols-outlined">arrow_outward</span>
-                        </a>
+                            <div class="channel-actions">
+                                <button type="button"
+                                        class="channel-copy"
+                                        data-copy="936, av. du Mont-Royal Est, Montréal, QC H2J 1X2"
+                                        aria-label="Copier l'adresse">
+                                    <span class="channel-copy-icon channel-copy-icon--default material-symbols-outlined">content_copy</span>
+                                    <span class="channel-copy-icon channel-copy-icon--done material-symbols-outlined">check</span>
+                                </button>
+                                <a href="https://www.google.com/maps/search/?api=1&amp;query=936+av+du+Mont-Royal+Est+Montr%C3%A9al+QC"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="channel-external material-symbols-outlined"
+                                   aria-label="Ouvrir l'adresse dans Google Maps">arrow_outward</a>
+                            </div>
+                        </div>
+                        <span class="channel-copy-live" aria-live="polite" aria-atomic="true"></span>
                     </aside>
 
                     <div class="contact-divider" aria-hidden="true">

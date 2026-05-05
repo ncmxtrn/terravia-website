@@ -76,23 +76,38 @@ window.addEventListener("load", () => {
     }
 
 
-    // --- Glassmorphisme du header au scroll ---
-    // Observe la section hero. Quand elle sort de l'écran (scroll vers le bas),
-    // on ajoute "is-scrolled" sur le header pour activer l'effet verre dépoli.
-    const heroSection = document.querySelector(".hero-section");
+    // --- Header au scroll ---
+    // Deux états découplés :
+    //   • "show-cta"    → apparition du bouton "Contactez-nous" du header
+    //                     déclenchée dès que le CTA de la hero quitte l'écran.
+    //   • "is-scrolled" → glassmorphisme du header, déclenché plus tard,
+    //                     quand la section hero entière quitte le viewport.
     const siteHeader = document.querySelector(".site-header");
+    const heroCtaBtn = document.querySelector("#hero-start-btn");
+    const heroSection = document.querySelector(".hero-section");
 
-    if (heroSection && siteHeader) {
-        const headerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                siteHeader.classList.toggle("is-scrolled", !entry.isIntersecting);
-            });
-        }, { threshold: 0 });
+    if (siteHeader) {
+        if (heroCtaBtn) {
+            const ctaObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    siteHeader.classList.toggle("show-cta", !entry.isIntersecting);
+                });
+            }, { threshold: 0 });
+            ctaObserver.observe(heroCtaBtn);
+        }
 
-        headerObserver.observe(heroSection);
-    } else if (siteHeader) {
-        // Pages sans hero (contact, login) : header opaque en permanence.
-        siteHeader.classList.add("is-scrolled");
+        if (heroSection) {
+            const headerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    siteHeader.classList.toggle("is-scrolled", !entry.isIntersecting);
+                });
+            }, { threshold: 0 });
+            headerObserver.observe(heroSection);
+        } else {
+            // Pages sans hero (contact, login) : header opaque + bouton visible.
+            siteHeader.classList.add("is-scrolled");
+            siteHeader.classList.add("show-cta");
+        }
     }
 });
 

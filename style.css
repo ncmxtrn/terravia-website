@@ -230,8 +230,9 @@ a {
     overflow: hidden;
 }
 
-/* État mobile scrollé : on cache le texte du logo */
-.site-header.is-scrolled .logo h2 {
+/* Sur mobile : on cache le texte du logo dès que le bouton CTA apparaît
+   (la grille du header passe en 3 colonnes, il faut faire de la place). */
+.site-header.show-cta .logo h2 {
     opacity: 0;
     max-width: 0;
     margin-left: -0.5rem; /* Compense le gap */
@@ -369,7 +370,7 @@ a {
     visibility: visible;
 }
 
-.site-header:not(.is-scrolled) #header-quote-btn {
+.site-header:not(.show-cta) #header-quote-btn {
     opacity: 0;
     transform: translateY(-10px);
     pointer-events: none;
@@ -400,7 +401,7 @@ a {
         }
     
         /* Quand le bouton du header est caché, on centre le logo */
-        .site-header:not(.is-scrolled) .logo {
+        .site-header:not(.show-cta) .logo {
             grid-column: 1 / 2; /* Reste à gauche */
             justify-self: start;
             margin-left: 0;
@@ -439,7 +440,7 @@ a {
         }
 
     /* En haut de page, le bouton du header est caché */
-    .site-header:not(.is-scrolled) #header-quote-btn {
+    .site-header:not(.show-cta) #header-quote-btn {
         opacity: 0;
         transform: scale(0.9);
         pointer-events: none;
@@ -449,8 +450,8 @@ a {
         padding: 0; /* On enlève le padding pour qu'il disparaisse vraiment */
     }
 
-    /* Quand on scrolle, le bouton apparaît */
-    .site-header.is-scrolled #header-quote-btn {
+    /* Quand le CTA hero sort, le bouton apparaît */
+    .site-header.show-cta #header-quote-btn {
         opacity: 1;
         transform: scale(1);
         max-width: 250px; /* Une largeur suffisante pour contenir le bouton */
@@ -1197,13 +1198,13 @@ a {
             transform: translateX(0);
         }
     
-        /* État haut de page (non-scrollé) */
-        .site-header:not(.is-scrolled) .main-nav {
+        /* État haut de page (CTA hero encore visible) */
+        .site-header:not(.show-cta) .main-nav {
             /* On décale le menu vers la droite de la moitié de la largeur du bouton + le gap */
             /* On ajuste le calcul pour qu'il soit dynamique en fonction de la taille du bouton */
             transform: translateX(calc( (100% + 1rem) / 2));
         }
-        .site-header:not(.is-scrolled) #header-quote-btn {
+        .site-header:not(.show-cta) #header-quote-btn {
             opacity: 0;
             transform: translateX(10px);
             pointer-events: none;
@@ -1273,7 +1274,7 @@ a {
         }
     
         /* Sur Desktop, on ne cache jamais le nom du logo */
-        .site-header.is-scrolled .logo h2 {
+        .site-header.show-cta .logo h2 {
             opacity: 1;
             max-width: 100px;
             margin-left: 0;

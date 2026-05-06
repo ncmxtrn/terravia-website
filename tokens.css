@@ -1,7 +1,21 @@
 /**
- * Terravia Design System — Color & Typography Tokens
- * Source: terravia-website/style.css + login.css
- * Fonts: Montserrat (body/UI), Orbitron (logo/display), Material Symbols Outlined (icons)
+ * tokens.css — Source unique de vérité du design system Terravia.
+ *
+ * Rôle dans l'architecture CSS :
+ *   1. Définit toutes les variables CSS (:root) : couleurs primitives, aliases
+ *      sémantiques, typographie, espacement, layout, border-radius, ombres et
+ *      courbes d'animation.
+ *   2. Applique les défauts sémantiques sur les éléments HTML de base (body,
+ *      h1–h3, p, etc.) — un seul endroit où consommer les tokens pour le fond.
+ *   3. Expose des classes utilitaires légères (.label-upper, .font-display,
+ *      .text-highlight, .text-gradient) qui ne portent pas de sémantique
+ *      structurelle et peuvent être appliquées depuis n'importe quel HTML.
+ *
+ * Règle d'or : style.css et login.css ne doivent jamais contenir de valeur brute
+ * (hex, rgba, rem, px). Si un token manque, l'ajouter ici d'abord.
+ *
+ * Ordre d'import attendu dans chaque page :
+ *   tokens.css → style.css → [page].css
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
@@ -9,14 +23,27 @@
 
 /* ============================================================
    BASE COLOR PRIMITIVES
+   ------------------------------------------------------------
+   Palette monochrome forest + vert néon. Ces valeurs brutes ne
+   doivent jamais être utilisées directement dans style.css ou
+   login.css — passer toujours par un alias sémantique ci-dessous.
    ============================================================ */
 :root {
-  /* — Brand greens — */
+  /* — Brand greens —
+     --green-400 : accent néon, usage parcimonieux (CTA, icônes, highlights).
+     --green-500 : variante sombre utilisée pour les états hover des CTA verts. */
   --green-50:  #f0fdf4;
   --green-400: #4ADE80;   /* primary accent */
   --green-500: #22c55e;   /* primary dark / hover */
 
-  /* — Forest palette — */
+  /* — Forest palette —
+     --forest-900 et --forest-800 sont les seules valeurs opaques ; toutes les
+     autres sont des dégradés d'opacité de --forest-900 (#1A3C34) permettant de
+     superposer la teinte forest sur n'importe quel fond sans multiplier les
+     couleurs solides.
+     --forest-95 vs --forest-90 : deux pas proches nécessaires pour distinguer
+     l'arrière-plan du header (0.85 blanc) de celui de certains overlays sombres
+     (0.90 / 0.95) sans casser la lisibilité du texte blanc. */
   --forest-900: #1A3C34;   /* brand dark */
   --forest-800: #234e44;   /* forest light */
   --forest-95:  rgba(26, 60, 52, 0.95);
@@ -32,12 +59,20 @@
   --forest-05:  rgba(26, 60, 52, 0.05);
   --forest-03:  rgba(26, 60, 52, 0.03);
 
-  /* — Neutrals — */
+  /* — Neutrals —
+     --white et --bg-light sont délibérément identiques (#ffffff). --bg-light est
+     le token sémantique "fond de page" ; --white est le token "surface" (cartes,
+     inputs). Les distinguer nominalement permet de changer l'un sans l'autre si
+     le design évolue vers un fond légèrement teinté. */
   --white:       #ffffff;
   --bg-light:    #ffffff;   /* page background */
   --gray-200:    #e5e7eb;
 
-  /* — Semantic: state — */
+  /* — Semantic: state —
+     Tokens d'erreur déclinés en quatre niveaux d'intensité pour couvrir :
+     fond de bannière (error-bg), bordure subtile (error-border), bordure
+     marquée sur input invalide (error-border-strong), anneau de focus (error-focus-ring),
+     et texte lisible sur fond clair (error-text). */
   --error:              #ef4444;
   --error-bg:           rgba(239, 68, 68, 0.08);
   --error-border:       rgba(239, 68, 68, 0.25);
@@ -47,6 +82,11 @@
 
   /* ============================================================
      SEMANTIC ALIASES
+     ------------------------------------------------------------
+     Couche d'abstraction entre les primitives et les fichiers CSS
+     consommateurs. Permet de changer un rôle visuel en un seul endroit
+     sans toucher aux sélecteurs. Regroupés par domaine fonctionnel :
+     couleurs de marque, texte, surfaces, bordures.
      ============================================================ */
   --color-primary:      var(--green-400);
   --color-primary-dark: var(--green-500);
@@ -56,20 +96,31 @@
   --color-white:        var(--white);
   --color-gray-light:   var(--gray-200);
 
-  /* Text roles */
+  /* Rôles texte — hiérarchie à trois niveaux :
+     --fg1 : texte principal et titres, contraste maximum sur fond blanc.
+     --fg2 : texte secondaire (captions, lead, labels), contraste réduit.
+     --fg3 : placeholders et états désactivés, intentionnellement peu contrasté. */
   --fg1:   var(--forest-900);          /* primary text, headings */
   --fg2:   var(--forest-60);           /* secondary text, captions */
   --fg3:   var(--forest-30);           /* placeholders, disabled */
   --fg-on-dark: #ffffff;               /* text on forest/dark bg */
   --fg-on-dark-muted: rgba(255,255,255,0.60);
 
-  /* Surface roles */
+  /* Rôles surface — distinctions sémantiques entre les plans de l'UI :
+     --surface-page : fond de page, toujours le plus en retrait.
+     --surface-card : fond de carte, identique au blanc mais sémantiquement distinct.
+     --surface-dark : fond footer et sections sombres.
+     --surface-header : fond glassmorphism du header au scroll (blanc translucide). */
   --surface-page:   var(--bg-light);
   --surface-card:   var(--white);
   --surface-dark:   var(--forest-900);
   --surface-header: rgba(255, 255, 255, 0.85);
 
-  /* Border roles */
+  /* Rôles bordure — gradation d'intensité :
+     --border-subtle : séparateurs internes (ex. lignes entre options de dropdown).
+     --border-default : contour de carte ou d'input au repos.
+     --border-hover : contour vert au survol des cartes ou au focus des inputs.
+     --badge-bg / --badge-border : fond et contour des badges et chips verts. */
   --border-subtle:  var(--forest-08);
   --border-default: var(--forest-10);
   --border-hover:   rgba(74, 222, 128, 0.45);
@@ -78,12 +129,22 @@
 
   /* ============================================================
      TYPOGRAPHY
+     ------------------------------------------------------------
+     Trois familles aux rôles strictement séparés :
+     - Montserrat : corps, UI, navigation (toute prose).
+     - Orbitron   : logo et chiffres display uniquement — ne pas utiliser en prose.
+     - Material Symbols Outlined : icônes, variante Outlined exclusivement (FILL=0).
      ============================================================ */
   --font-main:    'Montserrat', sans-serif;
   --font-display: 'Orbitron', sans-serif;
   --font-icons:   'Material Symbols Outlined';
 
-  /* Type scale — desktop */
+  /* Échelle typographique — desktop.
+     --text-hero et --text-h2 utilisent clamp() pour une fluidité responsive sans
+     media query : la taille interpole entre la valeur minimale (em) et maximale
+     (rem) selon la largeur du viewport (vw). Les valeurs fixes (--text-h2-sm,
+     --text-h3, etc.) s'appliquent à des contextes où la fluidité n'est pas requise
+     car le contenant est déjà contraint (cartes, colonnes étroites). */
   --text-hero:    clamp(2.5rem, 5vw, 3.5rem);   /* H1 hero */
   --text-h2:      clamp(2rem, 4vw, 3rem);        /* Section H2 */
   --text-h2-sm:   2rem;                           /* Tech / projects H2 */
@@ -94,7 +155,10 @@
   --text-xs:      0.8rem;                         /* Badges, labels */
   --text-logo:    1.25rem;                        /* Logo wordmark */
 
-  /* Icon scale — Material Symbols */
+  /* Échelle des icônes Material Symbols.
+     Les valeurs sont exprimées en rem pour suivre la taille de police racine.
+     Chaque pas correspond à un usage fonctionnel précis afin d'éviter les
+     valeurs ad hoc dans les fichiers consommateurs. */
   --icon-xs:   0.875rem;  /* 14px — chips, tags */
   --icon-sm:   1rem;      /* 16px — inline body */
   --icon-base: 1.1rem;    /* ~17.6px — boutons, bannières */
@@ -102,7 +166,7 @@
   --icon-lg:   1.5rem;    /* 24px — défaut visuel Material */
   --icon-xl:   2rem;      /* 32px — cartes services */
 
-  /* Weight scale */
+  /* Graisses — alignées sur les valeurs disponibles dans Montserrat Variable. */
   --weight-regular: 400;
   --weight-medium:  500;
   --weight-semibold:600;
@@ -110,13 +174,17 @@
   --weight-extrabold:800;
   --weight-black:   900;
 
-  /* Line heights */
+  /* Hauteurs de ligne — du plus serré (titres display) au plus aéré (texte long). */
   --leading-tight:   1.1;
   --leading-snug:    1.25;
   --leading-normal:  1.5;
   --leading-relaxed: 1.6;
 
-  /* Letter spacing */
+  /* Espacement de lettres —
+     --tracking-logo : ajustement optique minimal sur le nom de marque.
+     --tracking-badge : 0.1em, standard pour les labels uppercase (WCAG lisibilité).
+     --tracking-link  : discret, utilisé sur la navigation pour aérer sans déformer.
+     --tracking-tight : compensation optique sur les grands titres gras (évite l'effet cramped). */
   --tracking-logo:   0.5px;
   --tracking-badge:  0.1em;
   --tracking-link:   0.08em;
@@ -125,6 +193,15 @@
 
   /* ============================================================
      SPACING SCALE
+     ------------------------------------------------------------
+     Échelle multiplicative par pas de ×2 (4 → 8 → 16 → 32 → 64…),
+     avec des demi-pas intermédiaires (12, 24, 40) pour les situations
+     où le saut double est trop important.
+     --space-none : explicite l'intention "zéro" (gap: 0 sur .channel-actions)
+     plutôt que d'écrire la valeur brute 0.
+     --tap-target-min : 44px, seuil WCAG 2.5.5 et Apple/Google HIG pour les
+     cibles tactiles. Utilisé sur .password-toggle et .channel-copy/.channel-external
+     pour garantir l'accessibilité mobile sans agrandir l'icône visuelle.
      ============================================================ */
   --space-none: 0;       /*   0px */
   --space-2xs: 0.25rem;  /*   4px */
@@ -141,6 +218,12 @@
 
   /* ============================================================
      LAYOUT
+     ------------------------------------------------------------
+     --width-max : largeur maximale du conteneur principal (1280px).
+     --header-height : hauteur fixe du header, utilisée comme padding-top
+       sur les pages sans hero pour éviter que le contenu passe sous le header.
+     --container-px / --container-px-md : marges horizontales du conteneur
+       selon le breakpoint (mobile → tablette/desktop).
      ============================================================ */
   --width-max:       1280px;
   --header-height:   80px;
@@ -149,6 +232,13 @@
 
   /* ============================================================
      BORDER RADIUS
+     ------------------------------------------------------------
+     Progression du plus anguleux au plus arrondi :
+     --radius-sm  : badges de statut, micro-éléments.
+     --radius-md  : boutons et inputs — cohérence avec les composants de formulaire.
+     --radius-lg  : UI flottante (tooltips, panels).
+     --radius-xl  : cartes — arrondi plus généreux pour les surfaces larges.
+     --radius-pill: 999px, garantit un arrondi complet quelle que soit la largeur.
      ============================================================ */
   --radius-sm:   0.25rem;   /* status badges */
   --radius-md:   0.5rem;    /* buttons, inputs */
@@ -158,6 +248,17 @@
 
   /* ============================================================
      SHADOWS
+     ------------------------------------------------------------
+     Toutes les ombres utilisent la teinte forest (rgba 26,60,52) pour rester
+     dans la palette monochrome — jamais de noir pur.
+     --shadow-card : ombre composite (near + far) pour donner de la profondeur
+       aux cartes au repos sans attirer l'attention.
+     --shadow-card-hover / --shadow-project-hover : ombres plus étirées et plus
+       opaques pour accentuer l'élévation au survol.
+     --shadow-glow / --shadow-glow-hover : halo vert sur les boutons CTA ;
+       renforce l'association visuelle avec l'accent de marque.
+     --focus-ring : anneau de focus vert translucide, conforme WCAG 2.4.11
+       (Focus Appearance) — 3px minimum, couleur suffisamment contrastée.
      ============================================================ */
   --shadow-card-hover:    0 24px 40px -18px rgba(26, 60, 52, 0.22);
   --shadow-project-hover: 0 28px 48px -16px rgba(26, 60, 52, 0.35);
@@ -170,6 +271,18 @@
 
   /* ============================================================
      ANIMATION TOKENS
+     ------------------------------------------------------------
+     Courbes d'accélération typées par usage :
+     --ease-card     : settle rapide → idéal pour le lift de carte (overshoot léger).
+     --ease-header   : material standard → transitions d'état du header.
+     --ease-entrance : départ lent → entrant avec de l'emphase, éléments qui arrivent.
+     --ease-scroll   : easeOutCubic classique → reveals au scroll.
+
+     Durées :
+     --duration-fast   : interactions immédiates (hover sur icône, toggle checkbox).
+     --duration-base   : interactions standard (hover de bouton, bordure d'input).
+     --duration-medium : transitions d'état plus substantielles (icône d'input).
+     --duration-slow / --duration-reveal : reveals au scroll (600–800 ms selon CLAUDE.md).
      ============================================================ */
   --ease-card:     cubic-bezier(0.22, 1, 0.36, 1);
   --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);
@@ -185,7 +298,12 @@
 
 /* ============================================================
    SEMANTIC HTML ELEMENT DEFAULTS
-   Apply by importing this file and resetting in your stylesheet.
+   ------------------------------------------------------------
+   Styles de base appliqués directement sur les éléments HTML
+   pour consommer les tokens dès l'import de ce fichier.
+   Ces règles sont intentionnellement peu spécifiques (0,0,1)
+   afin que style.css et login.css puissent les surcharger sans
+   recourir à !important.
    ============================================================ */
 
 body {
@@ -231,7 +349,9 @@ small, .text-sm {
   font-size: var(--text-sm);
 }
 
-/* Badge / label style */
+/* Classe utilitaire pour les badges et labels de section en majuscules.
+   Doit être combinée avec un élément inline ou un span — ne pas appliquer
+   à des titres sémantiques (h1–h6) pour préserver la hiérarchie du document. */
 .label-upper {
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
@@ -240,17 +360,23 @@ small, .text-sm {
   color: var(--fg1);
 }
 
-/* Display / logo font */
+/* Police display Orbitron — réservée au logo et aux chiffres display.
+   Ne pas utiliser en prose : Orbitron est illisible en corps de texte long. */
 .font-display {
   font-family: var(--font-display);
 }
 
-/* Text highlight (green on dark backgrounds) */
+/* Accent vert sur fond sombre (sections forest, footer).
+   Sur fond clair, préférer .text-gradient pour un meilleur rendu. */
 .text-highlight {
   color: var(--color-primary);
 }
 
-/* Text gradient (headings on light backgrounds) */
+/* Dégradé de texte forest → vert pour les titres sur fond clair.
+   Nécessite background-clip: text + color: transparent.
+   NOTE: background-clip: text est non-standard (préfixe -webkit- conservé
+   pour la compatibilité Safari) ; le fallback color: transparent est inoffensif
+   sur les navigateurs qui ne supportent pas la propriété. */
 .text-gradient {
   background: linear-gradient(to right, var(--color-forest), var(--color-primary-dark));
   -webkit-background-clip: text;

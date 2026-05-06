@@ -1,25 +1,26 @@
-<!-- 
-    👋 Salut ! Bienvenue dans le fichier index.html.
-    C'est un peu comme le squelette de notre site web. 
-    Imagine une maison : ici, on pose les fondations, les murs et le toit.
-    On ne s'occupe pas encore de la peinture (ça c'est le CSS) ni de l'électricité (ça c'est le JS).
+<!--
+    index.html — Page d'accueil (landing page) de Solutions Terravia.
+    Structure : en-tête fixe, hero plein écran, section services, section technologie,
+    galerie de projets, pied de page avec coordonnées.
+    Aucun JS inline — toute l'interactivité est centralisée dans script.js.
 -->
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="utf-8" />
-    <!-- 
-        📱 Cette ligne est magique pour les téléphones !
-        Elle dit au navigateur : "Hey, adapte-toi à la largeur de l'écran, ne dézoome pas comme un fou".
+    <!--
+        Viewport sans mise à l'échelle automatique : indispensable pour que
+        les media queries CSS correspondent aux dimensions réelles de l'écran.
     -->
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Solutions Terravia</title>
+    <title>Solutions Terravia — Relevés LiDAR par drone</title>
 
     <!--
-        🎨 On charge d'abord les polices et icônes de Google.
-        IMPORTANT : Google's CSS doit venir AVANT nos CSS pour qu'on puisse override
-        proprement (sinon le `font-size: 24px` de .material-symbols-outlined gagne par cascade).
+        Les feuilles de style Google (polices + icônes Material Symbols) sont chargées
+        avant nos propres CSS afin que la cascade CSS locale puisse les surcharger sans
+        recourir à `!important`. En particulier, `font-size` sur `.material-symbols-outlined`
+        doit être défini après la feuille Google pour prendre effet correctement.
     -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
@@ -27,37 +28,34 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
         rel="stylesheet" />
 
-    <!-- tokens.css = la boîte à outils du design system (couleurs, polices, espacements) -->
+    <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
     <link rel="stylesheet" href="tokens.css">
-    <!-- Ici, on fait le lien avec notre fichier de décoration (CSS) -->
+    <!-- style.css : styles globaux du site, consomme exclusivement les tokens définis ci-dessus -->
     <link rel="stylesheet" href="style.css">
 </head>
 
-<!-- 
-    Le <body>, c'est tout ce que tes visiteurs vont voir.
-    On lui met une petite étiquette "is-loading" au début pour lui dire :
-    "Attends un peu avant de t'afficher, le temps qu'on se fasse beau".
+<!--
+    La classe `is-loading` masque le body jusqu'à ce que script.js ait terminé
+    l'initialisation, évitant un flash de contenu non stylisé (FOUC).
+    La classe `page-transition` orchestre le fondu de sortie lors des navigations internes.
 -->
-
 <body class="is-loading page-transition">
     <div class="site-wrapper">
 
-        <!-- 
-            🎩 Le Header, c'est le chapeau du site.
-            Il reste souvent en haut et contient le logo et le menu.
+        <!--
+            En-tête du site — position fixe avec glassmorphisme activé dynamiquement
+            via la classe `.is-scrolled` lorsque le défilement dépasse le seuil défini dans script.js.
+            Sur mobile, le menu principal est replié et commandé par le bouton `.menu-toggle`.
         -->
         <header class="site-header">
             <div class="container header-content">
-                <!-- Le logo : quand on clique dessus, on revient à la maison (en haut) -->
+                <!-- Lien de retour en haut de page ; href="#" évite une navigation vers une ancre explicite -->
                 <a href="#" class="logo">
-                    <img src="assets/logo-noir.svg" alt="Terravia Logo" class="logo-icon">
+                    <img src="assets/logo-noir.svg" alt="Terravia" class="logo-icon">
                     <h2>Terravia</h2>
                 </a>
 
-                <!-- 
-                    🧭 La boussole du site (Menu de navigation).
-                    C'est ici qu'on met les liens pour aller aux différents endroits de la page.
-                -->
+                <!-- Navigation principale — liens d'ancre vers les sections de la page -->
                 <nav class="main-nav">
                     <a href="#services" class="transition-link">Services</a>
                     <a href="login.html" class="transition-link client-link">
@@ -65,16 +63,22 @@
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
                     <a href="#projets" class="transition-link">Projets</a>
-                    <a href="#contact" class="link-placeholder">À propos</a>
+                    <!--
+                        Lien placeholder : la page "À propos" n'est pas encore publiée.
+                        La classe `.link-placeholder` est interceptée par script.js pour
+                        afficher une alerte "page en construction" au lieu de naviguer.
+                    -->
+                    <a href="#" class="link-placeholder">À propos</a>
                 </nav>
 
                 <div class="header-actions">
                     <a href="contact.html" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
-                    <!-- 
-                        🍔 Le fameux menu "Hamburger" !
-                        Sur ordinateur, on le cache. Sur téléphone, c'est le bouton qui ouvre le menu.
+                    <!--
+                        Bouton hamburger — visible uniquement sur mobile (géré en CSS).
+                        Les attributs `aria-label` et `aria-expanded` sont mis à jour dynamiquement
+                        par script.js à l'ouverture et à la fermeture du menu.
                     -->
-                    <button class="menu-toggle">
+                    <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
                         <div class="burger-icon">
                             <span></span>
                             <span></span>
@@ -85,21 +89,23 @@
             </div>
         </header>
 
-        <!-- <main> contient la viande du site, le contenu principal -->
         <main>
-            <!-- 
-                🦸‍♀️ La section "Héros". 
-                C'est la première chose grandiose qu'on voit. Faut que ça claque !
+            <!--
+                Section hero — première impression visuelle, plein écran.
+                L'image de fond est déclarée en style inline pour permettre un remplacement
+                par variable CSS ou CMS ultérieurement sans modifier style.css.
+                L'overlay (`.hero-overlay`) est un élément séparé pour pouvoir animer
+                son opacité indépendamment du fond et du contenu texte.
             -->
             <section class="hero-section">
-                <!-- On met l'image en fond dans une boîte à part pour pouvoir mettre un filtre sombre par-dessus -->
+                <!-- Conteneur dédié au fond photographique : séparation fond / overlay / contenu -->
                 <div class="hero-background"
                     style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWeqVyL8VDPCEoVDcurPS_F93LisAMvxD_YIKsQCp1nrPirWp1gL7xTCCR3ePEa1gLINaz4lWGOqCsPswesWSOPLhhbDpEOxGPLm5RbsRkDbp08U9CQ4d9KRsn-l-GBw-ebG-fUnYUXeZVw90DbK1BQb6zhYZV_mYCIyaZ-lc_EwZJZVYnefqJkogn_4vvKuTLOEG2fcX_VXPNvuT_6yAviU6eWkwtzxLZPheSiP1Pl3UCG73-nS7ZvAnJPOHJa_1vNMnI9REjFbU");'>
                 </div>
                 <div class="hero-overlay"></div>
 
                 <div class="container hero-content">
-                    <h1>La Précision Géomatique <span class="text-highlight">par Drone</span></h1>
+                    <h1>La précision géomatique <span class="text-highlight">par drone</span></h1>
                     <p class="lead-text">
                         Acquisition de données haute fidélité pour ingénieurs et arpenteurs. Transformez le réel en
                         données exploitables.
@@ -111,24 +117,22 @@
                 </div>
             </section>
 
-            <!-- 
-                🛠️ Section Services.
-                On va présenter ce qu'on sait faire sous forme de cartes.
+            <!--
+                Section services — présentation des quatre expertises principales sous forme de grille de cartes.
+                Chaque carte porte `.animate-on-scroll` : un `IntersectionObserver` dans script.js
+                déclenche l'entrée en fondu + translation verticale au premier passage dans le viewport.
             -->
             <section class="services-section" id="services">
                 <div class="container">
                     <div class="section-header center">
                         <div class="badge"><span class="badge-dot"></span>Nos Expertises</div>
-                        <!-- "animate-on-scroll" : c'est notre code secret pour dire "Apparais doucement quand on te voit" -->
                         <h2 class="animate-on-scroll">Solutions de pointe pour <span
                                 class="text-gradient">l'ingénierie</span></h2>
                         <p class="subtitle animate-on-scroll">Des technologies adaptées aux exigences rigoureuses des
                             arpenteurs-géomètres et ingénieurs civils.</p>
                     </div>
 
-                    <!-- Une grille pour ranger nos cartes bien alignées -->
                     <div class="services-grid">
-                        <!-- Carte 1 : LiDAR -->
                         <div class="service-card animate-on-scroll">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">grid_4x4</span>
@@ -142,7 +146,6 @@
                                     class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
-                        <!-- Carte 2 : Photogrammétrie -->
                         <div class="service-card animate-on-scroll">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">imagesmode</span>
@@ -156,7 +159,6 @@
                                     class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
-                        <!-- Carte 3 : Inspection -->
                         <div class="service-card animate-on-scroll">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">content_paste_search</span>
@@ -170,7 +172,6 @@
                                     class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
 
-                        <!-- Carte 4 : Volumétrie -->
                         <div class="service-card animate-on-scroll">
                             <div class="icon-box">
                                 <span class="material-symbols-outlined">deployed_code</span>
@@ -187,14 +188,17 @@
                 </div>
             </section>
 
-            <!-- 
-                💻 Section Technologie.
-                Présentation avec un texte à gauche et une image à droite (ou l'inverse).
+            <!--
+                Section technologie — mise en valeur de la Plateforme Intelligente (concept de marque).
+                Disposition en deux colonnes asymétriques : texte à gauche, capture d'écran à droite.
+                L'élément `.floating-ui` superposé à l'image simule un widget de l'interface client
+                et ancre visuellement la section dans le produit réel.
             -->
             <section class="tech-section" id="technologie">
                 <div class="container">
                     <div class="split-layout">
                         <div class="tech-text">
+                            <!-- "Plateforme Intelligente" : les deux mots sont capitalisés — concept de marque -->
                             <div class="label-tech">Plateforme Intelligente</div>
                             <h2>Visualisez et analysez vos données</h2>
                             <p>
@@ -216,7 +220,11 @@
                             <div class="image-container"
                                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'>
                             </div>
-                            <!-- Un petit élément flottant par-dessus l'image pour faire "Tech" -->
+                            <!--
+                                Widget flottant décoratif positionné en absolu sur l'image.
+                                Il illustre l'interface de la plateforme sans nécessiter une vraie capture d'écran.
+                                Pas de comportement interactif — rôle purement visuel.
+                            -->
                             <div class="floating-ui">
                                 <div class="file-info">
                                     <span class="material-symbols-outlined">description</span>
@@ -229,15 +237,17 @@
                 </div>
             </section>
 
-            <!-- 
-                🏗️ Section Projets.
-                Une galerie de nos réalisations.
+            <!--
+                Section projets — galerie de réalisations récentes.
+                Chaque `<article>` représente un projet indépendant avec sa propre image de fond,
+                son overlay de lisibilité et ses métadonnées (catégorie, titre, détail technique).
+                L'élément `<article>` est sémantiquement approprié car chaque projet est un contenu autonome.
             -->
             <section class="projects-section" id="projets">
                 <div class="container">
                     <div class="projects-header">
                         <div>
-                            <h2>Projets Récents</h2>
+                            <h2>Projets récents</h2>
                             <p>Découvrez comment nos données transforment la planification de projets.</p>
                         </div>
                     </div>
@@ -251,7 +261,8 @@
                             <div class="project-info">
                                 <span class="project-category">Volumétrie</span>
                                 <h3>Carrière Saint-Marc</h3>
-                                <p class="project-detail">Calcul de stock mensuel avec précision < 1%.</p>
+                                <!-- `&lt;` pour afficher le signe < sans casser le parsing HTML -->
+                                <p class="project-detail">Calcul de stock mensuel avec précision &lt; 1&nbsp;%.</p>
                             </div>
                         </article>
 
@@ -283,16 +294,18 @@
             </section>
         </main>
 
-        <!-- 
-            🦶 Le Footer (Pied de page).
-            C'est comme la signature à la fin d'une lettre. On y met les infos pratiques.
+        <!--
+            Pied de page — fond solide `--forest-900`, quatre colonnes : marque, services, entreprise, coordonnées.
+            L'ancre `id="contact"` permet de pointer vers cette section depuis les boutons CTA de la page.
+            Les liens sous "Services" et "Entreprise" non encore publiés portent `.link-placeholder`
+            pour déclencher l'alerte "en construction" via script.js.
         -->
         <footer class="site-footer" id="contact">
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
                         <a href="#" class="logo">
-                            <img src="assets/logo-noir.svg" alt="Terravia Logo" class="logo-icon">
+                            <img src="assets/logo-noir.svg" alt="Terravia" class="logo-icon">
                             <h3>Terravia</h3>
                         </a>
                         <p>L'excellence en acquisition de données géospatiales par drone.</p>
@@ -301,9 +314,9 @@
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="#" class="link-placeholder">LiDAR Aéroporté</a></li>
+                            <li><a href="#" class="link-placeholder">LiDAR aéroporté</a></li>
                             <li><a href="#" class="link-placeholder">Photogrammétrie</a></li>
-                            <li><a href="#" class="link-placeholder">Inspection d'Ouvrages</a></li>
+                            <li><a href="#" class="link-placeholder">Inspection d'ouvrages</a></li>
                         </ul>
                     </div>
 
@@ -312,14 +325,19 @@
                         <ul>
                             <li><a href="#" class="link-placeholder">À propos</a></li>
                             <li><a href="#" class="link-placeholder">Carrières</a></li>
-                            <li><a href="#" class="link-placeholder">Blogue Technique</a></li>
+                            <li><a href="#" class="link-placeholder">Blogue technique</a></li>
                         </ul>
                     </div>
 
+                    <!--
+                        Coordonnées structurées avec `<address>` pour la sémantique HTML correcte.
+                        Les icônes Material Symbols sont purement décoratives ici (pas d'aria-label nécessaire
+                        car le texte adjacent est suffisant pour l'accessibilité).
+                    -->
                     <div class="footer-contact">
                         <h4>Contactez-nous</h4>
                         <ul>
-                            
+
                             <li><span class="material-symbols-outlined icon">call</span> +1 (999) 999-9999</li>
                             <li><span class="material-symbols-outlined icon">mail</span> info@solutionsterravia.com</li>
                             <li>
@@ -338,10 +356,10 @@
             </div>
         </footer>
     </div>
-    <!-- 
-        🧠 Le Cerveau du site (JavaScript).
-        C'est lui qui va rendre les boutons vivants et faire bouger les choses.
-        On le met à la toute fin pour que le squelette soit chargé avant de brancher l'électricité.
+    <!--
+        script.js chargé en fin de body (sans `defer`) pour garantir que le DOM est entièrement
+        parsé avant l'initialisation. Centralise toute l'interactivité : reveal au scroll,
+        glassmorphisme du header, menu hamburger, transitions de page, alertes placeholders.
     -->
     <script src="script.js"></script>
 </body>

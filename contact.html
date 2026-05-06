@@ -1,33 +1,63 @@
+<!--
+    contact.html — Page de contact de Solutions Terravia.
+    Propose deux voies d'accès complémentaires : coordonnées directes (téléphone, courriel, adresse)
+    et formulaire de demande de projet. Aucun backend requis à ce stade — le formulaire est
+    structuré pour une intégration ultérieure (Formspree, Netlify Forms, ou API interne).
+    Aucun JS inline — toute l'interactivité est centralisée dans script.js.
+-->
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Contact - Solutions Terravia</title>
+    <title>Contact — Solutions Terravia</title>
 
-    <!-- Google d'abord (polices + icônes), nos CSS ensuite — voir commentaire dans index.html -->
+    <!--
+        Les feuilles de style Google (polices + icônes Material Symbols) sont chargées
+        avant nos propres CSS afin que la cascade CSS locale puisse les surcharger sans
+        recourir à `!important`. Même contrainte d'ordre que dans index.html.
+    -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
         rel="stylesheet" />
 
-    <!-- tokens.css = la boîte à outils du design system (couleurs, polices, espacements) -->
+    <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
     <link rel="stylesheet" href="tokens.css">
+    <!-- style.css : styles globaux partagés avec index.html (header, footer, boutons, utilitaires) -->
     <link rel="stylesheet" href="style.css">
-    <!-- login.css fournit les classes form génériques (.form-stack, .input-wrapper, .form-input…) -->
+    <!--
+        login.css : fournit les classes de formulaire génériques réutilisées ici
+        (.form-stack, .input-wrapper, .form-input, .input-label, etc.).
+        Importé en amont de contact.css pour permettre la surcharge locale.
+    -->
     <link rel="stylesheet" href="login.css">
+    <!-- contact.css : styles spécifiques à cette page (layout, cartes de coordonnées, formulaire) -->
     <link rel="stylesheet" href="contact.css">
 </head>
 
+<!--
+    Mêmes classes que index.html : `is-loading` prévient le FOUC,
+    `page-transition` gère le fondu de sortie lors des navigations.
+-->
 <body class="is-loading page-transition">
     <div class="site-wrapper">
 
+        <!--
+            En-tête identique structurellement à index.html.
+            Les liens de navigation pointent vers les ancres d'index.html (préfixe `index.html#`)
+            car cette page ne contient pas les sections correspondantes.
+            Le bouton CTA "Contactez-nous" pointe vers `#contact-form-card` (ancre intra-page)
+            et est masqué via `aria-hidden` + `tabindex="-1"` : sur cette page, le bouton
+            serait redondant et visible dans le viewport, il ne doit donc pas être accessible
+            au clavier ni aux lecteurs d'écran.
+        -->
         <header class="site-header">
             <div class="container header-content">
                 <a href="index.html" class="logo transition-link">
-                    <img src="assets/logo-noir.svg" alt="Terravia Logo" class="logo-icon">
+                    <img src="assets/logo-noir.svg" alt="Terravia" class="logo-icon">
                     <h2>Terravia</h2>
                 </a>
 
@@ -42,8 +72,13 @@
                 </nav>
 
                 <div class="header-actions">
+                    <!--
+                        Sur cette page, le CTA pointe vers le formulaire de contact via une ancre intra-page.
+                        `aria-hidden` et `tabindex="-1"` le retirent de l'ordre de tabulation et de l'arbre
+                        d'accessibilité : le formulaire est déjà visible sans défilement significatif.
+                    -->
                     <a href="#contact-form-card" class="btn btn-primary" id="header-quote-btn" aria-hidden="true" tabindex="-1">Contactez-nous</a>
-                    <button class="menu-toggle">
+                    <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
                         <div class="burger-icon">
                             <span></span>
                             <span></span>
@@ -56,13 +91,28 @@
 
         <main class="contact-main">
             <div class="container">
+
+                <!-- Introduction de page — H1 + accroche avec délai de réponse garanti -->
                 <section class="contact-intro">
                     <h1 class="animate-on-scroll">Discutons de votre projet</h1>
                     <p class="lead animate-on-scroll">Téléphone, courriel ou formulaire — choisissez le canal qui vous convient. <span class="contact-intro-reassurance"><span class="material-symbols-outlined">schedule</span> Réponse sous 24 heures ouvrables.</span></p>
                 </section>
 
+                <!--
+                    Disposition principale en deux colonnes : coordonnées directes (aside) | formulaire (section).
+                    Un séparateur décoratif `.contact-divider` occupe la colonne centrale sur desktop
+                    et disparaît sur mobile où les blocs s'empilent verticalement.
+                -->
                 <div class="contact-layout">
 
+                    <!--
+                        Colonne gauche — cartes de coordonnées directes.
+                        Chaque carte propose deux actions : copier la valeur dans le presse-papiers
+                        et ouvrir le canal natif (tel:, mailto:, Google Maps).
+                        Le double état des icônes (`.channel-copy-icon--default` / `.channel-copy-icon--done`)
+                        est piloté par script.js : bascule vers l'icône "check" à la confirmation de copie.
+                        La région `aria-live` `.channel-copy-live` annonce la confirmation aux lecteurs d'écran.
+                    -->
                     <aside class="contact-channels">
                         <div class="channel-card animate-on-scroll">
                             <span class="channel-icon material-symbols-outlined">call</span>
@@ -83,6 +133,7 @@
                                    aria-label="Appeler le +1 (999) 999-9999">arrow_outward</a>
                             </div>
                         </div>
+
                         <div class="channel-card animate-on-scroll">
                             <span class="channel-icon material-symbols-outlined">mail</span>
                             <div class="channel-body">
@@ -102,10 +153,12 @@
                                    aria-label="Envoyer un courriel à info@solutionsterravia.com">arrow_outward</a>
                             </div>
                         </div>
+
                         <div class="channel-card animate-on-scroll">
                             <span class="channel-icon material-symbols-outlined">location_on</span>
                             <div class="channel-body">
                                 <span class="channel-label">Bureau</span>
+                                <!-- `<address>` : élément sémantique HTML pour les coordonnées physiques -->
                                 <address>936, av. du Mont-Royal Est<br>Montréal, QC H2J 1X2</address>
                             </div>
                             <div class="channel-actions">
@@ -116,19 +169,36 @@
                                     <span class="channel-copy-icon channel-copy-icon--default material-symbols-outlined">content_copy</span>
                                     <span class="channel-copy-icon channel-copy-icon--done material-symbols-outlined">check</span>
                                 </button>
+                                <!--
+                                    `&amp;` encode l'esperluette dans l'URL de l'API Google Maps
+                                    pour respecter la syntaxe HTML valide dans un attribut href.
+                                    `rel="noopener noreferrer"` sur le lien externe : empêche la page cible
+                                    d'accéder à `window.opener` et évite de transmettre le referrer.
+                                -->
                                 <a href="https://www.google.com/maps/search/?api=1&amp;query=936+av+du+Mont-Royal+Est+Montr%C3%A9al+QC"
                                    target="_blank" rel="noopener noreferrer"
                                    class="channel-external material-symbols-outlined"
                                    aria-label="Ouvrir l'adresse dans Google Maps">arrow_outward</a>
                             </div>
                         </div>
+
+                        <!-- Zone de message pour lecteurs d'écran : annonce la confirmation de copie -->
                         <span class="channel-copy-live" aria-live="polite" aria-atomic="true"></span>
                     </aside>
 
+                    <!-- Séparateur visuel entre les deux colonnes — masqué des lecteurs d'écran -->
                     <div class="contact-divider" aria-hidden="true">
                         <span class="contact-divider-label">OU</span>
                     </div>
 
+                    <!--
+                        Colonne droite — formulaire de demande de projet.
+                        `novalidate` désactive la validation native du navigateur pour permettre
+                        une validation JavaScript personnalisée avec des messages d'erreur cohérents
+                        avec le design system.
+                        Les régions `role="alert"` et `role="status"` permettent aux lecteurs d'écran
+                        d'annoncer automatiquement les erreurs et confirmations sans changement de focus.
+                    -->
                     <section class="contact-form-section">
                         <div class="form-card" id="contact-form-card">
                             <header class="form-card-header">
@@ -137,9 +207,11 @@
                             </header>
 
                             <form id="contact-form" class="form-stack" novalidate>
+                                <!-- Bannières de retour d'état — peuplées dynamiquement par script.js -->
                                 <div id="contact-error" class="error-banner" role="alert" aria-live="polite"></div>
                                 <div id="contact-success" class="success-banner" role="status" aria-live="polite"></div>
 
+                                <!-- Ligne Nom / Courriel : deux champs côte à côte sur desktop, empilés sur mobile -->
                                 <div class="input-row">
                                     <div class="input-group">
                                         <label class="input-label" for="contact-name">Nom</label>
@@ -166,6 +238,16 @@
                                     </div>
                                 </div>
 
+                                <!--
+                                    Champ "Services" — liste déroulante à sélection multiple implémentée
+                                    en JS pur (pas de `<select multiple>` natif dont le rendu varie trop entre navigateurs).
+                                    Structure : un `<button>` trigger (`.services-trigger`) ouvre un panneau
+                                    (`.services-panel`) contenant des checkboxes HTML natives pour l'envoi du formulaire.
+                                    Les attributs ARIA (`aria-haspopup`, `aria-expanded`, `aria-labelledby`,
+                                    `role="listbox"`, `aria-multiselectable`) exposent le widget aux technologies d'assistance.
+                                    La zone `.services-tags` affiche les sélections actives sous forme de badges
+                                    et est mise à jour dynamiquement par script.js.
+                                -->
                                 <div class="input-group">
                                     <label class="input-label" id="services-label">Services recherchés <span class="input-optional">(facultatif)</span></label>
                                     <div class="services-dropdown" id="services-dropdown">
@@ -209,11 +291,13 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <!-- Zone de tags pour les services sélectionnés — peuplée par script.js -->
                                     <div class="services-tags" id="services-tags" aria-live="polite"></div>
                                 </div>
 
                                 <div class="input-group">
                                     <label class="input-label" for="contact-message">Décrivez votre projet</label>
+                                    <!-- `rows="4"` fixe la hauteur initiale du textarea sans contraindre le redimensionnement -->
                                     <textarea id="contact-message" name="message" class="form-input form-textarea" rows="4" required placeholder="Surface approximative, échéance, livrables attendus…"></textarea>
                                 </div>
 
@@ -230,12 +314,17 @@
             </div>
         </main>
 
-        <footer class="site-footer" id="contact">
+        <!--
+            Pied de page — structure identique à index.html.
+            Les liens "Services" pointent ici vers les ancres d'index.html (pages de service non encore publiées).
+            Les liens "Entreprise" restent des placeholders interceptés par script.js.
+        -->
+        <footer class="site-footer">
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
                         <a href="index.html" class="logo transition-link">
-                            <img src="assets/logo-noir.svg" alt="Terravia Logo" class="logo-icon">
+                            <img src="assets/logo-noir.svg" alt="Terravia" class="logo-icon">
                             <h3>Terravia</h3>
                         </a>
                         <p>L'excellence en acquisition de données géospatiales par drone.</p>
@@ -244,9 +333,9 @@
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="index.html#services">LiDAR Aéroporté</a></li>
+                            <li><a href="index.html#services">LiDAR aéroporté</a></li>
                             <li><a href="index.html#services">Photogrammétrie</a></li>
-                            <li><a href="index.html#services">Inspection d'Ouvrages</a></li>
+                            <li><a href="index.html#services">Inspection d'ouvrages</a></li>
                         </ul>
                     </div>
 
@@ -255,10 +344,15 @@
                         <ul>
                             <li><a href="#" class="link-placeholder">À propos</a></li>
                             <li><a href="#" class="link-placeholder">Carrières</a></li>
-                            <li><a href="#" class="link-placeholder">Blogue Technique</a></li>
+                            <li><a href="#" class="link-placeholder">Blogue technique</a></li>
                         </ul>
                     </div>
 
+                    <!--
+                        Coordonnées structurées avec `<address>` pour la sémantique HTML correcte.
+                        Les icônes Material Symbols sont purement décoratives ici (pas d'aria-label nécessaire
+                        car le texte adjacent est suffisant pour l'accessibilité).
+                    -->
                     <div class="footer-contact">
                         <h4>Contactez-nous</h4>
                         <ul>
@@ -280,6 +374,11 @@
             </div>
         </footer>
     </div>
+    <!--
+        script.js chargé en fin de body (sans `defer`) pour garantir que le DOM est entièrement
+        parsé avant l'initialisation. Gère sur cette page : reveal au scroll, glassmorphisme du header,
+        menu hamburger, copie presse-papiers des cartes de coordonnées, dropdown services, validation formulaire.
+    -->
     <script src="script.js"></script>
 </body>
 

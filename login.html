@@ -1,19 +1,27 @@
 <!DOCTYPE html>
+<!-- Page de connexion à l'espace client Solutions Terravia.
+     Structure autonome : reproduit les patterns visuels de la modale de connexion
+     (définie dans login.css) mais rendue en pleine page, sans overlay sombre.
+     Toute l'interactivité (toggle mot de passe, validation, bannière d'erreur)
+     est gérée dans script.js — aucun JS inline ici. -->
 <html lang="fr">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Espace Client - Terravia</title>
+    <title>Espace client — Solutions Terravia</title>
 
-    <!-- Google d'abord (polices + icônes), nos CSS ensuite — voir commentaire dans index.html -->
+    <!-- Polices et icônes Google Fonts chargées en premier pour éviter le FOUT.
+         Material Symbols est déclaré dans le <head> de index.html avec le même
+         pattern ; la cohérence de l'ordre de chargement est intentionnelle. -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
         rel="stylesheet" />
 
-    <!-- tokens.css = la boîte à outils du design system (couleurs, polices, espacements) -->
+    <!-- tokens.css : source unique de vérité du design system (couleurs, typographie,
+         espacement, ombres). Doit être importé avant style.css et login.css. -->
     <link rel="stylesheet" href="tokens.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">
@@ -24,21 +32,49 @@
 
         <main class="login-main">
 
-            <!-- Nous reproduisons ici la structure exacte du login-wrapper de la modale, mais sur fond blanc sans overlay sombre -->
+            <!-- Conteneur centré à largeur contrainte (max 30rem).
+                 Déclenche l'animation slideUpFade au chargement via login.css. -->
             <div class="login-container">
                 <div class="login-wrapper">
                     <div class="login-card">
+
+                        <!-- En-tête de marque : logo cliquable + titre + sous-titre.
+                             Le logo renvoie vers index.html via .transition-link
+                             (fondu de sortie géré dans script.js). -->
                         <div class="brand-header">
                             <a class="logo-link transition-link" href="index.html">
-                                <img alt="Terravia Logo" class="logo-icon" src="assets/logo-noir.svg" />
+                                <img alt="Terravia" class="logo-icon" src="assets/logo-noir.svg" />
                             </a>
                             <h1 class="login-title">Connectez-vous</h1>
                             <p class="brand-subtitle">Saisissez vos identifiants pour accéder à votre espace.</p>
                         </div>
 
+                        <!-- Formulaire de connexion.
+                             novalidate : désactive la validation native du navigateur
+                             afin de contrôler entièrement l'UX d'erreur via script.js
+                             (messages localisés en français, bannière cohérente avec
+                             le design system). La validation côté serveur reste active. -->
                         <form action="#" class="form-stack" method="POST" novalidate>
+
+                            <!-- Bannière d'erreur accessible.
+                                 role="alert" : annonce immédiatement le message aux
+                                 lecteurs d'écran dès son injection par script.js.
+                                 aria-live="polite" : file d'attente polie — attend la
+                                 fin de la lecture en cours avant d'annoncer, ce qui
+                                 évite d'interrompre l'utilisateur au milieu d'une action.
+                                 Initialement vide et masquée (display: none) ; la classe
+                                 .visible lui applique display: flex. -->
                             <div class="error-banner" id="error-banner" role="alert" aria-live="polite"></div>
+
+                            <!-- Groupe des deux champs de saisie (email + mot de passe).
+                                 .inputs-wrapper réduit l'espacement entre ces champs
+                                 par rapport au gap général de .form-stack. -->
                             <div class="inputs-wrapper">
+
+                                <!-- Champ email — icône positionnée en absolu à gauche
+                                     via .input-wrapper. L'aria-label est redondant avec
+                                     le placeholder mais garantit l'accessibilité si le
+                                     navigateur ne lit pas le placeholder comme label. -->
                                 <div class="input-group">
                                     <div class="input-wrapper">
                                         <span class="material-symbols-outlined input-icon">person</span>
@@ -47,6 +83,11 @@
                                     </div>
                                 </div>
 
+                                <!-- Champ mot de passe — contient un bouton toggle oeil
+                                     (type="button" pour ne pas soumettre le formulaire).
+                                     aria-pressed reflète l'état visible/caché géré par
+                                     script.js. La zone tactile du bouton est 44×44px
+                                     (seuil WCAG 2.5.5 / Apple HIG). -->
                                 <div class="input-group">
                                     <div class="input-wrapper">
                                         <span class="material-symbols-outlined input-icon">lock</span>
@@ -59,6 +100,11 @@
                                 </div>
                             </div>
 
+                            <!-- Options de formulaire : mémorisation de session + lien
+                                 de récupération de mot de passe.
+                                 Le lien "Mot de passe oublié ?" est un placeholder (#) ;
+                                 script.js intercepte les liens non-fonctionnels et
+                                 affiche une alerte "en construction". -->
                             <div class="flex-between form-options">
                                 <div class="checkbox-group">
                                     <input class="checkbox-input" id="remember-me" name="remember-me" type="checkbox" />
@@ -69,18 +115,22 @@
                                 <a class="forgot-password-link" href="#">Mot de passe oublié ?</a>
                             </div>
 
+                            <!-- Bouton de soumission principal -->
                             <button class="btn btn-primary" type="submit">
                                 Accéder à la plateforme
                                 <span class="material-symbols-outlined">login</span>
                             </button>
-                            
+
+                            <!-- Pied de formulaire : invite les non-inscrits à contacter
+                                 l'équipe commerciale via la section #contact de index.html.
+                                 .transition-link déclenche le fondu de sortie de page. -->
                             <p class="footer-text brand-footer-text">
                                 Pas encore de compte ?
                                 <a class="footer-link brand-footer-link transition-link" href="index.html#contact">Contactez-nous</a>
                             </p>
                         </form>
                     </div>
-                    
+
                 </div>
             </div>
         </main>

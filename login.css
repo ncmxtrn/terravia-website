@@ -1,12 +1,27 @@
-/* 
-    Styles spécifiques pour la page de connexion (Espace Client).
-    On reproduit ici le style de la modale "feat-login-modale" pour l'adapter 
-    en pleine page, de manière cohérente avec le design system (style.css).
-*/
+/*
+ * login.css — Double rôle dans l'architecture CSS :
+ *
+ * 1. Styles de la page de connexion (login.html) :
+ *    mise en page pleine page, carte centrée, animation d'entrée,
+ *    en-tête de marque, options de formulaire (mémorisation, lien oubli).
+ *
+ * 2. Classes de formulaire génériques réutilisées dans contact.html :
+ *    .form-stack, .input-wrapper, .input-icon, .form-input, .input-label,
+ *    .inputs-wrapper, .checkbox-group, .error-banner, .flex-between, .flex-end.
+ *    Toute modification de ces classes impacte les deux pages.
+ *
+ * Tous les tokens (couleurs, tailles, ombres) viennent de tokens.css.
+ * Aucune valeur brute dans ce fichier — voir les commentaires inline
+ * pour les exceptions justifiées.
+ */
 
-/* Tous les tokens sont dans tokens.css — aucune redéfinition ici. */
 
-/* Structure de la section pleine page */
+/* =========================================
+   STRUCTURE PLEINE PAGE
+   Centrage vertical et horizontal du formulaire.
+   padding: 2rem 1rem garantit un espace suffisant sur mobile
+   pour que la carte ne colle pas aux bords de l'écran.
+   ========================================= */
 .login-main {
     min-height: 100vh;
     display: flex;
@@ -18,8 +33,14 @@
 }
 
 
-
-/* Bannière d'erreur */
+/* =========================================
+   BANNIÈRE D'ERREUR
+   Masquée par défaut (display: none). La classe .visible lui applique
+   display: flex via le sélecteur suivant. Le !important est nécessaire
+   pour surcharger le display: none initial sans augmenter la spécificité
+   du sélecteur de base (ce qui casserait la cascade).
+   Voir aussi : role="alert" aria-live="polite" dans login.html.
+   ========================================= */
 .error-banner {
     display: none;
     align-items: center;
@@ -38,7 +59,13 @@
     display: flex !important;
 }
 
-/* États d'erreur sur les inputs */
+/* =========================================
+   ÉTATS D'ERREUR SUR LES INPUTS
+   Surcharge la bordure par défaut de .form-input.
+   .has-error est ajouté par script.js après validation.
+   L'anneau de focus d'erreur (--error-focus-ring) remplace --focus-ring
+   pour maintenir la cohérence visuelle même en état d'alerte.
+   ========================================= */
 .form-input.has-error {
     border-color: var(--error-border-strong);
 }
@@ -48,18 +75,30 @@
     box-shadow: var(--error-focus-ring);
 }
 
-/* Conteneur principal qui limite la largeur et anime l'arrivée */
+/* =========================================
+   CONTENEUR PRINCIPAL — ANIMATION D'ENTRÉE
+   max-width: 30rem (480px) contraint la largeur de la carte pour maintenir
+   une ligne de texte confortable dans le formulaire.
+   L'animation commence avec opacity: 0 + translateY(20px) pour éviter
+   le flash du contenu avant le chargement des polices (body.is-loading
+   masque déjà le body, mais ce délai de 0.2s laisse le temps au CSS
+   d'être appliqué avant que le contenu n'apparaisse).
+   ========================================= */
 .login-container {
     width: 100%;
     max-width: 30rem;
     margin: 0 auto;
-    
-    /* Animation d'arrivée douce */
+
+    /* Animation d'arrivée — décalée de 0.2s pour laisser le body se révéler d'abord. */
     opacity: 0;
     transform: translateY(20px);
     animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
 }
 
+/* NOTE: cubic-bezier(0.16, 1, 0.3, 1) = --ease-entrance. La valeur brute est
+   utilisée ici car l'animation @keyframes est déclarée avant que :root soit
+   accessible dans le contexte d'animation de certains navigateurs anciens.
+   À surveiller si on abandonne le support de Safari < 15. */
 @keyframes slideUpFade {
     0% {
         opacity: 0;
@@ -71,15 +110,20 @@
     }
 }
 
-/* 
-    Styles du formulaire de connexion, adaptés depuis modale_style.css 
-*/
+/* =========================================
+   WRAPPER INTERNE DU FORMULAIRE
+   Pas de padding ici — la carte (.login-card) gère l'espacement intérieur.
+   ========================================= */
 .login-wrapper {
     width: 100%;
     padding: 0;
 }
 
-/* Le Header avec logo au dessus du formulaire */
+/* =========================================
+   EN-TÊTE DE MARQUE (logo + titre + sous-titre)
+   Centrage en colonne. margin-bottom: --space-2xl (2rem) crée une
+   séparation visuelle nette entre la marque et le formulaire.
+   ========================================= */
 .brand-header {
     display: flex;
     flex-direction: column;
@@ -87,11 +131,14 @@
     margin-bottom: var(--space-2xl);
 }
 
+/* Le lien logo utilise une courbe avec légère surtension (1.275) pour
+   accentuer l'effet élastique au survol — acceptable sur cet élément
+   de marque unique, interdit sur les cartes de contenu (CLAUDE.md). */
 .logo-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.5rem; /* Réduction de l'espace sous le logo */
+    margin-bottom: 0.5rem;
     transition: transform var(--duration-base) cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -99,9 +146,14 @@
     transform: translateY(-3px) scale(1.05);
 }
 
-/* Le logo prend sa couleur normale */
+/* Le logo SVG (assets/logo-noir.svg) est noir par défaut. Le filtre CSS
+   le reteinte en couleur forest (#1A3C34) sans modifier le fichier source.
+   La chaîne de filtres : brightness(0) → noir pur → saturate/invert/sepia/
+   hue-rotate/brightness/contrast → approximation de --forest-900.
+   NOTE: cette technique est fragile si le SVG contient des couleurs multiples ;
+   elle fonctionne uniquement car le logo est un tracé monochrome. */
 .brand-header .logo-icon {
-    height: 7rem; /* Logo bien plus grand */
+    height: 7rem;
     width: auto;
     display: block;
     filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
@@ -117,16 +169,24 @@
     text-align: center;
 }
 
+/* max-width: 280px force le sous-titre sur deux lignes pour un bloc
+   compact visuellement aligné avec la largeur du logo. */
 .brand-subtitle {
     color: var(--fg2);
     text-align: center;
     font-weight: var(--weight-medium);
     font-size: 0.95rem;
-    max-width: 280px; /* Force le texte sur 2 lignes pour un bloc bien compact */
+    max-width: 280px;
     line-height: 1.4;
 }
 
-/* Le texte et lien du pied de formulaire */
+/* =========================================
+   PIED DE FORMULAIRE (lien "Pas encore de compte")
+   Le !important sur color est nécessaire pour surcharger la règle générique
+   de style.css qui applique var(--fg1) à tous les <p>, sans avoir à augmenter
+   la spécificité du sélecteur.
+   opacity: 0.8 atténue le texte sans recourir à --fg2 (trop clair sur ce fond).
+   ========================================= */
 .brand-footer-text {
     margin-top: 2rem;
     text-align: center;
@@ -149,6 +209,13 @@
     opacity: 1;
 }
 
+/* =========================================
+   CARTE DE CONNEXION — PADDING RESPONSIVE
+   Trois paliers de padding selon la largeur du viewport :
+   mobile (< 576px) : 1.5rem — compact, évite le débordement sur petits écrans.
+   tablette (≥ 576px) : 2.5rem — confortable, correspond au gap visuel attendu.
+   desktop (≥ 768px) : 3rem — maximum, exploite l'espace disponible.
+   ========================================= */
 .login-card {
     position: relative;
     padding: 1.5rem;
@@ -156,17 +223,24 @@
 
 @media (min-width: 576px) {
     .login-card {
-        padding: 2.5rem; /* Padding confortable sur écran moyen */
+        padding: 2.5rem;
     }
 }
 
 @media (min-width: 768px) {
     .login-card {
-        padding: 3rem; /* Padding maximal sur ordinateur */
+        padding: 3rem;
     }
 }
 
-/* Groupes et inputs du formulaire */
+/* =========================================
+   STRUCTURE DU FORMULAIRE (classes génériques — réutilisées dans contact.html)
+   .form-stack : colonne verticale avec gap --space-lg (1.5rem) entre
+     les grandes sections (bannière d'erreur, groupe d'inputs, options, bouton).
+   .inputs-wrapper : réduit le gap à --space-sm (0.75rem) entre les champs
+     adjacents — la proximité visuelle signale qu'ils forment un groupe logique.
+   .input-group : wrapper sémantique autour de chaque champ (label + input-wrapper).
+   ========================================= */
 .form-stack {
     display: flex;
     flex-direction: column;
@@ -176,13 +250,16 @@
 .inputs-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm); /* Espace réduit (0.75rem) entre l'email et le mot de passe */
+    gap: var(--space-sm);
 }
 
 .input-group {
     display: block;
 }
 
+/* =========================================
+   LABEL DE CHAMP (utilisé dans contact.html)
+   ========================================= */
 .input-label {
     display: block;
     font-size: 0.875rem;
@@ -191,6 +268,13 @@
     margin-bottom: var(--space-xs);
 }
 
+/* =========================================
+   WRAPPER D'INPUT + ICÔNE POSITIONNÉE
+   .input-wrapper : position: relative pour ancrer les icônes en absolu.
+   .input-icon : centrage vertical via top: 50% + translateY(-50%).
+     left: 0.75rem correspond au padding-left de .form-input (2.8rem = 44.8px)
+     moins la largeur de l'icône (24px), laissant ~8px de marge visuelle.
+   ========================================= */
 .input-wrapper {
     position: relative;
 }
@@ -206,21 +290,45 @@
     transition: color var(--duration-medium) ease;
 }
 
-/* L'icône prend la couleur du texte dès qu'on écrit quelque chose */
+/* Sélecteur :has() — support : Chrome 105+, Safari 15.4+, Firefox 121+.
+   NOTE: ce sélecteur n'a pas de fallback ; sur les navigateurs non supportés,
+   l'icône reste en --fg3 (état par défaut), ce qui est acceptable.
+   Comportement : l'icône prend la couleur du texte dès que le champ contient
+   une valeur (placeholder masqué = champ rempli). */
 .input-wrapper:has(.form-input:not(:placeholder-shown)) .input-icon {
     color: var(--color-forest);
 }
 
-/* La bordure du champ prend la couleur du texte dès qu'on écrit quelque chose, SAUF quand on est en train de cliquer dedans (focus) */
+/* La bordure du champ se renforce quand il est rempli, SAUF au focus
+   (on ne veut pas superposer deux états visuels).
+   :not(:focus) est nécessaire pour éviter le conflit entre la bordure verte
+   du focus (.form-input:focus → --color-primary) et la bordure forest ici. */
 .input-wrapper:has(.form-input:not(:placeholder-shown)) .form-input:not(:focus) {
     border-color: var(--color-forest);
 }
 
+/* =========================================
+   INPUT TEXTE (classe générique — réutilisée dans contact.html)
+
+   height: 3.175rem (~50.8px) :
+     Valeur calibrée pour que la zone tactile dépasse 44px (WCAG 2.5.5)
+     tout en maintenant les proportions visuelles avec le bouton submit
+     (padding: var(--space-md) = 1rem top+bottom + 1rem line-height ≈ 50px).
+
+   padding: 0 2.5rem 0 2.8rem :
+     Côté droit (2.5rem = 40px) : espace pour le bouton toggle (44px de zone
+     tactile, visuellement décalé à droite via right: 0.25rem).
+     Côté gauche (2.8rem = 44.8px) : espace pour l'icône positionnée à left: 0.75rem
+     (12px) + largeur icône (24px) + marge interne (~8px).
+
+   background-color: rgba(248, 252, 248, 0.5) :
+     Blanc légèrement teinté de vert (248/252/248), semi-transparent pour
+     laisser transparaître le fond de la carte. Différencie visuellement
+     les inputs du fond blanc sans introduire un contraste fort.
+   ========================================= */
 .form-input {
     width: 100%;
     height: 3.175rem;
-    /* L'ordre du padding : HAUT | DROITE | BAS | GAUCHE */
-    /* Modifiez la DERNIÈRE valeur (3.25rem) pour gérer l'écart avec l'icône de gauche */
     padding: 0 2.5rem 0 2.8rem;
     background-color: rgba(248, 252, 248, 0.5);
     border: 1px solid var(--border-default);
@@ -237,13 +345,17 @@
     box-shadow: var(--focus-ring);
 }
 
-/* On force la couleur des placeholders pour qu'ils soient identiques à la couleur par défaut des icônes */
+/* opacity: 1 sur ::placeholder est un correctif cross-browser :
+   Firefox applique opacity: 0.54 par défaut sur les placeholders,
+   Safari peut varier. On force l'opacité pour obtenir --fg3 exact. */
 .form-input::placeholder {
     color: var(--fg3);
-    opacity: 1; /* Par sécurité pour Safari/Firefox qui peuvent appliquer une transparence */
+    opacity: 1;
 }
 
-/* Mots de passe et liens d'oubli */
+/* =========================================
+   OPTIONS DE FORMULAIRE (mot de passe oublié + mémorisation)
+   ========================================= */
 .forgot-password-link {
     font-size: 0.75rem;
     font-weight: var(--weight-bold);
@@ -255,15 +367,20 @@
     text-decoration: underline;
 }
 
+/* flex-wrap: wrap permet le passage à la ligne sur très petits écrans
+   (< 280px) sans overflow. gap: 0.5rem maintient l'espacement si les
+   éléments passent sur deux lignes. */
 .flex-between {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-xs);
-    flex-wrap: wrap; /* Permet le passage à la ligne sur très petits écrans */
+    flex-wrap: wrap;
     gap: 0.5rem;
 }
 
+/* margin-top négatif : compense le gap de .form-stack pour rapprocher
+   visuellement les options du groupe d'inputs sans modifier la structure. */
 .form-options {
     margin-bottom: 0;
     margin-top: calc(var(--space-xs) * -1);
@@ -277,7 +394,11 @@
     margin-bottom: var(--space-xs);
 }
 
-/* Case à cocher "Se souvenir" */
+/* =========================================
+   CASE À COCHER "SE SOUVENIR DE MOI"
+   accent-color : colorie la case native avec --color-primary sans
+   reconstruire un composant custom. Support : Chrome 93+, Firefox 92+, Safari 15.4+.
+   ========================================= */
 .checkbox-group {
     display: flex;
     align-items: center;
@@ -300,7 +421,12 @@
     user-select: none;
 }
 
-/* Bouton pleine largeur */
+/* =========================================
+   BOUTON SUBMIT (page login uniquement)
+   Surcharge .btn-primary avec une pleine largeur et un halo vert.
+   Le translateY(-1px) au survol est intentionnellement faible (1px)
+   pour ne pas interférer avec le layout de la page pleine hauteur.
+   ========================================= */
 .login-card .btn-primary {
     width: 100%;
     padding: var(--space-md);
@@ -313,39 +439,56 @@
     transform: translateY(-1px);
 }
 
-/* Transition douce de page (depuis le body) */
-.page-transition {
-    opacity: 1;
-    transition: opacity 0.5s ease;
-}
+/* =========================================
+   CHAMP MOT DE PASSE — STYLES SPÉCIFIQUES
 
-.page-transition.fade-out {
-    opacity: 0;
-}
+   font-family: -apple-system, BlinkMacSystemFont, system-ui :
+     Police système utilisée à la place de Montserrat pour le type="password"
+     afin d'obtenir les glyphes bullet (•) corrects et bien formés.
+     Montserrat n'inclut pas de glyphe de masquage natif.
 
-/* Style champ de mot de passe spécifique */
+   letter-spacing: 0.15em :
+     Espacement augmenté pour mieux séparer visuellement les bullets et
+     faciliter le comptage mental des caractères saisis.
+
+   Annulation sur ::placeholder :
+     Le placeholder "Mot de passe" doit rester en Montserrat, taille normale,
+     sans espacement, pour être lisible. Les trois propriétés sont réinitialisées
+     explicitement car les héritages de la règle parent s'appliquent au pseudo-élément.
+   ========================================= */
 .form-input[type="password"] {
     font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     letter-spacing: 0.15em;
 }
 
-/* Le texte du placeholder doit rester normal et lisible */
 .form-input[type="password"]::placeholder {
     letter-spacing: normal;
     font-size: 1rem;
-    font-weight: normal; /* Annule l'épaisseur pour le placeholder */
+    font-weight: normal;
     font-family: var(--font-main);
 }
 
+/* =========================================
+   ICÔNE D'ERREUR DANS LA BANNIÈRE
+   ========================================= */
 .error-icon {
     font-size: 1.1rem;
     vertical-align: middle;
 }
 
-/* Bouton oeil pour afficher le mot de passe */
+/* =========================================
+   BOUTON TOGGLE VISIBILITÉ DU MOT DE PASSE
+
+   right: 0.25rem : le bouton est positionné près du bord droit de l'input.
+     La zone tactile (44×44px) s'étend vers l'intérieur du champ, ce qui
+     explique le padding-right compensatoire sur .form-input ci-dessous.
+
+   width/height: 44px : zone tactile minimale (WCAG 2.5.5 / Apple HIG).
+     Le bouton est visuellement plus petit (icône ~24px) mais cliquable sur 44px.
+   ========================================= */
 .password-toggle {
     position: absolute;
-    right: 0.25rem; /* Ajusté pour le padding de 44px */
+    right: 0.25rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -357,14 +500,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 44px; /* Zone tactile optimale (Apple/Google guidelines) */
-    height: 44px; /* Zone tactile optimale */
+    width: 44px;
+    height: 44px;
 }
 
 .password-toggle:hover {
     color: var(--color-forest);
 }
 
+/* Sélecteur :has() — cf. note de compatibilité sur .input-wrapper:has() plus haut.
+   padding-right: 2.75rem réserve l'espace pour la zone tactile du bouton toggle
+   afin que le texte saisi ne passe pas sous l'icône visibilité. */
 .input-wrapper:has(.password-toggle) .form-input {
-    padding-right: 2.75rem; /* Espace pour le bouton */
+    padding-right: 2.75rem;
 }

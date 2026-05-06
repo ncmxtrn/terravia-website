@@ -1,20 +1,27 @@
-/* 
-   👋 Bienvenue dans le fichier de Style (CSS) !
-   C'est ici qu'on fait la peinture et la décoration.
-   Sans ce fichier, le site ressemblerait à une page Word des années 90 : tout triste.
-*/
+/*
+ * style.css — Styles globaux du site Solutions Terravia.
+ *
+ * Partagé par toutes les pages (index.html, contact.html, login.html).
+ * Consomme exclusivement les tokens définis dans tokens.css — aucune valeur
+ * brute (hex, rem, px) ne doit être ajoutée sans passer d'abord par tokens.css.
+ *
+ * Structure :
+ *   1. Reset & base
+ *   2. Boutons
+ *   3. Header (glassmorphisme, états flottant / scrollé / caché, menu burger)
+ *   4. Section hero
+ *   5. Section services (cartes, badges, animations au scroll)
+ *   6. Section technologie (split-layout)
+ *   7. Section projets (grille de cartes image)
+ *   8. Pied de page
+ *   9. Responsive (tablette ≥ 841px, desktop ≥ 950px)
+ */
 
 /* =========================================
-   1. LA BOÎTE À OUTILS (Variables)
+   1. RESET & BASE
    ========================================= */
-/* Tous les tokens (couleurs, polices, espacements…) sont dans tokens.css.
-   C'est le design system — c'est là qu'on change les couleurs globalement. */
-
-/* 
-   📦 Une règle d'or en CSS !
-   Ça dit : "Si je dis qu'une boîte fait 20cm, alors elle fait 20cm, point barre."
-   (Sinon, les bordures s'ajoutent à la taille et ça casse tout).
-*/
+/* box-sizing: border-box sur * : la largeur déclarée inclut padding et bordures,
+   ce qui rend les calculs de mise en page prévisibles. */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -22,7 +29,8 @@
 }
 
 body {
-    /* On commence invisible pour apparaître en douceur (voir le script.js) */
+    /* opacity: 1 par défaut pour la transition fade-in : script.js retire la classe
+       .is-loading après 100 ms, déclenchant le passage de 0 → 1. */
     opacity: 1;
     transition: opacity 1s ease-in-out;
     
@@ -37,33 +45,30 @@ html {
     scroll-behavior: smooth;
 }
 
-/* 
-   Petite correction mathématique :
-   Quand on clique sur un lien, le titre ne doit pas se cacher sous la barre de menu fixe.
-   Donc on ajoute une marge invisible au-dessus.
-*/
+/* Compense la hauteur du header fixe lors du scroll vers une ancre :
+   sans scroll-margin-top, la cible serait partiellement masquée par le header. */
 section[id], footer[id] {
     scroll-margin-top: var(--header-height);
 }
 
-/* La classe qu'on met au début pour cacher le site */
+/* État initial anti-FOUC (Flash Of Unstyled Content).
+   visibility: hidden retire l'élément du flux de rendu visuel sans le cacher
+   via opacity seule, ce qui empêche le focus clavier et les interactions. */
 body.is-loading {
     opacity: 0;
     transition: none !important;
     visibility: hidden;
 }
 
-/*
-   🏠 Le Conteneur Principal.
-   C'est comme une boîte qui garde tout le contenu bien centré au milieu de l'écran.
-*/
 .container {
     max-width: var(--width-max);
-    margin: 0 auto; /* Hop, centré ! */
+    margin: 0 auto;
     padding: 0 var(--container-px);
     width: 100%;
 }
 
+/* Ajustements typographiques pour les petits écrans (< 480px) :
+   les valeurs clamp() de tokens.css ne descendent pas assez bas sur mobile étroit. */
 @media (max-width: 480px) {
     .hero-content h1 {
         font-size: 1.9rem;
@@ -98,11 +103,20 @@ img {
     display: block;
 }
 
-/* On enlève le soulignement moche des liens par défaut */
 a {
     text-decoration: none;
     color: inherit;
     transition: color 0.3s;
+}
+
+/* Transition de page fade entre les pages */
+.page-transition {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.page-transition.fade-out {
+    opacity: 0;
 }
 
 /* =========================================
@@ -155,17 +169,24 @@ a {
 }
 
 /* =========================================
-   3. L'EN-TÊTE (Header) - Le chapeau du site
+   3. HEADER
+   -----------------------------------------
+   Le header possède trois états visuels gérés par script.js :
+   • .is-floating  — transparent, posé sur le hero (scrollY = 0)
+   • .show-cta     — bouton CTA visible (le CTA hero a quitté le viewport)
+   • .is-scrolled  — glassmorphisme actif (le hero entier a quitté le viewport)
+   L'état "caché" (slide hors écran) est dérivé en CSS :
+   :not(.is-floating):not(.show-cta) → transform: translateY(-100%)
    ========================================= */
 .site-header {
     position: fixed;
     width: 100%;
     left: 0;
     top: 0;
-    z-index: 100;
+    z-index: 100; /* au-dessus de tout le contenu de page ; sous z-index: 200 du dropdown services */
 
     background-color: rgba(255, 255, 255, 1);
-    backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px); /* valeur initiale explicite : permet de transitionner vers blur(20px) sans saut */
     border-bottom: 1px solid var(--border-subtle);
     height: var(--header-height);
     display: flex;
@@ -179,6 +200,10 @@ a {
         color var(--duration-medium) ease;
 }
 
+/* Glassmorphisme activé une fois le hero scrollé hors du viewport.
+   blur(20px) + saturate(180%) : recette standard de l'effet verre macOS/iOS.
+   -webkit-backdrop-filter : nécessaire pour Safari (support standard insuffisant < Safari 18).
+   box-shadow 0 1px 0 : ligne de séparation subtile sans border (évite le doublon avec border-bottom). */
 .site-header.is-scrolled {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
@@ -285,7 +310,10 @@ a {
     transform: scale(1.05);
 }
 
-/* On change la couleur du logo avec des filtres (magie noire CSS pour manipuler les SVG) */
+/* Le SVG du logo est noir par défaut (assets/logo-noir.svg).
+   La chaîne de filtres le reteinte en --forest-900 (#1A3C34) sans modifier le fichier source.
+   brightness(0) → noir pur → les filtres suivants reconstituent la teinte forest.
+   NOTE: cette technique ne fonctionne que sur des SVG monochromes. */
 .logo-icon {
     height: 40px;
     width: auto;
@@ -305,12 +333,15 @@ a {
     letter-spacing: var(--tracking-logo);
 }
 
-/* Sur mobile, on cache le texte du logo pour gagner de la place */
+/* Technique de disparition animée sans display:none :
+   on réduit max-width à 0 en transition pour animer le rétrécissement,
+   combiné avec opacity pour un fondu simultané.
+   display:none bloquerait l'animation — c'est pourquoi max-width est utilisé ici. */
 .logo h2 {
-    display: block; /* On affiche par défaut */
+    display: block;
     transition: opacity 0.4s ease-out, max-width 0.5s ease-out;
     opacity: 1;
-    max-width: 100px; /* Assez grand pour "Terravia" */
+    max-width: 100px; /* largeur suffisante pour "Terravia" (8 caractères Orbitron) */
     white-space: nowrap;
     overflow: hidden;
 }
@@ -323,17 +354,20 @@ a {
     margin-left: -0.5rem; /* Compense le gap */
 }
 
-/* 
-   MENU DE NAVIGATION
-   Par défaut (sur mobile), le menu est caché.
-*/
+/* =========================================
+   NAVIGATION — MENU MOBILE / DESKTOP
+   ========================================= */
+/* Caché par défaut sur mobile (display: none).
+   La transition sur transform n'est active que sur desktop (≥ 841px),
+   où le menu ne passe jamais par display:none. */
 .main-nav {
     display: none;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(0);
 }
 
-/* Quand on ouvre le menu sur mobile (via le bouton burger) */
+/* Menu ouvert : position absolute sous le header, pleine largeur.
+   animation: slideDown — utilisé à la place de transition car on passe de display:none → flex. */
 .main-nav.is-open {
     display: flex;
     flex-direction: column;
@@ -358,6 +392,9 @@ a {
     to { opacity: 0; transform: translateY(-10px); }
 }
 
+/* État de fermeture : duplique le layout de .is-open pour maintenir le display:flex
+   le temps que l'animation slideUp se termine (300 ms). pointer-events: none
+   empêche les clics pendant l'animation. Géré par script.js (fermerMenu). */
 .main-nav.is-closing {
     display: flex;
     flex-direction: column;
@@ -394,14 +431,12 @@ a {
     padding: 0.5rem 0;
 }
 
-/* 
-   La petite ligne verte qui apparaît sous le lien quand on passe la souris.
-   C'est un élément invisible (::after) qu'on fait grandir.
-*/
+/* Trait de soulignement animé via ::after : la largeur passe de 0 à 100% au survol.
+   Utilise un pseudo-élément plutôt que text-decoration pour contrôler la transition. */
 .main-nav a::after {
     content: '';
     position: absolute;
-    width: 0; /* Au début, largeur 0 */
+    width: 0; /* point de départ de l'animation */
     height: 2px;
     bottom: 0;
     left: 0;
@@ -433,7 +468,8 @@ a {
     white-space: nowrap;
 }
 
-/* Sur desktop, légère animation au survol mais l'icône reste toujours visible */
+/* (hover: hover) and (pointer: fine) : cible les appareils avec une souris précise,
+   excluant les écrans tactiles où les états hover sont simulés et peu fiables. */
 @media (hover: hover) and (pointer: fine) {
     .client-link:hover .client-icon {
         transform: translate(2px, -2px) scale(1.1);
@@ -462,18 +498,19 @@ a {
     visibility: hidden;
 }
 
-/*
-   📱 MISE EN PAGE MOBILE (< 840px)
-   C'est un peu technique ici. On utilise une grille pour placer :
-   1. Le Logo à gauche
-   2. Le Bouton au milieu
-   3. Le Burger à droite
-*/
+/* =========================================
+   HEADER MOBILE (≤ 840px)
+   -----------------------------------------
+   Passage en grille 3 colonnes : [Logo | Bouton CTA | Burger].
+   La colonne centrale est `auto` pour ne pas dépasser la largeur du bouton.
+   .header-actions reçoit `display: contents` pour que ses enfants
+   (le bouton et le burger) participent directement à la grille parent,
+   sans ajouter un niveau imbriqué qui casserait le placement grid.
+   ========================================= */
 @media (max-width: 840px) {
     .header-content {
             display: grid;
-            /* On s'assure que la colonne du milieu ne grandit pas trop */
-            grid-template-columns: 1fr auto 1fr;
+            grid-template-columns: 1fr auto 1fr; /* Logo | CTA centré | Burger */
             align-items: center;
             padding: 0 1.5rem;
             width: 100%; /* S'assurer que le conteneur prend toute la largeur */
@@ -497,7 +534,11 @@ a {
         /* Plus besoin de règles spécifiques pour le scroll car c'est le défaut */
     
     .header-actions {
-        display: contents; /* Astuce : fait comme si ce conteneur n'existait pas */
+        /* display: contents : le conteneur est ignoré par le moteur de layout ;
+           ses enfants (#header-quote-btn et .menu-toggle) deviennent des items
+           directs de la grille .header-content et peuvent être positionnés
+           avec grid-column. */
+        display: contents;
     }
 
     #header-quote-btn {
@@ -516,12 +557,11 @@ a {
             }
 
     .menu-toggle {
-            grid-column: 3; /* Droite */
+            grid-column: 3; /* droite */
             justify-self: end;
             margin-right: 0;
             position: static;
-            /* S'assurer que le menu burger est toujours au premier plan */
-            z-index: 10;
+            z-index: 10; /* au-dessus du menu mobile (position: absolute) */
         }
 
     /* En haut de page, le bouton du header est caché */
@@ -556,12 +596,14 @@ a {
     }
 }
 
-/* LE BOUTON BURGER (Les 3 petites barres) */
+/* =========================================
+   BOUTON BURGER
+   ========================================= */
 .menu-toggle {
     background: none;
     border: none;
     cursor: pointer;
-    width: 48px;
+    width: 48px;  /* zone tactile 48×48px > seuil WCAG 2.5.5 de 44px */
     height: 48px;
     display: flex;
     justify-content: center;
@@ -585,18 +627,16 @@ a {
     height: 3px;
     background-color: var(--color-forest);
     border-radius: 3px;
-    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6); /* Effet "rebond" sympa */
+    /* TODO: cubic-bezier(0.68, -0.6, 0.32, 1.6) est une courbe à surtension (bounce).
+       CLAUDE.md l'interdit sur les éléments de contenu ; ici, c'est un feedback
+       interactif ponctuel sur le burger — à remplacer par --ease-card si jugé trop expressif. */
+    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
     transform-origin: center;
 }
 
-/* 
-   ANIMATION "TRANSFORMERS" DU BURGER
-   Quand on clique (.is-active) :
-   - La barre 1 tourne et descend
-   - La barre 2 disparaît
-   - La barre 3 tourne et monte
-   Ça forme une croix (X) !
-*/
+/* Transformation burger → croix (×) quand .is-active est ajouté par script.js.
+   8.5px = moitié de la hauteur du .burger-icon (20px) moins la hauteur d'une barre (3px) :
+   calcul qui aligne exactement les deux barres diagonales au centre du bouton. */
 .menu-toggle.is-active .burger-icon span:nth-of-type(1) {
     width: 100%;
     transform: translateY(8.5px) rotate(45deg);
@@ -619,28 +659,34 @@ a {
 }
 
 /* =========================================
-   4. SECTION HÉROS (L'accueil)
+   4. SECTION HERO
    ========================================= */
 .hero-section {
     position: relative;
-    min-height: 100vh; /* Prend TOUTE la hauteur de l'écran */
+    min-height: 100vh;
     display: flex;
     align-items: center;
     padding: 6rem 0;
     color: var(--color-white);
+    /* isolation: isolate crée un nouveau contexte d'empilement (stacking context).
+       Cela confine les z-index négatifs de .hero-background et .hero-overlay
+       à l'intérieur de cette section, sans affecter le z-index du header. */
     isolation: isolate;
 }
 
-/* L'image de fond */
+/* Fond photo séparé du contenu pour permettre l'insertion de l'overlay entre les deux.
+   z-index: -2 : sous l'overlay (-1) et sous le contenu (auto). */
 .hero-background {
     position: absolute;
-    inset: 0; /* Colle aux 4 bords */
+    inset: 0;
     background-size: cover;
     background-position: center;
-    z-index: -2; /* Tout au fond */
+    z-index: -2;
 }
 
-/* Le filtre sombre par-dessus l'image pour qu'on puisse lire le texte */
+/* Overlay dégradé gauche-droite : plus opaque à gauche (où se trouve le texte)
+   pour maximiser la lisibilité, plus transparent à droite pour laisser voir la photo.
+   z-index: -1 : entre le fond (-2) et le contenu (auto). */
 .hero-overlay {
     position: absolute;
     inset: 0;
@@ -657,9 +703,6 @@ a {
     color: var(--fg-on-dark);
 }
 
-.text-highlight {
-    color: var(--color-primary); /* Le texte en vert fluo */
-}
 
 .lead-text {
     font-size: var(--text-lead);
@@ -692,7 +735,9 @@ a {
     align-items: center;
 }
 
-/* Le petit badge "Nos Expertises" avec l'effet brillant */
+/* État initial du badge avant révélation par l'IntersectionObserver.
+   filter: blur(5px) ajoute un effet de mise au point progressif en complément du fondu.
+   overflow: hidden contient le pseudo-élément shimmer (::before) qui déborde à gauche. */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -710,8 +755,6 @@ a {
     margin-bottom: var(--space-lg);
     position: relative;
     overflow: hidden;
-
-    /* Au début, il est caché et descendu un peu plus bas */
     opacity: 0;
     transform: translateY(20px);
     filter: blur(5px);
@@ -726,14 +769,15 @@ a {
     flex-shrink: 0;
 }
 
-/* Quand il devient visible (ajouté par le JS) */
+/* État final déclenché par l'IntersectionObserver (script.js addBadgeObserver). */
 .badge.visible {
     opacity: 1;
     transform: translateY(0);
     filter: blur(0);
 }
 
-/* L'effet "Shimmer" (le reflet de lumière qui passe) */
+/* Reflet lumineux animé (shimmer) : un dégradé blanc skewé traverse le badge
+   de gauche (-100%) à droite (200%) une seule fois au moment de l'apparition. */
 .badge::before {
     content: '';
     position: absolute;
@@ -754,10 +798,10 @@ a {
     100% { left: 200%; }
 }
 
-/* 
-   ANIMATION D'APPARITION GÉNÉRIQUE
-   Tous les éléments avec cette classe vont monter doucement quand on scrolle.
-*/
+/* Classe générique de révélation au scroll, pilotée par l'IntersectionObserver de script.js.
+   will-change: opacity, transform : indice au navigateur pour promouvoir l'élément sur une
+   couche GPU avant la transition, évitant le repaint du fond de page à chaque frame.
+   cubic-bezier(0.215, 0.61, 0.355, 1) : courbe easeOutCubic — décélération naturelle. */
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(30px);
@@ -770,7 +814,10 @@ a {
     transform: translateY(0);
 }
 
-/* On décale un peu l'arrivée des éléments pour faire un effet "domino" */
+/* Stagger d'apparition en cascade : chaque enfant entre avec 100 ms de décalage.
+   :not(.visible) limite le délai à l'état avant révélation — une fois la classe .visible
+   ajoutée, le délai ne s'applique plus, évitant un délai parasite sur les transitions
+   ultérieures (survol, etc.). */
 .section-header h2.animate-on-scroll { transition-delay: 0.1s; }
 .section-header .subtitle.animate-on-scroll { transition-delay: 0.2s; }
 .services-grid .service-card:nth-child(1):not(.visible) { transition-delay: 0.1s; }
@@ -778,19 +825,14 @@ a {
 .services-grid .service-card:nth-child(3):not(.visible) { transition-delay: 0.3s; }
 .services-grid .service-card:nth-child(4):not(.visible) { transition-delay: 0.4s; }
 
+/* 3rem : valeur intermédiaire entre --text-h2-sm et --text-h2 de tokens.css,
+   pour donner plus d'emphase à ce titre de section tout en restant lisible sur mobile. */
 .section-header h2 {
     font-size: 3rem;
     color: var(--color-forest);
     margin-bottom: var(--space-md);
 }
 
-/* Texte dégradé (Vert forêt -> Vert clair) */
-.text-gradient {
-    background: linear-gradient(to right, var(--color-forest), var(--color-primary-dark));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
 
 .subtitle {
     max-width: 600px;
@@ -798,10 +840,8 @@ a {
     opacity: 0.7;
 }
 
-/* 
-   LA GRILLE DES SERVICES
-   Sur mobile, c'est une seule colonne (les cartes les unes sous les autres).
-*/
+/* Mobile-first : une seule colonne. La grille passe à 2 colonnes (≥ 841px)
+   puis 4 colonnes (≥ 950px) dans les media queries de la section 9. */
 .services-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -954,7 +994,7 @@ a {
 }
 
 .check-list {
-    list-style: none; /* On enlève les puces moches par défaut */
+    list-style: none;
     margin: 1.5rem 0;
 }
 
@@ -975,6 +1015,8 @@ a {
     position: relative;
 }
 
+/* box-shadow : ombre portée prononcée (offset-y 20px, blur 25px, spread -5px)
+   pour donner l'impression que l'image flotte au-dessus du fond de section. */
 .image-container {
     background-color: var(--color-forest);
     aspect-ratio: 4/3;
@@ -984,7 +1026,8 @@ a {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* L'élément qui flotte par-dessus l'image */
+/* Encart glassmorphisme sur l'image : background semi-transparent + backdrop-filter
+   crée l'effet verre dépoli superposé à la photo sans masquer la lisibilité. */
 .floating-ui {
     position: absolute;
     bottom: 1.5rem;
@@ -1062,6 +1105,8 @@ a {
     gap: 1.75rem; /* intentional: between --space-lg and --space-xl */
 }
 
+/* isolation: isolate crée un contexte d'empilement local : z-index: 2 de .project-info
+   reste confiné à cette carte et n'interagit pas avec le z-index du header ou du footer. */
 .project-card {
     position: relative;
     border-radius: var(--radius-xl);
@@ -1102,6 +1147,8 @@ a {
 
 
 
+/* z-index: 2 : au-dessus de .project-overlay (implicitement 1) et de .project-bg (auto).
+   Rendu sûr grâce à isolation: isolate sur .project-card. */
 .project-info {
     position: absolute;
     bottom: 0;
@@ -1133,6 +1180,10 @@ a {
     margin-bottom: 0.9rem;
 }
 
+/* Technique max-height pour animer vers une hauteur inconnue : on ne peut pas transitionner
+   height: auto, donc on part de max-height: 0 → 4rem (valeur supérieure au contenu réel).
+   L'inconvénient est une durée d'animation proportionnelle à max-height, pas à height réelle,
+   d'où le choix d'une valeur faible (4rem ≈ ~64px) proche de la hauteur attendue. */
 .project-detail {
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.78);
@@ -1144,14 +1195,15 @@ a {
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), max-height 0.4s ease;
 }
 
-/* Le détail apparaît quand on passe la souris */
+/* Hover : max-height passe à 4rem, opacity à 1. */
 .project-card:hover .project-detail {
     opacity: 1;
     transform: translateY(0);
     max-height: 4rem;
 }
 
-/* Sur touch, le détail est toujours visible */
+/* Sur appareils tactiles (hover: none), le détail est toujours affiché —
+   le survol étant impossible, on ne prive pas l'utilisateur de l'information. */
 @media (hover: none) {
     .project-detail {
         opacity: 1;
@@ -1251,8 +1303,8 @@ a {
    9. ADAPTATION AUX GRANDS ÉCRANS (Responsive)
    ========================================= */
 
-/* --- TABLETTES (Plus large que 839px) --- */
-@media (min-width: 839px) {
+/* --- TABLETTES (Plus large que 840px) --- */
+@media (min-width: 841px) {
     .container {
         padding: 0 2rem;
     }
@@ -1283,10 +1335,11 @@ a {
             transform: translateX(0);
         }
     
-        /* État haut de page (CTA hero encore visible) */
+        /* Quand le bouton CTA du header est masqué (CTA hero encore visible dans le viewport),
+           le menu nav glisse vers le centre de l'espace libéré.
+           calc((100% + 1rem) / 2) : 100% est la largeur du menu nav lui-même ;
+           on ajoute le gap (1rem) entre nav et bouton, puis on divise par 2 pour centrer. */
         .site-header:not(.show-cta) .main-nav {
-            /* On décale le menu vers la droite de la moitié de la largeur du bouton + le gap */
-            /* On ajuste le calcul pour qu'il soit dynamique en fonction de la taille du bouton */
             transform: translateX(calc( (100% + 1rem) / 2));
         }
         .site-header:not(.show-cta) #header-quote-btn {
@@ -1375,7 +1428,8 @@ a {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    /* Footer asymétrique (Logo gros, liens petits) */
+    /* Footer asymétrique : la colonne brand et la colonne contact (1fr chacune)
+       sont plus larges que les colonnes de liens (0.5fr) — priorité au contenu informatif. */
     .footer-grid {
         grid-template-columns: 1fr 0.5fr 0.5fr 1fr;
     }

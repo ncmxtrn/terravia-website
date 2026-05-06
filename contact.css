@@ -1,14 +1,42 @@
 /*
-    Styles spécifiques à la page Contact (contact.html).
-    Réutilise les classes form génériques de login.css (.form-stack,
-    .input-wrapper, .input-icon, .form-input, .input-label,
-    .checkbox-group, .error-banner) et les tokens de tokens.css.
-    Aucune valeur brute ici — tout consomme un token.
-*/
+ * contact.css — Styles exclusifs à la page contact.html.
+ *
+ * Ce fichier s'appuie sur deux dépendances :
+ *   - tokens.css : toutes les valeurs (couleurs, tailles, ombres, transitions).
+ *   - login.css  : classes de formulaire génériques (.form-stack, .input-wrapper,
+ *     .input-icon, .form-input, .input-label, .inputs-wrapper, .checkbox-group,
+ *     .error-banner, .flex-between). Ces classes ne sont pas redéfinies ici.
+ *
+ * Structure de la page :
+ *   0. Header — masquage du CTA sur cette page
+ *   1. Structure globale
+ *   2. Intro (badge + H1 + lead)
+ *   3. Layout 2 colonnes
+ *   4. Cartes canal (colonne gauche)
+ *   5. Séparateur
+ *   6. Card formulaire (colonne droite)
+ *   7. Paires d'inputs
+ *   8. Dropdown services multi-sélect + chips
+ *   9. Textarea
+ *  10. Bouton submit
+ *  11. Bannière de succès
+ *  12. Ligne de rassurance
+ *  13. Responsive grands écrans
+ */
 
 /* =========================================
    0. HEADER — pas de bouton CTA sur cette page
-   ========================================= */
+   =========================================
+   Le bouton "Obtenir une soumission" du header est masqué ici car la page
+   propose déjà un formulaire de contact en pleine page ; le CTA deviendrait
+   redondant et générerait une confusion de navigation.
+   Les trois propriétés (opacity, pointer-events, visibility) sont cumulées
+   pour garantir un masquage complet : visuel, interactif et pour les outils
+   d'accessibilité. !important est nécessaire pour surcharger les règles inline
+   ou de haute spécificité de style.css sans modifier l'ordre d'import.
+   Le breakpoint 840px correspond au point de bascule du header en mode mobile
+   (hamburger) dans style.css — on réduit aussi le max-width et le padding
+   pour éviter qu'un fantôme de bouton n'occupe de l'espace dans le flex layout. */
 #header-quote-btn {
     opacity: 0 !important;
     pointer-events: none !important;
@@ -24,7 +52,11 @@
 
 /* =========================================
    1. STRUCTURE GLOBALE DE LA PAGE
-   ========================================= */
+   =========================================
+   padding-top: --header-height compense la position fixed du header
+   afin que le contenu commence sous lui sans chevaucher.
+   min-height: 100vh garantit que le fond de page couvre tout l'écran
+   même si le contenu est court. */
 .contact-main {
     padding-top: var(--header-height);
     padding-bottom: var(--space-5xl);
@@ -34,7 +66,9 @@
 
 /* =========================================
    2. SECTION INTRO (Badge + H1 + lead)
-   ========================================= */
+   =========================================
+   Centrage en colonne. padding-top plus réduit que --header-height
+   car le padding du .contact-main le compense déjà. */
 .contact-intro {
     padding-top: var(--space-xl);
     padding-bottom: var(--space-md);
@@ -44,6 +78,9 @@
     align-items: center;
 }
 
+/* max-width: 32rem contraint le H1 à deux lignes maximum sur desktop,
+   ce qui évite un titre trop court sur une seule ligne ou trop long
+   qui déborderait le bloc de texte centré. */
 .contact-intro h1 {
     font-size: var(--text-hero);
     color: var(--color-forest);
@@ -58,6 +95,9 @@
     max-width: 38rem;
 }
 
+/* Élément de rassurance inline dans le lead (ex. "Réponse sous 24h").
+   white-space: nowrap empêche le texte de se couper en milieu de phrase
+   sur les écrans étroits — acceptable car ce fragment est court. */
 .contact-intro-reassurance {
     display: inline-flex;
     align-items: center;
@@ -66,6 +106,9 @@
     white-space: nowrap;
 }
 
+/* font-size: 1em s'aligne sur la taille du texte parent (lead),
+   vertical-align: middle corrige le décalage optique de l'icône Material
+   par rapport à la ligne de base du texte adjacent. */
 .contact-intro-reassurance .material-symbols-outlined {
     font-size: 1em;
     color: var(--color-primary);
@@ -74,7 +117,13 @@
 
 /* =========================================
    3. LAYOUT 2 COLONNES (channels | divider | form)
-   ========================================= */
+   =========================================
+   Mobile : colonne unique, les cartes canal apparaissent au-dessus du formulaire.
+   Desktop (≥ 950px) : grille à 3 colonnes — channels | divider (1px) | form.
+   minmax(18rem, 1fr) sur la colonne gauche garantit une largeur minimale lisible.
+   minmax(28rem, 1.5fr) sur la colonne droite lui donne plus d'espace car le
+   formulaire contient des champs plus larges. Le séparateur (auto) prend sa
+   largeur naturelle (1px définie dans la section 5). */
 .contact-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -91,13 +140,21 @@
 
 /* =========================================
    4. COLONNE GAUCHE — CARTES CANAL HORIZONTALES
-   ========================================= */
+   =========================================
+   Les cartes sont disposées en colonne avec gap --space-md.
+   Chaque carte utilise un grid 3 colonnes : icône | contenu | actions. */
 .contact-channels {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
 }
 
+/* grid-template-columns: auto 1fr auto :
+   - auto (icône) : largeur naturelle du bloc icône (2.5rem).
+   - 1fr (contenu) : prend tout l'espace disponible.
+   - auto (actions) : largeur naturelle des boutons d'action.
+   La transition de border-color est déclinée sur trois propriétés car
+   le survol modifie simultanément l'élévation, l'ombre et le contour vert. */
 .channel-card {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -115,6 +172,10 @@
         border-color var(--duration-medium) ease;
 }
 
+/* Icône de canal : carré 2.5rem centré via place-items.
+   Pas de fond de couleur au repos — la couleur de fond apparaît au survol
+   via .channel-external:hover / .channel-copy:hover pour ne pas alourdir
+   visuellement les cartes à l'état passif. */
 .channel-icon {
     width: 2.5rem;
     height: 2.5rem;
@@ -126,6 +187,9 @@
     transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
 }
 
+/* min-width: 0 sur .channel-body est requis dans un contexte Grid/Flex :
+   sans cela, le contenu peut forcer la colonne à dépasser sa contrainte
+   1fr si le texte est long (ex. adresse postale). */
 .channel-body {
     display: flex;
     flex-direction: column;
@@ -133,6 +197,8 @@
     min-width: 0;
 }
 
+/* Label de canal en uppercase — conforme au pattern .label-upper de tokens.css
+   mais appliqué directement ici pour éviter une dépendance sur la classe utilitaire. */
 .channel-label {
     font-size: var(--text-xs);
     font-weight: var(--weight-bold);
@@ -141,6 +207,8 @@
     color: var(--fg2);
 }
 
+/* word-break: break-word : nécessaire pour les adresses email longues
+   qui pourraient dépasser la colonne 1fr sur mobile. */
 .channel-value {
     font-size: var(--text-body);
     font-weight: var(--weight-semibold);
@@ -148,6 +216,9 @@
     word-break: break-word;
 }
 
+/* font-style: normal annule le style italique par défaut de <address>.
+   L'élément <address> est conservé pour sa sémantique HTML (contact postal)
+   tout en étant rendu visuellement comme du texte courant. */
 .channel-card address {
     font-style: normal;
     font-size: var(--text-body);
@@ -156,12 +227,21 @@
     line-height: var(--leading-snug);
 }
 
+/* gap: var(--space-none) = gap: 0 sur .channel-actions.
+   Les boutons d'action (lien externe + copier) sont intentionnellement
+   accolés sans espace pour former un groupe compact à droite de la carte.
+   L'espacement perçu est assuré par le padding interne de chaque bouton
+   (--space-2xs) et leur zone tactile (--tap-target-min). */
 .channel-actions {
     display: flex;
     align-items: center;
     gap: var(--space-none);
 }
 
+/* Classes partagées entre .channel-external (lien) et .channel-copy (bouton).
+   min-width/height: --tap-target-min (44px) garantit la zone tactile WCAG 2.5.5.
+   La transition de transform utilise une courbe avec rebond (1.275) pour
+   accentuer le micro-feedback d'interaction sur ces éléments discrets. */
 .channel-external,
 .channel-copy {
     font-size: var(--icon-lg);
@@ -180,6 +260,9 @@
         transform var(--duration-base) cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* .channel-copy est un <button> : reset des styles navigateur par défaut.
+   -webkit-appearance + appearance: none : nécessaire sur Safari iOS qui
+   applique un style de bouton système sans ce reset. */
 .channel-copy {
     position: relative;
     background: transparent;
@@ -189,6 +272,10 @@
     appearance: none;
 }
 
+/* Les deux icônes (par défaut et "copié") se superposent via grid-area: 1/1.
+   Seule l'une d'elles est visible à la fois grâce aux transitions opacity/scale.
+   Cette technique de superposition en grille évite un positionnement absolu
+   et maintient l'alignement automatique dans le flux. */
 .channel-copy-icon {
     grid-area: 1 / 1;
     font-size: var(--icon-lg);
@@ -198,6 +285,9 @@
         transform var(--duration-base) cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* État initial de l'icône "done" : invisible et réduite.
+   Au moment de la copie, script.js ajoute .is-copied sur .channel-copy,
+   ce qui inverse les états des deux icônes via les sélecteurs ci-dessous. */
 .channel-copy-icon--done {
     opacity: 0;
     transform: scale(0.6);
@@ -218,7 +308,11 @@
     transform: scale(1);
 }
 
-/* Anneau radar — clin d'oeil LiDAR : impulsion concentrique au moment de la copie */
+/* Anneau radar — clin d'oeil LiDAR : impulsion concentrique au moment de la copie.
+   Le pseudo-élément ::after est positionné via inset: 0 (équivalent de
+   top/right/bottom/left: 0) pour couvrir exactement le bouton.
+   pointer-events: none l'exclut des interactions souris.
+   L'animation ne se déclenche que via .is-copied — durée 600ms, une seule fois. */
 .channel-copy::after {
     content: "";
     position: absolute;
@@ -239,6 +333,15 @@
     100% { opacity: 0;   transform: scale(1.8);  }
 }
 
+/* Pattern ARIA visually-hidden appliqué à .channel-copy-live.
+   Ce span contient le message lu par les lecteurs d'écran lors de la copie
+   (ex. "Email copié dans le presse-papiers"). Il est rendu visible aux
+   technologies d'assistance via aria-live="polite" dans le HTML, mais
+   reste invisible à l'écran.
+   Les propriétés position:absolute + dimensions 1px + clip + overflow:hidden
+   constituent le pattern standard "sr-only" (screen-reader only) — préféré
+   à display:none ou visibility:hidden qui masquent aussi aux lecteurs d'écran.
+   margin: -1px compense le 1px de hauteur pour éviter tout décalage de layout. */
 .channel-copy-live {
     position: absolute;
     width: 1px;
@@ -251,6 +354,10 @@
     border: 0;
 }
 
+/* Hover des cartes et boutons d'action — restreint aux dispositifs pointeurs précis
+   (souris) via @media (hover: hover) and (pointer: fine).
+   Sur mobile (pointer: coarse), les états hover ne s'appliquent pas : évite
+   le "hover stuck" où une carte reste visuellement surlignée après un tap. */
 @media (hover: hover) and (pointer: fine) {
     .channel-card:hover {
         transform: translateY(-2px);
@@ -258,6 +365,11 @@
         border-color: var(--border-hover);
     }
 
+    /* Déplacement directionnel des icônes au survol de la carte :
+       lien externe monte à droite (translate positif x, négatif y) —
+       indique visuellement une ouverture externe.
+       bouton copier monte à gauche (translate négatif x, négatif y) —
+       symétrique pour équilibrer le groupe d'actions. */
     .channel-card:hover .channel-external {
         color: var(--color-primary);
         transform: translate(2px, -2px);
@@ -275,10 +387,17 @@
     }
 }
 
+/* Feedback tactile sur le bouton copier : légère compression au clic.
+   transform: scale(0.94) est préféré à une modification de padding ou margin
+   car il ne décale pas les éléments adjacents dans le flux. */
 .channel-copy:active {
     transform: scale(0.94);
 }
 
+/* outline: none sur :focus-visible : le focus ring personnalisé (box-shadow)
+   remplace l'outline natif pour respecter la charte graphique.
+   :focus-visible garantit que le style s'applique uniquement à la navigation
+   clavier, pas au clic souris. */
 .channel-copy:focus-visible,
 .channel-external:focus-visible {
     outline: none;
@@ -287,7 +406,11 @@
 
 /* =========================================
    5. SÉPARATEUR (visible ≥ 950px)
-   ========================================= */
+   =========================================
+   Ligne verticale de 1px entre les deux colonnes avec un label centré.
+   display: none par défaut ; display: flex à partir de 950px.
+   align-self: stretch permet à la ligne de s'étirer sur toute la hauteur
+   de la grille sans fixer une hauteur explicite. */
 .contact-divider {
     display: none;
 }
@@ -303,6 +426,9 @@
         align-self: stretch;
     }
 
+    /* Le label "ou" est superposé sur la ligne via position: relative
+       et background-color: --surface-page pour masquer la ligne derrière lui.
+       Cette technique est identique au pattern "hr avec label" classique. */
     .contact-divider-label {
         background-color: var(--surface-page);
         border: 1px solid var(--border-default);
@@ -318,7 +444,12 @@
 
 /* =========================================
    6. COLONNE DROITE — FORM CARD
-   ========================================= */
+   =========================================
+   min-width: 0 : même raison que .channel-body — évite le dépassement dans
+   le contexte grid.
+   scroll-margin-top: --header-height : corrige le défilement vers #formulaire
+   (ancre) depuis le lien "Contactez-nous" du footer afin que le titre de la
+   carte ne passe pas sous le header fixe. */
 .contact-form-section {
     min-width: 0;
 }
@@ -348,6 +479,9 @@
     color: var(--fg2);
 }
 
+/* Indicateur "(optionnel)" inséré après le label de certains champs.
+   font-size: 0.85em est relatif à la taille du parent (.input-label)
+   pour suivre automatiquement les changements d'échelle. */
 .input-optional {
     font-weight: var(--weight-regular);
     color: var(--fg2);
@@ -357,7 +491,10 @@
 
 /* =========================================
    7. PAIRES D'INPUTS (.input-row)
-   ========================================= */
+   =========================================
+   Grille 1 colonne sur mobile, 2 colonnes à partir de 600px.
+   gap passe de --space-sm à --space-md pour mieux tirer parti de l'espace
+   horizontal disponible sur les écrans larges. */
 .input-row {
     display: grid;
     grid-template-columns: 1fr;
@@ -373,14 +510,21 @@
 
 /* =========================================
    8. SERVICES — DROPDOWN MULTI-SÉLECT + CHIPS
-   ========================================= */
+   =========================================
+   Le dropdown est implémenté en JavaScript vanilla (script.js).
+   L'état "ouvert" est géré par la classe .is-open ajoutée par script.js
+   sur .services-dropdown. Le panel est affiché/masqué via display: none/block
+   plutôt que visibility/height pour éviter que le panel vide n'occupe de l'espace. */
 
-/* Conteneur positionné pour ancrer le panel */
+/* position: relative ancre le panel (.services-panel) en position absolute
+   relative au trigger, pas à la page. */
 .services-dropdown {
     position: relative;
 }
 
-/* Bouton trigger — hérite de .form-input (border, height, bg, radius) */
+/* Le trigger est un <button> stylé pour ressembler à un .form-input.
+   appearance: none / -webkit-appearance: none est indispensable sur Safari
+   pour supprimer le style de bouton iOS natif (fond gris, coins arrondis system). */
 .services-trigger {
     display: flex;
     align-items: center;
@@ -392,6 +536,9 @@
     padding-right: var(--space-md);
 }
 
+/* Couleur du texte du trigger selon l'état de sélection :
+   pas de sélection → --fg3 (placeholder visuel).
+   avec sélection → --fg1 (texte réel). */
 .services-trigger-text {
     flex: 1;
     color: var(--fg3);
@@ -402,9 +549,11 @@
     color: var(--fg1);
 }
 
-/* Le trigger est un <button> : :placeholder-shown ne matche jamais, donc les
-   règles "champ rempli" de login.css s'activent à tort. On rétablit l'état vide
-   tant que .has-selection n'est pas présent. */
+/* Correctif pour le trigger <button> dans le contexte des sélecteurs :has() de login.css.
+   Le trigger est un <button>, donc :placeholder-shown ne s'applique jamais.
+   Les règles de login.css ("champ rempli") s'activent à tort car la pseudo-classe
+   :not(:placeholder-shown) est toujours vraie sur un bouton.
+   On rétablit explicitement l'état visuel "vide" tant que .has-selection est absent. */
 .input-wrapper:has(.services-trigger:not(.has-selection)) .services-trigger:not(:focus) {
     border-color: var(--border-default);
 }
@@ -412,6 +561,8 @@
     color: var(--fg3);
 }
 
+/* Chevron rotatif — 180° quand le panel est ouvert.
+   flex-shrink: 0 empêche le chevron de se réduire si le texte du trigger est long. */
 .services-chevron {
     color: var(--fg3);
     font-size: var(--icon-lg);
@@ -423,6 +574,10 @@
     transform: rotate(180deg);
 }
 
+/* Quand le panel est ouvert, le trigger supprime ses coins inférieurs arrondis
+   pour créer un effet de continuité visuelle avec le panel soudé en dessous.
+   border-bottom-color: --border-subtle (plus discret) évite un double bord
+   vert trop marqué à la jonction trigger/panel. */
 .services-dropdown.is-open .services-trigger {
     border-color: var(--color-primary);
     box-shadow: var(--focus-ring);
@@ -431,7 +586,11 @@
     border-bottom-color: var(--border-subtle);
 }
 
-/* Panel déroulant — soudé au trigger */
+/* Panel déroulant — positionné sous le trigger via top: 100%.
+   z-index: 200 : valeur choisie pour passer au-dessus du contenu de page
+   (cartes, inputs) sans interférer avec le header (z-index généralement ≥ 1000).
+   La jonction avec le trigger est gérée par border-top: none + suppression
+   des coins supérieurs (border-bottom-*-radius uniquement). */
 .services-panel {
     display: none;
     position: absolute;
@@ -448,6 +607,13 @@
     overflow: hidden;
 }
 
+/* Animation d'ouverture du panel via scaleY(0.85 → 1).
+   transform-origin: top center : le panel se déplie vers le bas depuis
+   la jonction avec le trigger. Si transform-origin était bottom ou center,
+   l'animation partirait du mauvais point et désalignerait visuellement le panel.
+   NOTE: le reflow forcé (button.offsetWidth) dans script.js est nécessaire
+   pour que l'animation CSS se déclenche à chaque ouverture ; sans lui,
+   le navigateur saute l'état initial de @keyframes sur les réouvertures rapides. */
 .services-dropdown.is-open .services-panel {
     display: block;
     transform-origin: top center;
@@ -459,7 +625,8 @@
     to   { opacity: 1; transform: scaleY(1); }
 }
 
-/* Ligne d'option */
+/* Chaque option du dropdown : flex avec gap --space-md (icône + label + check).
+   border-bottom sépare visuellement les options ; supprimé sur :last-child. */
 .service-option {
     display: flex;
     align-items: center;
@@ -478,7 +645,10 @@
     background-color: var(--forest-05);
 }
 
-/* Masque le checkbox natif — accessible mais invisible */
+/* Le checkbox natif est masqué visuellement (opacity: 0, width/height: 0)
+   mais reste dans le DOM et reste focusable — il est toujours fonctionnel
+   pour les lecteurs d'écran et la navigation clavier. Ce n'est pas un
+   display: none qui le retirerait de l'accessibilité. */
 .services-panel .checkbox-input {
     position: absolute;
     opacity: 0;
@@ -487,6 +657,10 @@
     pointer-events: none;
 }
 
+/* Couleur du label selon l'état de la case :
+   Sélecteur :has() — cf. note de compatibilité dans login.css.
+   .service-option:has(.checkbox-input:checked) : l'option entière change
+   d'apparence quand sa case est cochée, pas seulement le label. */
 .service-option-label {
     flex: 1;
     font-size: var(--text-sm);
@@ -497,6 +671,8 @@
     color: var(--fg1);
 }
 
+/* Icône de coche — invisible par défaut (opacity: 0), visible quand cochée.
+   La transition sur opacity seule est plus performante qu'un display toggle. */
 .service-check {
     opacity: 0;
     color: var(--color-primary-dark);
@@ -508,7 +684,11 @@
     opacity: 1;
 }
 
-/* Zone chips — invisible si vide */
+/* Zone de chips de services sélectionnés.
+   display: none via :empty masque le conteneur s'il n'y a aucun chip,
+   évitant un espace vide visible sous le trigger quand rien n'est sélectionné.
+   :empty fonctionne car le JS insère/supprime les chips sans laisser
+   de nœuds texte vides dans le conteneur. */
 .services-tags {
     display: flex;
     flex-wrap: wrap;
@@ -520,6 +700,8 @@
     display: none;
 }
 
+/* Chip de service sélectionné — apparence badge vert pill.
+   animation chip-in : entrée douce au moment de la création par script.js. */
 .service-chip {
     display: inline-flex;
     align-items: center;
@@ -541,6 +723,10 @@
     to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* Bouton de suppression du chip (×).
+   opacity: 0.55 au repos — suffisamment visible sans attirer plus l'attention
+   que le label du chip lui-même. opacity: 1 au survol pour indiquer
+   l'interactivité. */
 .service-chip-remove {
     background: none;
     border: none;
@@ -558,13 +744,19 @@
     opacity: 1;
 }
 
+/* --icon-xs (14px) pour l'icône de fermeture — plus petite que l'icône standard
+   pour rester proportionnelle au texte du chip (--text-xs = 12.8px). */
 .service-chip-remove .material-symbols-outlined {
     font-size: var(--icon-xs);
 }
 
 /* =========================================
    9. TEXTAREA
-   ========================================= */
+   =========================================
+   height: auto annule la hauteur fixe de .form-input (3.175rem).
+   min-height: 6rem donne un point de départ raisonnable pour un message.
+   padding: --space-md remplace le padding asymétrique des inputs texte
+   (pas d'icône à gauche ni de bouton à droite dans la textarea). */
 .form-textarea {
     height: auto;
     min-height: 6rem;
@@ -575,7 +767,9 @@
 
 /* =========================================
    10. BOUTON SUBMIT
-   ========================================= */
+   =========================================
+   Pleine largeur, halo vert, transitions explicites sur les trois propriétés
+   modifiées au survol pour un contrôle précis des durées. */
 .form-submit {
     width: 100%;
     padding: var(--space-md);
@@ -593,13 +787,18 @@
     transform: translateY(-1px);
 }
 
+/* Icône du bouton submit — --icon-base (~17.6px) légèrement plus petite que
+   l'icône standard (--icon-lg = 24px) pour s'intégrer dans le flux du label. */
 .form-submit .material-symbols-outlined {
     font-size: var(--icon-base);
 }
 
 /* =========================================
    11. BANNIÈRE DE SUCCÈS (miroir vert de .error-banner)
-   ========================================= */
+   =========================================
+   Même structure que .error-banner dans login.css, mais avec la palette
+   vert (badge-bg, badge-border, primary-dark) au lieu de la palette rouge.
+   Le !important suit la même logique que .error-banner.visible. */
 .success-banner {
     display: none;
     align-items: center;
@@ -623,7 +822,9 @@
 
 /* =========================================
    12. LIGNE DE RASSURANCE SOUS LE BOUTON
-   ========================================= */
+   =========================================
+   Texte secondaire indiquant la politique de confidentialité ou le délai
+   de réponse. --icon-sm (16px) pour l'icône inline — taille body, non intrusive. */
 .form-reassurance {
     display: flex;
     align-items: center;
@@ -639,7 +840,10 @@
 
 /* =========================================
    13. RESPONSIVE — AJUSTEMENTS GRANDS ÉCRANS
-   ========================================= */
+   =========================================
+   À partir de 950px (seuil du layout 2 colonnes), la form-card bénéficie
+   d'un padding horizontal plus généreux (--space-2xl = 2.5rem) car elle
+   occupe une colonne dédiée plus large. Le padding vertical reste --space-xl. */
 @media (min-width: 950px) {
     .form-card {
         padding: var(--space-xl) var(--space-2xl);

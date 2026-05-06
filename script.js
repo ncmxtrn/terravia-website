@@ -179,6 +179,14 @@ document.querySelectorAll(".transition-link").forEach(link => {
 });
 
 
+// Retirer fade-out si la page est restaurée depuis le bfcache (bouton retour/avant)
+window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+        document.body.classList.remove("fade-out");
+    }
+});
+
+
 // --- Liens en construction ---
 // .link-arrow et .link-placeholder pointent vers des pages ou sections
 // pas encore disponibles. Le clic est intercepté pour éviter une navigation cassée.

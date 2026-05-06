@@ -514,3 +514,28 @@
 .input-wrapper:has(.password-toggle) .form-input {
     padding-right: 2.75rem;
 }
+
+/* Indicateur Caps Lock actif — apparaît sous le champ password quand la touche Maj est activée. */
+.caps-warning {
+    display: none;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-2xs);
+    font-size: var(--text-xs);
+    color: var(--fg2);
+}
+
+.caps-warning.is-visible {
+    display: flex;
+    animation: capsWarningFadeIn var(--duration-fast) var(--ease-header) forwards;
+}
+
+.caps-warning .material-symbols-outlined {
+    font-size: var(--icon-sm);
+    line-height: 1;
+}
+
+@keyframes capsWarningFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

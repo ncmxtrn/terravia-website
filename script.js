@@ -235,6 +235,26 @@ if (passwordToggle && passwordInput) {
     });
 }
 
+// --- Détection Caps Lock sur le champ password ---
+const capsWarning = document.getElementById("caps-warning");
+
+if (passwordInput && capsWarning) {
+    const updateCapsLock = (e) => {
+        const capsOn = e.getModifierState("CapsLock");
+        capsWarning.classList.toggle("is-visible", capsOn);
+        capsWarning.setAttribute("aria-hidden", capsOn ? "false" : "true");
+    };
+
+    // keydown couvre les touches normales ; keyup couvre le toggle Caps Lock lui-même
+    passwordInput.addEventListener("keydown", updateCapsLock);
+    passwordInput.addEventListener("keyup", updateCapsLock);
+
+    passwordInput.addEventListener("blur", () => {
+        capsWarning.classList.remove("is-visible");
+        capsWarning.setAttribute("aria-hidden", "true");
+    });
+}
+
 
 // --- Validation du formulaire de connexion ---
 // Validation côté client uniquement — aucune logique d'authentification implémentée.

@@ -261,16 +261,13 @@
     margin: 0;
 }
 
-/* Correction 3 : flash de bordure verte au clic d'ancre (CSS :target, sans JS).
-   Timing : entrée immédiate (~0.35s plateau), fondu lent sur 2.4s total.
-   Easing easeOutCubic sur l'ensemble = décélération naturelle. */
 @keyframes anchor-flash {
     0%   { border-color: var(--green-400);      box-shadow: var(--shadow-glow-hover); }
     15%  { border-color: var(--green-400);      box-shadow: var(--shadow-glow); }
     100% { border-color: var(--border-default); box-shadow: none; }
 }
 
-.service-sub-item:target {
+.service-sub-item.is-highlighted {
     animation: anchor-flash 2.4s var(--ease-scroll) forwards;
 }
 

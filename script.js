@@ -406,14 +406,9 @@ if (channelsRoot) {
 const servicesLayout = document.querySelector(".services-layout");
 
 if (servicesLayout) {
-    const serviceBlocks  = document.querySelectorAll(".service-block[id]");
+    const serviceBlocks   = document.querySelectorAll(".service-block[id]");
     const sidebarNavLinks = document.querySelectorAll(".services-sidebar .nav-link");
 
-    /**
-     * Marque le lien sidebar dont le href correspond à l'id fourni comme actif.
-     * Retire .is-active de tous les autres liens.
-     * @param {string} activeId - id de la section actuellement visible
-     */
     const activateSidebarLink = (activeId) => {
         sidebarNavLinks.forEach(link => {
             link.classList.toggle(
@@ -423,26 +418,58 @@ if (servicesLayout) {
         });
     };
 
-    // Initialise le premier lien actif sans attendre un scroll
-    if (serviceBlocks.length > 0) {
-        activateSidebarLink(serviceBlocks[0].id);
-    }
+    // Scroll-spy : la section active est la dernière dont le haut du bloc
+    // a franchi le seuil de détection (bas du header + 32 px = scroll-margin-top).
+    // Itérer dans l'ordre du DOM garantit que la plus basse l'emporte.
+    // Par défaut, le premier bloc est actif (haut de page).
+    const syncSidebar = () => {
+        const headerH   = document.querySelector(".site-header")?.offsetHeight ?? 80;
+        const threshold = headerH + 32; // 32 px = var(--space-xl), aligne sur scroll-margin-top
+        let activeId    = serviceBlocks[0].id;
 
-    // Observe chaque bloc de service : dès qu'il entre dans le viewport à 20 %,
-    // le lien correspondant dans la sidebar passe en état actif.
-    // rootMargin compense la hauteur du header fixe (80px).
-    const sectionWatcher = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                activateSidebarLink(entry.target.id);
+        serviceBlocks.forEach(block => {
+            if (block.getBoundingClientRect().top <= threshold) {
+                activeId = block.id;
             }
         });
-    }, {
-        threshold: 0.2,
-        rootMargin: "-80px 0px 0px 0px"
-    });
 
-    serviceBlocks.forEach(block => sectionWatcher.observe(block));
+        activateSidebarLink(activeId);
+    };
+
+    window.addEventListener("scroll", syncSidebar, { passive: true });
+    syncSidebar(); // état initial sans attendre un scroll
+
+    // Premier lien principal : renvoie au sommet (pas le même espace visuel
+    // qu'entre les autres sections).
+    if (sidebarNavLinks[0]) {
+        sidebarNavLinks[0].addEventListener("click", (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+
+    // Sous-liens : scroll vers la section parente pour montrer le numéro
+    // et le titre (01/02/03), puis flash sur la carte cible.
+    // L'animation est pilotée par la classe .is-highlighted (et non :target)
+    // pour pouvoir être relancée même si on clique plusieurs fois le même lien.
+    document.querySelectorAll(".services-sidebar .sub-nav a").forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute("href").slice(1);
+            const targetEl = document.getElementById(targetId);
+            if (!targetEl) return;
+
+            const parentSection = targetEl.closest(".service-block");
+            if (parentSection) {
+                parentSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            // Force le redémarrage de l'animation même si la carte était déjà active
+            targetEl.classList.remove("is-highlighted");
+            void targetEl.offsetWidth; // force reflow
+            targetEl.classList.add("is-highlighted");
+        });
+    });
 }
 
 

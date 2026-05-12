@@ -289,12 +289,34 @@
   --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);
   --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-scroll:   cubic-bezier(0.215, 0.61, 0.355, 1);
+  /* --ease-elastic : overshoot léger, utilisé pour les micro-interactions (boutons d'action, chips). */
+  --ease-elastic:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   --duration-fast:   0.2s;
   --duration-base:   0.3s;
   --duration-medium: 0.4s;
   --duration-slow:   0.6s;
   --duration-reveal: 0.8s;
+
+  /* ============================================================
+     FILTRES CSS
+     ------------------------------------------------------------
+     --filter-logo-forest : teinte le logo SVG (noir par défaut) en vert forest
+       (#1A3C34). Calculé une fois pour éviter la duplication dans style.css et
+       login.css.
+     --filter-logo-white  : teinte le logo en blanc, pour les fonds sombres (footer).
+     ============================================================ */
+  --filter-logo-forest: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
+  --filter-logo-white:  brightness(0) invert(1);
+
+  /* ============================================================
+     GLASSMORPHISM
+     ------------------------------------------------------------
+     Valeurs de flou et saturation utilisées sur le header au scroll
+     et la pill-bar mobile de la page services.
+     ============================================================ */
+  --blur-glass:     blur(20px);
+  --saturate-glass: saturate(180%);
 }
 
 /* ============================================================

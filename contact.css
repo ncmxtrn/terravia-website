@@ -257,7 +257,7 @@
     transition:
         color var(--duration-base) ease,
         background-color var(--duration-base) ease,
-        transform var(--duration-base) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform var(--duration-base) var(--ease-elastic);
 }
 
 /* .channel-copy est un <button> : reset des styles navigateur par défaut.
@@ -282,7 +282,7 @@
     line-height: 1;
     transition:
         opacity var(--duration-base) ease,
-        transform var(--duration-base) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform var(--duration-base) var(--ease-elastic);
 }
 
 /* État initial de l'icône "done" : invisible et réduite.

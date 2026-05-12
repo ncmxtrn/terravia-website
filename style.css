@@ -206,8 +206,8 @@ a {
    box-shadow 0 1px 0 : ligne de séparation subtile sans border (évite le doublon avec border-bottom). */
 .site-header.is-scrolled {
     background-color: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: var(--blur-glass) var(--saturate-glass);
+    -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
     border-bottom-color: var(--border-subtle);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
@@ -223,7 +223,7 @@ a {
 }
 
 .site-header.is-floating .logo-icon {
-    filter: brightness(0) invert(1);
+    filter: var(--filter-logo-white);
 }
 
 .site-header.is-floating .logo {
@@ -268,7 +268,7 @@ a {
 }
 
 .site-header.is-floating.menu-open .logo-icon {
-    filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
+    filter: var(--filter-logo-forest);
 }
 
 .site-header.is-floating.menu-open .main-nav a {
@@ -318,11 +318,11 @@ a {
     height: 40px;
     width: auto;
     transition: filter 0.3s ease, transform 0.3s ease;
-    filter: brightness(0) saturate(100%) invert(18%) sepia(13%) saturate(2227%) hue-rotate(124deg) brightness(93%) contrast(93%);
+    filter: var(--filter-logo-forest);
 }
 
 .site-footer .logo-icon {
-    filter: brightness(0) invert(1); /* Dans le footer, on le veut blanc */
+    filter: var(--filter-logo-white);
 }
 
 .logo h2,
@@ -458,7 +458,7 @@ a {
     font-size: var(--icon-lg);
     margin-left: 0.2rem;
     color: var(--color-primary); /* Même vert que le trait de soulignement */
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animation fluide */
+    transition: all var(--duration-base) var(--ease-elastic);
     opacity: 1; /* Visible par défaut pour mobile/tablette */
     transform: translate(0, 0) scale(1);
     white-space: nowrap;

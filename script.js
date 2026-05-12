@@ -419,6 +419,9 @@ if (servicesLayout) {
     const sidebarNavLinks = document.querySelectorAll(".services-sidebar .nav-link");
     const sidebar         = document.querySelector(".services-sidebar");
 
+    // Permet à services.css de cibler le header sur cette page uniquement
+    document.body.classList.add("has-pill-nav");
+
     const activateSidebarLink = (activeId) => {
         sidebarNavLinks.forEach(link => {
             const isActive = link.getAttribute("href") === `#${activeId}`;

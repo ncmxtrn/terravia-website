@@ -6,7 +6,6 @@
  * Ordre d'import : tokens.css → style.css → services.css
  */
 
-
 /* ============================================================
    1. LAYOUT PRINCIPAL (sidebar + contenu)
    ============================================================ */
@@ -283,19 +282,24 @@
         gap: 0;
     }
 
-    /* Sidebar → barre de navigation horizontale scrollable */
+    /* Sidebar → barre de navigation horizontale scrollable.
+       Même recette glass que .site-header.is-scrolled pour s'y adosser visuellement.
+       Marges négatives = on casse le padding du .container pour aller bord à bord. */
     .services-sidebar {
         position: sticky;
         top: var(--header-height);
-        z-index: 10;
+        z-index: 99; /* juste sous le header (100) pour que son ombre le recouvre */
         max-height: none;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        background: var(--surface-page);
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
         border-bottom: 1px solid var(--border-subtle);
         padding: var(--space-sm) 0;
+        margin-inline: calc(var(--container-px) * -1);
     }
 
     .services-sidebar::-webkit-scrollbar {
@@ -306,7 +310,9 @@
         flex-direction: row;
         gap: var(--space-xs);
         white-space: nowrap;
-        padding: 0 var(--container-px);
+        /* Compense la marge négative de .services-sidebar : la première pill
+           s'aligne sur le bord interne du .container, comme le reste du contenu. */
+        padding: 0 0 0 var(--container-px);
     }
 
     .nav-group {
@@ -379,6 +385,21 @@
     .nav-group-inner::before {
         display: none;
     }
+
+    /* Fusionne visuellement la pill-bar avec le header :
+       supprime le border-bottom du header sur cette page pour ne laisser
+       qu'un seul trait de fermeture (celui du bas de la pill-bar). */
+    .has-pill-nav .site-header {
+        border-bottom-color: transparent;
+        box-shadow: none;
+    }
+
+    .sticky-nav::after {
+        content: '';
+        display: block;
+        min-width: var(--container-px);
+        flex-shrink: 0;
+    }
 }
 
 @media (max-width: 480px) {
@@ -390,5 +411,20 @@
     .service-number {
         font-size: var(--text-h2-sm);
         opacity: 0.2;
+    }
+}
+
+/* À ≤380px, .container passe à 1.25rem (cf. style.css) : on suit. */
+@media (max-width: 380px) {
+    .services-sidebar {
+        margin-inline: -1.25rem;
+    }
+
+    .sticky-nav {
+        padding-left: 1.25rem;
+    }
+
+    .sticky-nav::after {
+        min-width: 1.25rem;
     }
 }

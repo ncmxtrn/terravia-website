@@ -346,13 +346,9 @@ a {
     overflow: hidden;
 }
 
-/* Sur mobile : on cache le texte du logo dès que le bouton CTA apparaît
-   (la grille du header passe en 3 colonnes, il faut faire de la place). */
-.site-header.show-cta .logo h2 {
-    opacity: 0;
-    max-width: 0;
-    margin-left: -0.5rem; /* Compense le gap */
-}
+/* Sur mobile uniquement : on cache le texte du logo dès que le bouton CTA
+   apparaît (grille 3 colonnes, espace contraint). À ≥841px le header est en
+   flex et le wordmark tient — pas besoin de le masquer. */
 
 /* =========================================
    NAVIGATION — MENU MOBILE / DESKTOP
@@ -563,6 +559,13 @@ a {
             position: static;
             z-index: 10; /* au-dessus du menu mobile (position: absolute) */
         }
+
+    /* Wordmark caché uniquement sur mobile quand le CTA header est visible */
+    .site-header.show-cta .logo h2 {
+        opacity: 0;
+        max-width: 0;
+        margin-left: -0.5rem;
+    }
 
     /* En haut de page, le bouton du header est caché */
     .site-header:not(.show-cta) #header-quote-btn {
@@ -1407,17 +1410,6 @@ a {
             justify-content: center;
         }
 
-    .logo h2 {
-            display: block; /* On réaffiche le nom du site dans le logo */
-        }
-    
-        /* Sur Desktop, on ne cache jamais le nom du logo */
-        .site-header.show-cta .logo h2 {
-            opacity: 1;
-            max-width: 100px;
-            margin-left: 0;
-        }
-    
     /* 4 colonnes pour les services */
     .services-grid {
         grid-template-columns: repeat(4, 1fr);

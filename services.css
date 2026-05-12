@@ -147,7 +147,7 @@
 .service-block {
     border-top: 1px solid var(--border-subtle);
     padding: var(--space-4xl) 0;
-    scroll-margin-top: calc(var(--header-height) + var(--space-xl));
+    scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-xl)));
 }
 
 .service-block:first-child {
@@ -217,7 +217,7 @@
     border: 1px solid var(--border-default);
     border-radius: var(--radius-xl);
     padding: var(--space-xl);
-    scroll-margin-top: calc(var(--header-height) + var(--space-xl));
+    scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-xl)));
     transition:
         border-color var(--duration-base),
         box-shadow var(--duration-base),
@@ -290,7 +290,7 @@
         z-index: 10;
         max-height: none;
         overflow-x: auto;
-        overflow-y: visible;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         background: var(--surface-page);
@@ -347,11 +347,11 @@
 
     .service-block {
         padding: var(--space-2xl) 0;
-        scroll-margin-top: calc(var(--header-height) + var(--space-2xl) + var(--space-md));
+        scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-3xl)));
     }
 
     .service-sub-item {
-        scroll-margin-top: calc(var(--header-height) + var(--space-2xl) + var(--space-md));
+        scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-3xl)));
     }
 
     .service-block-header {
@@ -368,6 +368,16 @@
 
     .service-sub-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Supprime l'espace vide entre le header et la pill-bar */
+    .services-section {
+        padding-top: var(--header-height);
+    }
+
+    /* L'indicateur vertical de groupe n'a pas de sens dans la pill-bar */
+    .nav-group-inner::before {
+        display: none;
     }
 }
 

@@ -23,11 +23,6 @@ window.addEventListener("load", () => {
     // Révélation de la page
     // La classe "is-loading" sur le body la gardait invisible pendant le chargement.
     // On l'enlève maintenant que tout est prêt, pour l'animation d'entrée.
-    setTimeout(() => {
-        document.body.classList.remove("is-loading");
-    }, 100);
-
-
     // --- Animations au scroll (IntersectionObserver) ---
     // Surveille les éléments .badge et .animate-on-scroll.
     // Dès qu'un élément est visible à 50 %, on lui ajoute la classe "visible"
@@ -43,6 +38,20 @@ window.addEventListener("load", () => {
 
     document.querySelectorAll(".badge, .animate-on-scroll")
         .forEach(el => scrollObserver.observe(el));
+
+    setTimeout(() => {
+        document.body.classList.remove("is-loading");
+        // Révèle immédiatement les éléments déjà présents dans le viewport au chargement.
+        // Le threshold 0.5 de l'observer ne déclenche pas pour les éléments partiellement
+        // visibles dès le départ (ex. : premières cartes de services.html).
+        document.querySelectorAll(".badge, .animate-on-scroll").forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                el.classList.add("visible");
+                scrollObserver.unobserve(el);
+            }
+        });
+    }, 100);
 
 
     // --- Menu burger (mobile) ---
@@ -408,24 +417,52 @@ const servicesLayout = document.querySelector(".services-layout");
 if (servicesLayout) {
     const serviceBlocks   = document.querySelectorAll(".service-block[id]");
     const sidebarNavLinks = document.querySelectorAll(".services-sidebar .nav-link");
+    const sidebar         = document.querySelector(".services-sidebar");
 
     const activateSidebarLink = (activeId) => {
         sidebarNavLinks.forEach(link => {
-            link.classList.toggle(
-                "is-active",
-                link.getAttribute("href") === `#${activeId}`
-            );
+            const isActive = link.getAttribute("href") === `#${activeId}`;
+            link.classList.toggle("is-active", isActive);
+            // Sur mobile, centre la pill active dans la barre horizontale
+            if (isActive && window.innerWidth <= 840 && sidebar) {
+                const sidebarRect = sidebar.getBoundingClientRect();
+                const linkRect    = link.getBoundingClientRect();
+                sidebar.scrollTo({
+                    left: sidebar.scrollLeft + linkRect.left - sidebarRect.left
+                          - (sidebarRect.width / 2) + (linkRect.width / 2),
+                    behavior: "smooth"
+                });
+            }
         });
     };
 
+    // Met à jour --sticky-top sur :root = hauteur réelle de la zone collante
+    // (header + sidebar sur mobile, header seul sur desktop) + buffer visuel.
+    // Utilisé à la fois par le scroll-spy et par scroll-margin-top en CSS.
+    const updateStickyTop = () => {
+        const headerH  = document.querySelector(".site-header")?.offsetHeight ?? 80;
+        const isMobile = window.innerWidth <= 840;
+        const sidebarH = isMobile ? (sidebar?.offsetHeight ?? 0) : 0;
+        const buffer   = isMobile ? 16 : 32; // --space-md mobile, --space-xl desktop
+        document.documentElement.style.setProperty(
+            "--sticky-top",
+            `${headerH + sidebarH + buffer}px`
+        );
+    };
+
+    updateStickyTop();
+    window.addEventListener("resize", updateStickyTop, { passive: true });
+    window.addEventListener("load", updateStickyTop, { once: true });
+
     // Scroll-spy : la section active est la dernière dont le haut du bloc
-    // a franchi le seuil de détection (bas du header + 32 px = scroll-margin-top).
+    // a franchi le seuil --sticky-top (header + sidebar mobile + buffer).
     // Itérer dans l'ordre du DOM garantit que la plus basse l'emporte.
     // Par défaut, le premier bloc est actif (haut de page).
     const syncSidebar = () => {
-        const headerH   = document.querySelector(".site-header")?.offsetHeight ?? 80;
-        const threshold = headerH + 32; // 32 px = var(--space-xl), aligne sur scroll-margin-top
-        let activeId    = serviceBlocks[0].id;
+        const threshold = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
+        ) || 112;
+        let activeId = serviceBlocks[0].id;
 
         serviceBlocks.forEach(block => {
             if (block.getBoundingClientRect().top <= threshold) {

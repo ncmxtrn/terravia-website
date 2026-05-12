@@ -1,0 +1,387 @@
+/**
+ * services.css — Styles spécifiques à la page services.html
+ *
+ * Complète style.css. Toutes les valeurs via tokens.css.
+ *
+ * Ordre d'import : tokens.css → style.css → services.css
+ */
+
+
+/* ============================================================
+   1. LAYOUT PRINCIPAL (sidebar + contenu)
+   ============================================================ */
+
+.services-section {
+    /* padding-top = header fixe + espace de respiration */
+    padding: calc(var(--header-height) + var(--space-3xl)) 0 var(--space-5xl);
+}
+
+.services-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: var(--space-3xl);
+    align-items: start;
+}
+
+
+/* ============================================================
+   2. SIDEBAR STICKY
+   ============================================================ */
+
+.services-sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-xl));
+    max-height: calc(100vh - var(--header-height) - var(--space-3xl));
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.services-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.sticky-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.nav-group {
+    padding-bottom: var(--space-md);
+}
+
+.nav-group + .nav-group {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-md);
+}
+
+/* Wrapper nav-link + sub-nav : ancre naturelle du trait actif. */
+.nav-group-inner {
+    position: relative;
+}
+
+.nav-group-inner::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(
+        to bottom,
+        var(--green-400) 0%,
+        var(--green-400) 30%,
+        color-mix(in srgb, var(--green-400) 28%, transparent) 100%
+    );
+    border-radius: 0 1.5px 1.5px 0;
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform 360ms var(--ease-scroll);
+}
+
+.nav-group-inner:has(.nav-link.is-active)::before {
+    transform: scaleY(1);
+}
+
+.nav-link {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--fg2);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-md);
+    border-left: 3px solid transparent;
+    letter-spacing: var(--tracking-link);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    transition:
+        color var(--duration-base),
+        border-color var(--duration-base),
+        background var(--duration-base);
+}
+
+.nav-link:hover {
+    color: var(--color-forest);
+    background: var(--forest-03);
+}
+
+.nav-link.is-active {
+    color: var(--color-forest);
+    border-left-color: transparent;
+    background: var(--forest-05);
+    font-weight: var(--weight-bold);
+}
+
+.sub-nav {
+    list-style: none;
+    padding: var(--space-xs) 0 0 var(--space-md);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+}
+
+.sub-nav li a {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--fg3);
+    text-decoration: none;
+    padding: var(--space-2xs) var(--space-sm);
+    border-radius: var(--radius-md);
+    transition: color var(--duration-fast), transform var(--duration-fast);
+}
+
+.sub-nav li a:hover {
+    color: var(--fg1);
+    transform: translateX(3px);
+}
+
+.nav-group:has(.nav-link.is-active) .sub-nav li a {
+    color: var(--fg2);
+}
+
+
+/* ============================================================
+   3. BLOCS DE SERVICE
+   ============================================================ */
+
+.service-block {
+    border-top: 1px solid var(--border-subtle);
+    padding: var(--space-4xl) 0;
+    scroll-margin-top: calc(var(--header-height) + var(--space-xl));
+}
+
+.service-block:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+/* Correction 1 : align-items: start suffit — pas de padding-top sur le numéro */
+.service-block-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+    margin-bottom: var(--space-2xl);
+}
+
+/* Numérotation Orbitron — décorative, pas sémantique.
+   line-height: var(--leading-tight) évite un débordement visuel du chiffre. */
+.service-number {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: var(--weight-black);
+    line-height: var(--leading-tight);
+    color: var(--green-400);
+    opacity: 0.28;
+    letter-spacing: var(--tracking-tight);
+    user-select: none;
+}
+
+.service-block-header h2 {
+    font-size: var(--text-h2-sm);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-forest);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-sm);
+}
+
+.service-intro {
+    font-size: var(--text-body);
+    color: var(--fg2);
+    line-height: var(--leading-relaxed);
+    max-width: 540px;
+}
+
+
+/* ============================================================
+   4. GRILLE DES SOUS-SERVICES (fiches)
+   ============================================================ */
+
+.service-sub-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+/* Correction 2 : icône + titre côte à côte via CSS Grid 2×2.
+   Aucune modification HTML nécessaire. */
+.service-sub-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: var(--space-sm);
+    row-gap: var(--space-xs);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    scroll-margin-top: calc(var(--header-height) + var(--space-xl));
+    transition:
+        border-color var(--duration-base),
+        box-shadow var(--duration-base),
+        transform var(--duration-base) var(--ease-card);
+}
+
+.service-sub-item:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+}
+
+.service-sub-icon {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    font-size: var(--icon-lg);
+    color: var(--color-forest);
+    margin-bottom: 0;
+    font-variation-settings: 'FILL' 0, 'wght' 300;
+}
+
+.service-sub-item h3 {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    font-size: var(--text-body);
+    font-weight: var(--weight-bold);
+    color: var(--color-forest);
+    margin-bottom: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+}
+
+.service-sub-item p {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: var(--text-body);
+    color: var(--fg2);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+}
+
+/* Correction 3 : flash de bordure verte au clic d'ancre (CSS :target, sans JS).
+   Timing : entrée immédiate (~0.35s plateau), fondu lent sur 2.4s total.
+   Easing easeOutCubic sur l'ensemble = décélération naturelle. */
+@keyframes anchor-flash {
+    0%   { border-color: var(--green-400);      box-shadow: var(--shadow-glow-hover); }
+    15%  { border-color: var(--green-400);      box-shadow: var(--shadow-glow); }
+    100% { border-color: var(--border-default); box-shadow: none; }
+}
+
+.service-sub-item:target {
+    animation: anchor-flash 2.4s var(--ease-scroll) forwards;
+}
+
+
+
+/* ============================================================
+   6. MOBILE (≤ 840px)
+   ============================================================ */
+
+@media (max-width: 840px) {
+    .services-layout {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    /* Sidebar → barre de navigation horizontale scrollable */
+    .services-sidebar {
+        position: sticky;
+        top: var(--header-height);
+        z-index: 10;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        background: var(--surface-page);
+        border-bottom: 1px solid var(--border-subtle);
+        padding: var(--space-sm) 0;
+    }
+
+    .services-sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .sticky-nav {
+        flex-direction: row;
+        gap: var(--space-xs);
+        white-space: nowrap;
+        padding: 0 var(--container-px);
+    }
+
+    .nav-group {
+        padding: 0;
+        display: inline-block;
+    }
+
+    .nav-group + .nav-group {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        border-left: none;
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-pill);
+        padding: var(--space-xs) var(--space-md);
+        font-size: var(--text-xs);
+        white-space: nowrap;
+        background: transparent;
+    }
+
+    .nav-link.is-active {
+        background: var(--color-forest);
+        color: var(--fg-on-dark);
+        border-color: var(--color-forest);
+    }
+
+    .sub-nav {
+        display: none;
+    }
+
+    .services-content {
+        padding-top: var(--space-2xl);
+    }
+
+    .service-block {
+        padding: var(--space-2xl) 0;
+        scroll-margin-top: calc(var(--header-height) + var(--space-2xl) + var(--space-md));
+    }
+
+    .service-sub-item {
+        scroll-margin-top: calc(var(--header-height) + var(--space-2xl) + var(--space-md));
+    }
+
+    .service-block-header {
+        gap: var(--space-md);
+    }
+
+    .service-number {
+        font-size: calc(var(--text-display) * 0.6);
+    }
+
+    .service-block-header h2 {
+        font-size: calc(var(--text-h2-sm) * 0.75);
+    }
+
+    .service-sub-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .service-block-header {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+    }
+
+    .service-number {
+        font-size: var(--text-h2-sm);
+        opacity: 0.2;
+    }
+}

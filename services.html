@@ -1,0 +1,315 @@
+<!--
+    services.html — Page de détail des services de Solutions Terravia.
+    Structure : en-tête fixe, section intro sombre, layout sidebar + contenu,
+    trois blocs de service, pied de page.
+    Aucun JS inline — toute l'interactivité est centralisée dans script.js.
+-->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Nos services — Solutions Terravia</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="tokens.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="services.css">
+</head>
+
+<body class="is-loading page-transition">
+    <div class="site-wrapper">
+
+        <header class="site-header">
+            <div class="container header-content">
+                <a href="index.html" class="logo transition-link">
+                    <img src="assets/logo-noir.svg" alt="Terravia" class="logo-icon">
+                    <h2>Terravia</h2>
+                </a>
+
+                <nav class="main-nav">
+                    <a href="index.html" class="transition-link">Accueil</a>
+                    <a href="login.html" class="transition-link client-link">
+                        Espace client
+                        <span class="material-symbols-outlined client-icon">arrow_outward</span>
+                    </a>
+                    <a href="index.html#projets" class="transition-link">Projets</a>
+                    <a href="#" class="link-placeholder">À propos</a>
+                </nav>
+
+                <div class="header-actions">
+                    <a href="contact.html" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
+                    <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+                        <div class="burger-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+
+
+
+            <!-- ================================================
+                 LAYOUT PRINCIPAL — sidebar + contenu
+                 ================================================ -->
+            <div class="services-section">
+                <div class="container services-layout">
+
+                    <!-- ----------------------------------------
+                         SIDEBAR — navigation sticky
+                         ---------------------------------------- -->
+                    <aside class="services-sidebar" aria-label="Navigation des services">
+                        <nav class="sticky-nav">
+
+                            <div class="nav-group">
+                                <div class="nav-group-inner">
+                                    <a href="#acquisition" class="nav-link">Capture et Acquisition</a>
+                                    <ul class="sub-nav">
+                                        <li><a href="#lidar">Levés LiDAR</a></li>
+                                        <li><a href="#photogrammetrie">Photogrammétrie</a></li>
+                                        <li><a href="#conventionnel">Levés conventionnels</a></li>
+                                        <li><a href="#numerisation">Numérisation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="nav-group">
+                                <div class="nav-group-inner">
+                                    <a href="#ingenierie" class="nav-link">Ingénierie des Données</a>
+                                    <ul class="sub-nav">
+                                        <li><a href="#volumes">Calculs de volumes</a></li>
+                                        <li><a href="#analyses">Analyses spatiales</a></li>
+                                        <li><a href="#extraction">Extraction de géométries</a></li>
+                                        <li><a href="#automatisation">Automatisation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="nav-group">
+                                <div class="nav-group-inner">
+                                    <a href="#diffusion" class="nav-link">Solutions Numériques</a>
+                                    <ul class="sub-nav">
+                                        <li><a href="#sig">Plateformes SIG Web</a></li>
+                                        <li><a href="#visualisation">Visualisation immersive</a></li>
+                                        <li><a href="#tableaux">Tableaux de bord</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </nav>
+                    </aside>
+
+                    <!-- ----------------------------------------
+                         CONTENU — blocs de service
+                         ---------------------------------------- -->
+                    <div class="services-content">
+
+                        <!-- ====================================
+                             BLOC 01 — CAPTURE ET ACQUISITION
+                             ==================================== -->
+                        <section id="acquisition" class="service-block">
+
+                            <div class="service-block-header animate-on-scroll">
+                                <span class="service-number" aria-hidden="true">01</span>
+                                <div>
+                                    <h2>Capture et Acquisition de Précision</h2>
+                                    <p class="service-intro">
+                                        Déploiement des technologies les plus avancées pour capturer
+                                        la réalité de votre terrain avec une exactitude millimétrique —
+                                        aérien, terrestre ou mixte selon la complexité du site.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="service-sub-grid animate-on-scroll">
+                                <div class="service-sub-item" id="lidar">
+                                    <span class="material-symbols-outlined service-sub-icon">radar</span>
+                                    <h3>Levés LiDAR</h3>
+                                    <p>Drone et scanner laser terrestre pour une densité de points maximale sous la canopée ou dans des environnements à géométrie complexe.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="photogrammetrie">
+                                    <span class="material-symbols-outlined service-sub-icon">photo_camera</span>
+                                    <h3>Photogrammétrie aérienne</h3>
+                                    <p>Modélisation 3D et orthophotographies haute résolution à partir de vols drone systématiques à altitude calibrée.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="conventionnel">
+                                    <span class="material-symbols-outlined service-sub-icon">straighten</span>
+                                    <h3>Levés conventionnels</h3>
+                                    <p>GNSS et Station Totale pour l'établissement de points de contrôle terrestres et les levés topographiques de précision.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="numerisation">
+                                    <span class="material-symbols-outlined service-sub-icon">scanner</span>
+                                    <h3>Numérisation d'infrastructures</h3>
+                                    <p>Capture détaillée de bâtiments et d'ouvrages d'art pour la documentation patrimoniale et l'intégration BIM.</p>
+                                </div>
+                            </div>
+
+                        </section>
+
+
+                        <!-- ====================================
+                             BLOC 02 — INGÉNIERIE DES DONNÉES
+                             ==================================== -->
+                        <section id="ingenierie" class="service-block">
+
+                            <div class="service-block-header animate-on-scroll">
+                                <span class="service-number" aria-hidden="true">02</span>
+                                <div>
+                                    <h2>Ingénierie et Intelligence des Données</h2>
+                                    <p class="service-intro">
+                                        La donnée brute est transformée en information exploitable grâce à
+                                        des processus de traitement rigoureux et automatisés — du nuage de
+                                        points brut au livrable clé en main.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="service-sub-grid animate-on-scroll">
+                                <div class="service-sub-item" id="volumes">
+                                    <span class="material-symbols-outlined service-sub-icon">stacked_bar_chart</span>
+                                    <h3>Calculs de volumes</h3>
+                                    <p>Suivi de stocks, carrières et sablières. Mesures différentielles entre campagnes pour quantifier l'évolution des matériaux.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="analyses">
+                                    <span class="material-symbols-outlined service-sub-icon">map</span>
+                                    <h3>Analyses spatiales avancées</h3>
+                                    <p>Détection de changements entre levés, classification de nuages de points, génération de MNT et MNS haute précision.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="extraction">
+                                    <span class="material-symbols-outlined service-sub-icon">architecture</span>
+                                    <h3>Extraction de géométries</h3>
+                                    <p>Vectorisation 2D et 3D de structures, modélisation de surfaces et d'ouvrages pour intégration directe dans les flux BIM.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="automatisation">
+                                    <span class="material-symbols-outlined service-sub-icon">automation</span>
+                                    <h3>Automatisation</h3>
+                                    <p>Développement de scripts sur mesure pour accélérer les flux de traitement répétitifs et réduire les délais de livraison.</p>
+                                </div>
+                            </div>
+
+                        </section>
+
+
+                        <!-- ====================================
+                             BLOC 03 — SOLUTIONS NUMÉRIQUES
+                             ==================================== -->
+                        <section id="diffusion" class="service-block">
+
+                            <div class="service-block-header animate-on-scroll">
+                                <span class="service-number" aria-hidden="true">03</span>
+                                <div>
+                                    <h2>Solutions Numériques et Diffusion</h2>
+                                    <p class="service-intro">
+                                        Des outils sur mesure pour interagir avec vos données géospatiales
+                                        directement depuis le navigateur — sans installation de logiciels lourds
+                                        ni compétences SIG requises.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="service-sub-grid animate-on-scroll">
+                                <div class="service-sub-item" id="sig">
+                                    <span class="material-symbols-outlined service-sub-icon">language</span>
+                                    <h3>Plateformes SIG Web</h3>
+                                    <p>Cartographie interactive 2D et 3D accessible depuis votre navigateur, avec contrôle des couches, exports et partage sécurisé.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="visualisation">
+                                    <span class="material-symbols-outlined service-sub-icon">view_in_ar</span>
+                                    <h3>Visualisation immersive</h3>
+                                    <p>Hébergement et affichage fluide de nuages de points massifs et de photomaillages — navigation intuitive sans téléchargement.</p>
+                                </div>
+
+                                <div class="service-sub-item" id="tableaux">
+                                    <span class="material-symbols-outlined service-sub-icon">dashboard</span>
+                                    <h3>Tableaux de bord</h3>
+                                    <p>Outils décisionnels sur mesure pour suivre l'avancement de vos projets, visualiser les métriques clés et piloter les interventions.</p>
+                                </div>
+
+                                <div class="service-sub-item">
+                                    <span class="material-symbols-outlined service-sub-icon">share</span>
+                                    <h3>Diffusion et accès client</h3>
+                                    <p>Portail d'accès sécurisé pour consulter, télécharger et partager vos livrables géospatiaux avec vos équipes ou sous-traitants.</p>
+                                </div>
+                            </div>
+
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="site-footer" id="contact">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <a href="index.html" class="logo transition-link">
+                            <img src="assets/logo-noir.svg" alt="Terravia" class="logo-icon">
+                            <h3>Terravia</h3>
+                        </a>
+                        <p>L'excellence en acquisition de données géospatiales par drone.</p>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#lidar" class="transition-link">LiDAR aéroporté</a></li>
+                            <li><a href="#photogrammetrie" class="transition-link">Photogrammétrie</a></li>
+                            <li><a href="#numerisation" class="transition-link">Inspection d'ouvrages</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Entreprise</h4>
+                        <ul>
+                            <li><a href="#" class="link-placeholder">À propos</a></li>
+                            <li><a href="#" class="link-placeholder">Carrières</a></li>
+                            <li><a href="#" class="link-placeholder">Blogue technique</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-contact">
+                        <h4>Contactez-nous</h4>
+                        <ul>
+                            <li><span class="material-symbols-outlined icon">call</span> +1 (999) 999-9999</li>
+                            <li><span class="material-symbols-outlined icon">mail</span> info@solutionsterravia.com</li>
+                            <li>
+                                <span class="material-symbols-outlined icon">location_on</span>
+                                <address>
+                                    936, av. du Mont-Royal Est, 2e étage<br>
+                                    Montréal, QC H2J 1X2
+                                </address>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2026 Terravia. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

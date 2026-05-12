@@ -15,6 +15,16 @@
     padding: calc(var(--header-height) + var(--space-3xl)) 0 var(--space-5xl);
 }
 
+.section-header.services-page-intro h1 {
+    font-size: 3rem;
+    color: var(--color-forest);
+    margin-bottom: var(--space-md);
+}
+
+.section-header.services-page-intro h1.animate-on-scroll {
+    transition-delay: 0.1s;
+}
+
 .services-layout {
     display: grid;
     grid-template-columns: 240px 1fr;
@@ -75,7 +85,7 @@
     border-radius: 0 1.5px 1.5px 0;
     transform: scaleY(0);
     transform-origin: top center;
-    transition: transform 360ms var(--ease-scroll);
+    transition: transform var(--duration-medium) var(--ease-scroll);
 }
 
 .nav-group-inner:has(.nav-link.is-active)::before {
@@ -273,6 +283,18 @@
 
 
 /* ============================================================
+   5. STAGGER DES CARTES AU SCROLL
+   ============================================================ */
+
+/* Cascade d'entrée individuelle par carte. :not(.visible) efface le délai
+   une fois la classe posée, pour ne pas parasiter les transitions de hover. */
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(1):not(.visible) { transition-delay: 0s;     }
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(2):not(.visible) { transition-delay: 0.1s;   }
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(3):not(.visible) { transition-delay: 0.15s;  }
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(4):not(.visible) { transition-delay: 0.25s;  }
+
+
+/* ============================================================
    6. MOBILE (≤ 840px)
    ============================================================ */
 
@@ -294,7 +316,7 @@
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        background: rgba(255, 255, 255, 0.72);
+        background: var(--surface-glass);
         backdrop-filter: var(--blur-glass) var(--saturate-glass);
         -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
         border-bottom: 1px solid var(--border-subtle);
@@ -310,9 +332,8 @@
         flex-direction: row;
         gap: var(--space-xs);
         white-space: nowrap;
-        /* Compense la marge négative de .services-sidebar : la première pill
-           s'aligne sur le bord interne du .container, comme le reste du contenu. */
-        padding: 0 0 0 var(--container-px);
+        justify-content: center;
+        padding: 0 var(--container-px);
     }
 
     .nav-group {
@@ -376,9 +397,16 @@
         grid-template-columns: 1fr;
     }
 
-    /* Supprime l'espace vide entre le header et la pill-bar */
     .services-section {
-        padding-top: var(--header-height);
+        padding-top: calc(var(--header-height) + var(--space-lg));
+    }
+
+    .section-header.services-page-intro {
+        margin-bottom: var(--space-sm);
+    }
+
+    .section-header.services-page-intro h1 {
+        font-size: var(--text-h2-sm);
     }
 
     /* L'indicateur vertical de groupe n'a pas de sens dans la pill-bar */
@@ -394,12 +422,6 @@
         box-shadow: none;
     }
 
-    .sticky-nav::after {
-        content: '';
-        display: block;
-        min-width: var(--container-px);
-        flex-shrink: 0;
-    }
 }
 
 @media (max-width: 480px) {
@@ -421,10 +443,6 @@
     }
 
     .sticky-nav {
-        padding-left: 1.25rem;
-    }
-
-    .sticky-nav::after {
-        min-width: 1.25rem;
+        padding-inline: 1.25rem;
     }
 }

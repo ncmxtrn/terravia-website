@@ -34,7 +34,7 @@ window.addEventListener("load", () => {
                 scrollObserver.unobserve(entry.target); // déclenché une seule fois par élément
             }
         });
-    }, { threshold: 0.5 }); // 50 % visible avant de déclencher l'animation
+    }, { threshold: 0.1 }); // 10 % visible suffit — les cartes apparaissent dès l'entrée dans le viewport
 
     document.querySelectorAll(".badge, .animate-on-scroll")
         .forEach(el => scrollObserver.observe(el));
@@ -457,18 +457,25 @@ if (servicesLayout) {
     window.addEventListener("resize", updateStickyTop, { passive: true });
     window.addEventListener("load", updateStickyTop, { once: true });
 
+    // Gel du scroll-spy pendant un scroll piloté (clic sur pill).
+    // navScrollActive = true → syncSidebar est gelé.
+    // Le debounce de 150 ms détecte la fin du scroll smooth et réactive le spy.
+    let navScrollActive   = false;
+    let navScrollDebounce = null;
+
     // Scroll-spy : la section active est la dernière dont le haut du bloc
     // a franchi le seuil --sticky-top (header + sidebar mobile + buffer).
     // Itérer dans l'ordre du DOM garantit que la plus basse l'emporte.
     // Par défaut, le premier bloc est actif (haut de page).
     const syncSidebar = () => {
+        if (navScrollActive) return;
         const threshold = parseFloat(
             getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
         ) || 112;
         let activeId = serviceBlocks[0].id;
 
         serviceBlocks.forEach(block => {
-            if (block.getBoundingClientRect().top <= threshold) {
+            if (block.getBoundingClientRect().top <= threshold + 4) {
                 activeId = block.id;
             }
         });
@@ -476,23 +483,51 @@ if (servicesLayout) {
         activateSidebarLink(activeId);
     };
 
-    window.addEventListener("scroll", syncSidebar, { passive: true });
+    window.addEventListener("scroll", () => {
+        if (navScrollActive) {
+            // Détecte la fin du scroll smooth : 150 ms sans événement scroll
+            clearTimeout(navScrollDebounce);
+            navScrollDebounce = setTimeout(() => {
+                navScrollActive = false;
+                syncSidebar();
+            }, 150);
+        } else {
+            syncSidebar();
+        }
+    }, { passive: true });
     syncSidebar(); // état initial sans attendre un scroll
 
-    // Premier lien principal : renvoie au sommet (pas le même espace visuel
-    // qu'entre les autres sections).
-    if (sidebarNavLinks[0]) {
-        sidebarNavLinks[0].addEventListener("click", (e) => {
+    // Tous les liens principaux : activation immédiate de la pill cliquée,
+    // puis scroll manuel vers la section avec le bon décalage.
+    sidebarNavLinks.forEach((link, index) => {
+        link.addEventListener("click", (e) => {
             e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            const targetId = index === 0 ? serviceBlocks[0].id : link.getAttribute("href").slice(1);
+
+            // Gel du spy + activation instantanée avant le début du scroll
+            navScrollActive = true;
+            clearTimeout(navScrollDebounce);
+            activateSidebarLink(targetId);
+
+            if (index === 0) {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                return;
+            }
+            const targetEl = document.getElementById(targetId);
+            if (!targetEl) return;
+            const stickyTop = parseFloat(
+                getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
+            ) || 112;
+            const top = targetEl.getBoundingClientRect().top + window.scrollY - stickyTop;
+            window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
         });
-    }
+    });
 
     // Sous-liens : scroll vers la section parente pour montrer le numéro
     // et le titre (01/02/03), puis flash sur la carte cible.
     // L'animation est pilotée par la classe .is-highlighted (et non :target)
     // pour pouvoir être relancée même si on clique plusieurs fois le même lien.
-    document.querySelectorAll(".services-sidebar .sub-nav a").forEach(link => {
+    document.querySelectorAll(".services-sidebar .sub-nav a, .site-footer a[href^='#']").forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
             const targetId = link.getAttribute("href").slice(1);
@@ -508,6 +543,9 @@ if (servicesLayout) {
             targetEl.classList.remove("is-highlighted");
             void targetEl.offsetWidth; // force reflow
             targetEl.classList.add("is-highlighted");
+            targetEl.addEventListener("animationend", () => {
+                targetEl.classList.remove("is-highlighted");
+            }, { once: true });
         });
     });
 }

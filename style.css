@@ -165,7 +165,7 @@ a {
 }
 
 .btn-outline-white:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--white-10);
 }
 
 /* =========================================
@@ -185,7 +185,7 @@ a {
     top: 0;
     z-index: 100; /* au-dessus de tout le contenu de page ; sous z-index: 200 du dropdown services */
 
-    background-color: rgba(255, 255, 255, 1);
+    background-color: var(--white);
     backdrop-filter: blur(0px); /* valeur initiale explicite : permet de transitionner vers blur(20px) sans saut */
     border-bottom: 1px solid var(--border-subtle);
     height: var(--header-height);
@@ -205,7 +205,7 @@ a {
    -webkit-backdrop-filter : nécessaire pour Safari (support standard insuffisant < Safari 18).
    box-shadow 0 1px 0 : ligne de séparation subtile sans border (évite le doublon avec border-bottom). */
 .site-header.is-scrolled {
-    background-color: rgba(255, 255, 255, 0.72);
+    background-color: var(--surface-glass);
     backdrop-filter: var(--blur-glass) var(--saturate-glass);
     -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
     border-bottom-color: var(--border-subtle);
@@ -252,7 +252,7 @@ a {
 /* Quand le menu burger s'ouvre en mode flottant, le header repasse en style
    opaque (même apparence que l'état show-cta). */
 .site-header.is-floating.menu-open {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: var(--white);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-bottom-color: var(--border-subtle);
@@ -1036,7 +1036,7 @@ a {
     bottom: 1.5rem;
     left: 1.5rem;
     right: 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--white-10);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 1rem;
@@ -1292,7 +1292,7 @@ a {
 }
 
 .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--white-10);
     padding-top: 2rem;
     text-align: center;
     font-size: 0.875rem;

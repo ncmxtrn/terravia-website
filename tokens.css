@@ -66,6 +66,7 @@
      le design évolue vers un fond légèrement teinté. */
   --white:       #ffffff;
   --bg-light:    #ffffff;   /* page background */
+  --white-10:    rgba(255, 255, 255, 0.10);   /* overlay/border subtil sur fond sombre */
   --gray-200:    #e5e7eb;
 
   /* — Semantic: state —
@@ -317,6 +318,7 @@
      ============================================================ */
   --blur-glass:     blur(20px);
   --saturate-glass: saturate(180%);
+  --surface-glass:  rgba(255, 255, 255, 0.72);
 }
 
 /* ============================================================

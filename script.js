@@ -499,20 +499,16 @@ if (servicesLayout) {
 
     // Tous les liens principaux : activation immédiate de la pill cliquée,
     // puis scroll manuel vers la section avec le bon décalage.
-    sidebarNavLinks.forEach((link, index) => {
+    sidebarNavLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
-            const targetId = index === 0 ? serviceBlocks[0].id : link.getAttribute("href").slice(1);
+            const targetId = link.getAttribute("href").slice(1);
 
             // Gel du spy + activation instantanée avant le début du scroll
             navScrollActive = true;
             clearTimeout(navScrollDebounce);
             activateSidebarLink(targetId);
 
-            if (index === 0) {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                return;
-            }
             const targetEl = document.getElementById(targetId);
             if (!targetEl) return;
             const stickyTop = parseFloat(

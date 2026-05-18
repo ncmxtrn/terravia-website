@@ -193,6 +193,19 @@
   --tracking-tight:  -0.02em;
   --tracking-normal: 0;
 
+  /* ── Taille du SVG logo ────────────────────────────────────────────────────
+     Hauteur et largeur indépendantes pour étirer/réduire sur chaque axe.
+     --logo-icon-w: auto  →  proportionnel à la hauteur (comportement par défaut)
+     --logo-icon-w: 50px  →  étire sur l'axe X indépendamment */
+  --logo-icon-h: 40px;  /* ↕ axe Y — hauteur du logo */
+  --logo-icon-w: auto;  /* ← axe X — auto = proportionnel */
+
+  /* ── Position du wordmark "erravia" ────────────────────────────────────────
+     Ajuster ces deux valeurs pour déplacer le texte par rapport au T du logo.
+     positif = droite / bas  |  négatif = gauche / haut */
+  --logo-text-x: -12px;   /* ← gauche / droite */
+  --logo-text-y: 6px;   /* ↕ haut   / bas    */
+
   /* ============================================================
      SPACING SCALE
      ------------------------------------------------------------

@@ -315,8 +315,8 @@ a {
    brightness(0) → noir pur → les filtres suivants reconstituent la teinte forest.
    NOTE: cette technique ne fonctionne que sur des SVG monochromes. */
 .logo-icon {
-    height: 40px;
-    width: auto;
+    height: var(--logo-icon-h);
+    width: var(--logo-icon-w);
     transition: filter 0.3s ease, transform 0.3s ease;
     filter: var(--filter-logo-forest);
 }
@@ -331,6 +331,8 @@ a {
     font-weight: var(--weight-bold);
     font-size: var(--text-logo);
     letter-spacing: var(--tracking-logo);
+    position: relative;
+    transform: translate(var(--logo-text-x), var(--logo-text-y));
 }
 
 /* Technique de disparition animée sans display:none :
@@ -341,7 +343,7 @@ a {
     display: block;
     transition: opacity 0.4s ease-out, max-width 0.5s ease-out;
     opacity: 1;
-    max-width: 100px; /* largeur suffisante pour "Terravia" (8 caractères Orbitron) */
+    max-width: 90px; /* largeur suffisante pour "erravia" (7 caractères Orbitron) */
     white-space: nowrap;
     overflow: hidden;
 }

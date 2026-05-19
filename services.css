@@ -332,8 +332,13 @@
         flex-direction: row;
         gap: var(--space-xs);
         white-space: nowrap;
-        justify-content: center;
-        padding: 0 var(--container-px);
+        padding-inline-start: var(--container-px);
+    }
+
+    .sticky-nav::after {
+        content: '';
+        min-width: var(--container-px);
+        flex-shrink: 0;
     }
 
     .nav-group {
@@ -443,6 +448,10 @@
     }
 
     .sticky-nav {
-        padding-inline: 1.25rem;
+        padding-inline-start: 1.25rem;
+    }
+
+    .sticky-nav::after {
+        min-width: 1.25rem;
     }
 }

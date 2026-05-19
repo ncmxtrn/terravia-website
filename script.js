@@ -24,8 +24,8 @@ window.addEventListener("load", () => {
     // La classe "is-loading" sur le body la gardait invisible pendant le chargement.
     // On l'enlève maintenant que tout est prêt, pour l'animation d'entrée.
     // --- Animations au scroll (IntersectionObserver) ---
-    // Surveille les éléments .badge et .animate-on-scroll.
-    // Dès qu'un élément est visible à 50 %, on lui ajoute la classe "visible"
+    // Surveille les éléments .animate-on-scroll.
+    // Dès qu'un élément est visible à 10 %, on lui ajoute la classe "visible"
     // (le CSS prend le relais pour l'animation d'apparition).
     const scrollObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -36,15 +36,15 @@ window.addEventListener("load", () => {
         });
     }, { threshold: 0.1 }); // 10 % visible suffit — les cartes apparaissent dès l'entrée dans le viewport
 
-    document.querySelectorAll(".badge, .animate-on-scroll")
+    document.querySelectorAll(".animate-on-scroll")
         .forEach(el => scrollObserver.observe(el));
 
     setTimeout(() => {
         document.body.classList.remove("is-loading");
         // Révèle immédiatement les éléments déjà présents dans le viewport au chargement.
-        // Le threshold 0.5 de l'observer ne déclenche pas pour les éléments partiellement
+        // Le threshold 0.1 de l'observer ne déclenche pas pour les éléments partiellement
         // visibles dès le départ (ex. : premières cartes de services.html).
-        document.querySelectorAll(".badge, .animate-on-scroll").forEach(el => {
+        document.querySelectorAll(".animate-on-scroll").forEach(el => {
             const rect = el.getBoundingClientRect();
             if (rect.top < window.innerHeight && rect.bottom > 0) {
                 el.classList.add("visible");
@@ -214,17 +214,6 @@ document.querySelectorAll(".link-arrow, .link-placeholder").forEach(link => {
    Les guards "if (element)" évitent toute erreur sur les autres pages
    où ces éléments n'existent pas.
    ============================================================= */
-
-// --- Auto-focus sur le champ email (login.html uniquement) ---
-// Le délai de 300 ms est calé sur l'animation d'entrée du login-container
-// (0.2 s de delay CSS + marge) pour s'assurer que l'élément est visible
-// avant de lui donner le focus — un focus sur un élément opacity:0 est ignoré.
-if (document.getElementById("email")) {
-    setTimeout(() => {
-        document.getElementById("email").focus();
-    }, 300);
-}
-
 
 // --- Toggle visibilité du mot de passe ---
 const passwordToggle = document.querySelector(".password-toggle");

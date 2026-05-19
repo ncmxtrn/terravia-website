@@ -740,68 +740,6 @@ a {
     align-items: center;
 }
 
-/* État initial du badge avant révélation par l'IntersectionObserver.
-   filter: blur(5px) ajoute un effet de mise au point progressif en complément du fondu.
-   overflow: hidden contient le pseudo-élément shimmer (::before) qui déborde à gauche. */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-    background-color: var(--badge-bg);
-    color: var(--color-forest);
-    padding: 7px 16px 7px 12px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--badge-border);
-    font-size: 0.73rem;
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-badge);
-    margin-bottom: var(--space-lg);
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(5px);
-    transition: opacity 0.8s ease-out, transform 0.8s, filter 0.8s;
-}
-
-.badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    flex-shrink: 0;
-}
-
-/* État final déclenché par l'IntersectionObserver (script.js addBadgeObserver). */
-.badge.visible {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-}
-
-/* Reflet lumineux animé (shimmer) : un dégradé blanc skewé traverse le badge
-   de gauche (-100%) à droite (200%) une seule fois au moment de l'apparition. */
-.badge::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
-    transform: skewX(-25deg);
-}
-
-.badge.visible::before {
-    animation: shimmer 2s ease-out forwards;
-}
-
-@keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 200%; }
-}
 
 /* Classe générique de révélation au scroll, pilotée par l'IntersectionObserver de script.js.
    will-change: opacity, transform : indice au navigateur pour promouvoir l'élément sur une

@@ -1350,9 +1350,9 @@ a {
             justify-content: center;
         }
 
-    /* 4 colonnes pour les services */
+    /* 3 colonnes pour les services */
     .services-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 
     /* 3 colonnes pour les projets */

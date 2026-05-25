@@ -16,7 +16,8 @@
 }
 
 .section-header.services-page-intro h1 {
-    font-size: 3rem;
+    font-size: var(--text-hero);
+    letter-spacing: var(--tracking-tight);
     color: var(--color-forest);
     margin-bottom: var(--space-md);
 }
@@ -437,10 +438,6 @@
 
     .section-header.services-page-intro {
         margin-bottom: var(--space-sm);
-    }
-
-    .section-header.services-page-intro h1 {
-        font-size: var(--text-h2-sm);
     }
 
     /* L'indicateur vertical de groupe n'a pas de sens dans la pill-bar */

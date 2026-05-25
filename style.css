@@ -74,10 +74,6 @@ body.is-loading {
         font-size: 1.9rem;
     }
 
-    .section-header h2 {
-        font-size: 1.75rem;
-    }
-
     .section-header {
         margin-bottom: 2.5rem;
     }
@@ -768,10 +764,10 @@ a {
 .services-grid .service-card:nth-child(3):not(.visible) { transition-delay: 0.3s; }
 .services-grid .service-card:nth-child(4):not(.visible) { transition-delay: 0.4s; }
 
-/* 3rem : valeur intermédiaire entre --text-h2-sm et --text-h2 de tokens.css,
-   pour donner plus d'emphase à ce titre de section tout en restant lisible sur mobile. */
 .section-header h2 {
-    font-size: 3rem;
+    font-size: var(--text-hero);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-tight);
     color: var(--color-forest);
     margin-bottom: var(--space-md);
 }

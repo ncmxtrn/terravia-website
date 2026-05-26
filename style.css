@@ -774,9 +774,9 @@ a {
 
 
 .subtitle {
+    font-size: var(--text-lead);
     max-width: 600px;
-    color: var(--color-forest);
-    opacity: 0.7;
+    color: var(--fg2);
 }
 
 /* Mobile-first : une seule colonne. La grille passe à 2 colonnes (≥ 841px)

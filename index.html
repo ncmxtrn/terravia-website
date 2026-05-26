@@ -116,55 +116,66 @@
                 </div>
             </section>
 
-            <!--
-                Section services — présentation des quatre expertises principales sous forme de grille de cartes.
-                Chaque carte porte `.animate-on-scroll` : un `IntersectionObserver` dans script.js
-                déclenche l'entrée en fondu + translation verticale au premier passage dans le viewport.
-            -->
-            <section class="services-section" id="services">
+            <section class="services-section svc-v2" id="services">
                 <div class="container">
-                    <div class="section-header center">
-                        <h2 class="animate-on-scroll">Solutions de pointe en arpentage et géomatique</h2>
-                        <p class="subtitle animate-on-scroll">Des technologies adaptées aux exigences rigoureuses des
-                            professionnels.</p>
-                    </div>
 
-                    <div class="services-grid">
-                        <div class="service-card animate-on-scroll">
-                            <div class="icon-box">
-                                <span class="material-symbols-outlined">grid_4x4</span>
-                            </div>
-                            <div class="card-content">
-                                <h3>Capture et acquisition de précision</h3>
-                                <p>LiDAR, Photogrammétrie, levé conventionnel, numérisation de sites complexes et d'infrastructures</p>
-                            </div>
-                            <a href="services.html#acquisition" class="link-arrow transition-link">En savoir plus <span class="material-symbols-outlined">arrow_forward</span></a>
+                    <article class="svc-v2-row animate-on-scroll">
+                        <div class="svc-v2-visual">
+                            <div class="svc-placeholder"></div>
                         </div>
+                        <div class="svc-v2-content">
+                            <div class="svc-v2-tags">
+                                <span>LiDAR</span>
+                                <span>Photogrammétrie</span>
+                                <span>Multi-capteurs</span>
+                            </div>
+                            <h3>Capture et acquisition</h3>
+                            <p>Numérisation de terrain, d'infrastructure ou de site industriel avec une précision centimétrique. LiDAR aéroporté, photogrammétrie drone, levé conventionnel - la donnée terrain la plus fiable du secteur.</p>
+                            <a href="services.html#capture" class="transition-link svc-v2-link">
+                                En savoir plus
+                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            </a>
+                        </div>
+                    </article>
 
-                        <div class="service-card animate-on-scroll">
-                            <div class="icon-box">
-                                <span class="material-symbols-outlined">imagesmode</span>
-                            </div>
-                            <div class="card-content">
-                                <h3>Ingénierie et intelligence des données</h3>
-                                <p>Analyses spatiales avancées, calculs de volumes, extraction de géométries, automatisation des processus, gestion de bases de données géospatiales.</p>
-                            </div>
-                            <a href="#" class="link-arrow">En savoir plus <span
-                                    class="material-symbols-outlined">arrow_forward</span></a>
+                    <article class="svc-v2-row svc-v2-row--reverse animate-on-scroll">
+                        <div class="svc-v2-visual">
+                            <div class="svc-placeholder"></div>
                         </div>
+                        <div class="svc-v2-content">
+                            <div class="svc-v2-tags">
+                                <span>Analyse spatiale</span>
+                                <span>Volumétrie</span>
+                                <span>Automatisation</span>
+                            </div>
+                            <h3>Ingénierie et intelligence des données</h3>
+                            <p>Calculs volumétriques, extraction de géométries, modèles numériques de terrain. Pipelines automatisés pour livrer la bonne donnée au bon décideur, dans le bon format.</p>
+                            <a href="services.html#ingenierie" class="transition-link svc-v2-link">
+                                En savoir plus
+                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            </a>
+                        </div>
+                    </article>
 
-                        <div class="service-card animate-on-scroll">
-                            <div class="icon-box">
-                                <span class="material-symbols-outlined">content_paste_search</span>
-                            </div>
-                            <div class="card-content">
-                                <h3>Solutions numériques et diffusion</h3>
-                                <p>Développement de plateformes SIG Web (2D et 3D), Visualisation immersive de nuages de points et photomaillages, Tableaux de bord décisionnels et outils de consultation.</p>
-                            </div>
-                            <a href="#" class="link-arrow">En savoir plus <span
-                                    class="material-symbols-outlined">arrow_forward</span></a>
+                    <article class="svc-v2-row animate-on-scroll">
+                        <div class="svc-v2-visual">
+                            <div class="svc-placeholder"></div>
                         </div>
-                    </div>
+                        <div class="svc-v2-content">
+                            <div class="svc-v2-tags">
+                                <span>SIG Web</span>
+                                <span>3D immersif</span>
+                                <span>Tableaux de bord</span>
+                            </div>
+                            <h3>Solutions numériques et diffusion</h3>
+                            <p>Plateformes de consultation interactives, visualisation de nuages de points et de photomaillages, outils décisionnels accessibles depuis un navigateur web standard.</p>
+                            <a href="services.html#solutions" class="transition-link svc-v2-link">
+                                En savoir plus
+                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            </a>
+                        </div>
+                    </article>
+
                 </div>
             </section>
 

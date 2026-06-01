@@ -1,6 +1,6 @@
 <!--
     index.html — Page d'accueil (landing page) de Solutions Terravia.
-    Structure : en-tête fixe, hero plein écran, section services, section technologie,
+    Structure : en-tête fixe, hero plein écran, section services,
     galerie de projets, pied de page avec coordonnées.
     Aucun JS inline — toute l'interactivité est centralisée dans script.js.
 -->
@@ -119,6 +119,18 @@
             <section class="services-section svc-v2" id="services">
                 <div class="container">
 
+                    <!--
+                        En-tête de section — titre + accroche centrés.
+                        Réutilise le pattern global `.section-header center` (titre forest
+                        taille hero + sous-titre gris), identique à l'intro de contact.html.
+                        H2 et non H1 : le H1 de la page reste celui du hero photo.
+                        Reveal au scroll via `.animate-on-scroll` (stagger géré en CSS).
+                    -->
+                    <div class="section-header center">
+                        <h2 class="animate-on-scroll">Solutions de pointe en arpentage et géomatique</h2>
+                        <p class="subtitle animate-on-scroll">Des technologies adaptées aux exigences rigoureuses des professionnels.</p>
+                    </div>
+
                     <article class="svc-v2-row animate-on-scroll">
                         <div class="svc-v2-visual">
                             <div class="svc-placeholder"></div>
@@ -176,55 +188,6 @@
                         </div>
                     </article>
 
-                </div>
-            </section>
-
-            <!--
-                Section technologie — mise en valeur de la Plateforme Intelligente (concept de marque).
-                Disposition en deux colonnes asymétriques : texte à gauche, capture d'écran à droite.
-                L'élément `.floating-ui` superposé à l'image simule un widget de l'interface client
-                et ancre visuellement la section dans le produit réel.
-            -->
-            <section class="tech-section" id="technologie">
-                <div class="container">
-                    <div class="split-layout">
-                        <div class="tech-text">
-                            <!-- "Plateforme Intelligente" : les deux mots sont capitalisés — concept de marque -->
-                            <div class="label-tech">Plateforme Intelligente</div>
-                            <h2>Visualisez et analysez vos données</h2>
-                            <p>
-                                Accédez à notre application interne dédiée pour visualiser et exploiter tout le
-                                potentiel de vos données. Explorez vos nuages de points LiDAR et modèles
-                                photogrammétriques.
-                            </p>
-                            <ul class="check-list">
-                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Visualisation
-                                    interactive LiDAR et 3D</li>
-                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Comparaison
-                                    des relevés historiques</li>
-                                <li><span class="material-symbols-outlined check-icon">check_circle</span> Suivi
-                                    d'évolution par photo aérienne</li>
-                            </ul>
-                        </div>
-
-                        <div class="tech-image-wrapper">
-                            <div class="image-container"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'>
-                            </div>
-                            <!--
-                                Widget flottant décoratif positionné en absolu sur l'image.
-                                Il illustre l'interface de la plateforme sans nécessiter une vraie capture d'écran.
-                                Pas de comportement interactif — rôle purement visuel.
-                            -->
-                            <div class="floating-ui">
-                                <div class="file-info">
-                                    <span class="material-symbols-outlined">description</span>
-                                    <span>Relevé_Site_A.dwg</span>
-                                </div>
-                                <span class="status-badge">Prêt</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
 

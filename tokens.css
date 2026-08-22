@@ -155,7 +155,6 @@
   --text-body:    1rem;                           /* Body paragraph */
   --text-sm:      0.9rem;                         /* Small body / footer */
   --text-xs:      0.8rem;                         /* Badges, labels */
-  --text-logo:    1.25rem;                        /* Logo wordmark */
 
   /* Échelle des icônes Material Symbols.
      Les valeurs sont exprimées en rem pour suivre la taille de police racine.
@@ -183,28 +182,24 @@
   --leading-relaxed: 1.6;
 
   /* Espacement de lettres —
-     --tracking-logo : ajustement optique minimal sur le nom de marque.
      --tracking-badge : 0.1em, standard pour les labels uppercase (WCAG lisibilité).
      --tracking-link  : discret, utilisé sur la navigation pour aérer sans déformer.
      --tracking-tight : compensation optique sur les grands titres gras (évite l'effet cramped). */
-  --tracking-logo:   0.5px;
   --tracking-badge:  0.1em;
   --tracking-link:   0.08em;
   --tracking-tight:  -0.02em;
   --tracking-normal: 0;
 
   /* ── Taille du SVG logo ────────────────────────────────────────────────────
-     Hauteur et largeur indépendantes pour étirer/réduire sur chaque axe.
+     assets/logo-noir.svg porte le lockup complet (marque encadrée + "Solutions
+     Terravia"), viewBox 841.89 × 257.36 → ratio L/H ≈ 3,27.
+     Avec --logo-icon-w: auto, la largeur rendue vaut donc hauteur × 3,27
+     (44px → ≈ 144px). En tenir compte avant de toucher à la hauteur : c'est la
+     largeur qui est l'axe contraint, notamment dans la grille du header mobile.
      --logo-icon-w: auto  →  proportionnel à la hauteur (comportement par défaut)
      --logo-icon-w: 50px  →  étire sur l'axe X indépendamment */
-  --logo-icon-h: 40px;  /* ↕ axe Y — hauteur du logo */
+  --logo-icon-h: 44px;  /* ↕ axe Y — hauteur du logo */
   --logo-icon-w: auto;  /* ← axe X — auto = proportionnel */
-
-  /* ── Position du wordmark "erravia" ────────────────────────────────────────
-     Ajuster ces deux valeurs pour déplacer le texte par rapport au T du logo.
-     positif = droite / bas  |  négatif = gauche / haut */
-  --logo-text-x: -12px;   /* ← gauche / droite */
-  --logo-text-y: 6px;   /* ↕ haut   / bas    */
 
   /* ============================================================
      SPACING SCALE

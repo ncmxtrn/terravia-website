@@ -146,15 +146,20 @@
     transform: translateY(-3px) scale(1.05);
 }
 
-/* Le logo SVG (assets/logo-noir.svg) est noir par défaut. Le filtre CSS
-   le reteinte en couleur forest (#1A3C34) sans modifier le fichier source.
+/* Le logo SVG (assets/logo-noir.svg) porte le lockup complet et se rend en noir
+   (ses tracés visibles n'ont pas d'attribut fill). Le filtre CSS le reteinte en
+   couleur forest (#1A3C34) sans modifier le fichier source.
    La chaîne de filtres : brightness(0) → noir pur → saturate/invert/sepia/
    hue-rotate/brightness/contrast → approximation de --forest-900.
-   NOTE: cette technique est fragile si le SVG contient des couleurs multiples ;
-   elle fonctionne uniquement car le logo est un tracé monochrome. */
+   NOTE: cette technique est fragile si le SVG gagne de vraies couleurs multiples.
+
+   Dimensionnement par la LARGEUR (et non par la hauteur comme ailleurs) :
+   le lockup a un ratio L/H ≈ 3,27, et c'est la largeur de .login-card qui
+   contraint (30rem moins 1,5rem à 3rem de padding selon le breakpoint).
+   18rem → ≈ 88px de haut, et le 100% évite tout débordement sous 576px. */
 .brand-header .logo-icon {
-    height: 7rem;
-    width: auto;
+    width: min(18rem, 100%);
+    height: auto;
     display: block;
     filter: var(--filter-logo-forest);
 }

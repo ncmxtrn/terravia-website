@@ -217,17 +217,6 @@ a {
     filter: var(--filter-logo-white);
 }
 
-.site-header.is-floating .logo {
-    color: var(--fg-on-dark);
-}
-
-/* Les h2/h3 ont une couleur directe dans tokens.css qui écrase l'héritage —
-   on doit les cibler explicitement pour les passer en blanc. */
-.site-header.is-floating .logo h2,
-.site-header.is-floating .logo h3 {
-    color: var(--fg-on-dark);
-}
-
 .site-header.is-floating .main-nav a {
     color: var(--fg-on-dark);
 }
@@ -247,15 +236,6 @@ a {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-bottom-color: var(--border-subtle);
-}
-
-.site-header.is-floating.menu-open .logo {
-    color: var(--color-forest);
-}
-
-.site-header.is-floating.menu-open .logo h2,
-.site-header.is-floating.menu-open .logo h3 {
-    color: var(--color-forest);
 }
 
 .site-header.is-floating.menu-open .logo-icon {
@@ -292,8 +272,6 @@ a {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--color-forest);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -301,10 +279,14 @@ a {
     transform: scale(1.05);
 }
 
-/* Le SVG du logo est noir par défaut (assets/logo-noir.svg).
+/* Le SVG du logo (assets/logo-noir.svg) porte le lockup complet : marque encadrée
+   + "Solutions Terravia". Ses tracés visibles n'ont pas d'attribut fill (donc noir
+   par défaut) ; seules deux <rect> décoratives portent un stroke #235045 d'épaisseur
+   sub-pixel au rendu.
    La chaîne de filtres le reteinte en --forest-900 (#1A3C34) sans modifier le fichier source.
    brightness(0) → noir pur → les filtres suivants reconstituent la teinte forest.
-   NOTE: cette technique ne fonctionne que sur des SVG monochromes. */
+   NOTE: cette technique suppose un rendu quasi monochrome — à revalider si le SVG
+   gagne un jour de vraies couleurs. */
 .logo-icon {
     height: var(--logo-icon-h);
     width: var(--logo-icon-w);
@@ -315,33 +297,6 @@ a {
 .site-footer .logo-icon {
     filter: var(--filter-logo-white);
 }
-
-.logo h2,
-.logo h3 {
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold);
-    font-size: var(--text-logo);
-    letter-spacing: var(--tracking-logo);
-    position: relative;
-    transform: translate(var(--logo-text-x), var(--logo-text-y));
-}
-
-/* Technique de disparition animée sans display:none :
-   on réduit max-width à 0 en transition pour animer le rétrécissement,
-   combiné avec opacity pour un fondu simultané.
-   display:none bloquerait l'animation — c'est pourquoi max-width est utilisé ici. */
-.logo h2 {
-    display: block;
-    transition: opacity 0.4s ease-out, max-width 0.5s ease-out;
-    opacity: 1;
-    max-width: 90px; /* largeur suffisante pour "erravia" (7 caractères Orbitron) */
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-/* Sur mobile uniquement : on cache le texte du logo dès que le bouton CTA
-   apparaît (grille 3 colonnes, espace contraint). À ≥841px le header est en
-   flex et le wordmark tient — pas besoin de le masquer. */
 
 /* =========================================
    NAVIGATION — MENU MOBILE / DESKTOP
@@ -552,13 +507,6 @@ a {
             position: static;
             z-index: 10; /* au-dessus du menu mobile (position: absolute) */
         }
-
-    /* Wordmark caché uniquement sur mobile quand le CTA header est visible */
-    .site-header.show-cta .logo h2 {
-        opacity: 0;
-        max-width: 0;
-        margin-left: -0.5rem;
-    }
 
     /* En haut de page, le bouton du header est caché */
     .site-header:not(.show-cta) #header-quote-btn {
@@ -1050,15 +998,6 @@ a {
     background-color: var(--color-forest);
     color: white;
     padding: 4rem 0 2rem;
-}
-
-.site-footer .logo {
-    color: var(--color-white);
-}
-
-.site-footer .logo h2,
-.site-footer .logo h3 {
-    color: inherit;
 }
 
 .footer-grid {

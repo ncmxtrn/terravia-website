@@ -270,6 +270,14 @@
     object-fit: cover;
     display: block;
     flex-shrink: 0;
+    transition: transform 0.7s var(--ease-card);
+}
+
+/* Zoom discret au survol — la bannière est rognée par overflow: hidden de la
+   carte. Amplitude volontairement plus faible que .project-bg (1.08) : ici
+   l'image est un bandeau, pas le sujet de la carte. */
+.service-sub-item.has-img:hover .service-card-img {
+    transform: scale(1.04);
 }
 
 .service-sub-item.has-img .service-sub-body {

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    favicon.svg — Icône d'onglet de Solutions Terravia.
+
+    Mêmes tracés que assets/logo-monogramme-noir.svg, avec deux différences
+    VOLONTAIRES — ne pas « resynchroniser » les deux fichiers :
+
+      · couleur — bascule avec le thème du navigateur
+          mode clair  → forest #1A3C34 (valeur du token forest-900)
+          mode sombre → blanc
+
+      · cadrage — pleine largeur ici (scale 1.3740, marge 0), alors que le
+        monogramme reste aéré (scale 1.116359, marge 24 px). À 16 px dans un
+        onglet, une marge coûte des pixels que la marque n'a pas.
+
+    Les deux fichiers dupliquent les mêmes tracés. C'est assumé : sans build step
+    il n'y a pas de moyen de les partager, et les fusionner coupleraient l'icône
+    d'onglet au logo du header. SI LE TRACÉ CHANGE ICI, LE RÉPERCUTER DANS
+    assets/logo-monogramme-noir.svg (et régénérer favicon.ico + apple-touch-icon.png).
+
+    Support : Chrome, Edge et Firefox appliquent la bascule. Safari ignore les
+    media queries embarquées dans un favicon SVG (WebKit bug 199134) et rendra
+    toujours la variante forest, y compris en mode sombre.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img"
+	 aria-label="Solutions Terravia">
+	<title>Solutions Terravia</title>
+
+	<!--
+	    ATTENTION : ne cibler que .mark, jamais `path`.
+	    En SVG une règle CSS l'emporte sur un attribut de présentation. Un sélecteur
+	    `path { fill: … }` repeindrait aussi le <path fill="black"> du masque
+	    ci-dessous : le masque deviendrait uniformément blanc et la découpe du S
+	    disparaîtrait. Les tracés du masque doivent rester pilotés par leurs
+	    attributs, hors de portée de toute règle CSS.
+	-->
+	<style>
+		.mark { fill: #1A3C34; }
+
+		@media (prefers-color-scheme: dark) {
+			.mark { fill: #ffffff; }
+		}
+	</style>
+
+	<!-- Masque de découpe du "S" à l'intérieur du "T".
+	     Défini dans le repère d'origine du logo (celui qui a cours à l'intérieur
+	     du <g transform>), d'où le maskUnits="userSpaceOnUse". -->
+	<defs>
+		<mask id="terravia-cutout-s" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="300">
+			<!-- Fond blanc : le "T" reste visible partout -->
+			<rect x="0" y="0" width="300" height="300" fill="white"/>
+			<!-- Forme noire du "S" : pochoir qui découpe le "T" -->
+			<path d="M158.69,166.19c-2.76-3.77-6.09-6.57-9.98-8.4c-3.89-1.84-8.87-3.6-14.94-5.3c-4.44-1.32-7.94-2.5-10.5-3.53
+				c-2.57-1.04-4.69-2.45-6.36-4.24-1.67-1.79-2.51-4.1-2.51-6.92c0-4.05,1.45-7.3,4.37-9.74c2.92-2.45,7.38-3.67,13.37-3.67
+				c3.65,0,7.43,0.66,11.32,1.98c3.89,1.32,7.63,3.24,11.21,5.79l4.78-14.27c-3.5-2.83-7.66-4.99-12.49-6.49
+				c-4.83-1.5-9.73-2.26-14.71-2.26c-7.16,0-13.21,1.32-18.15,3.96c-0.36,0.19-0.71,0.39-1.06,0.59v48.67
+				c0.12,0.06,0.24,0.12,0.36,0.17c3.85,1.79,8.89,3.58,15.11,5.37c4.44,1.32,7.94,2.5,10.51,3.53c2.57,1.04,4.69,2.47,6.36,4.31
+				c1.67,1.84,2.51,4.17,2.51,6.99c0,3.86-1.5,6.97-4.5,9.32c-2.99,2.35-7.53,3.53-13.6,3.53c-4.9,0-9.79-1.01-14.65-3.03
+				c-0.72-0.3-1.43-0.61-2.11-0.94v16.51c5.4,1.82,10.99,2.72,16.76,2.72c7.16,0,13.23-1.32,18.21-3.96
+				c4.98-2.64,8.7-6.17,11.14-10.59c2.45-4.43,3.68-9.37,3.68-14.83C162.83,175.05,161.45,169.96,158.69,166.19z" fill="black"/>
+		</mask>
+	</defs>
+
+	<!--
+	    Recadrage de la bbox d'origine (x 44,04→230,36 · y 52→217,96) vers le carré 256×256.
+
+	    POUR AGRANDIR OU RÉDUIRE LA MARQUE : un seul nombre à toucher, le scale( ) ci-dessous.
+	    Les deux translate() l'encadrent pour que la mise à l'échelle opère autour du centre
+	    de la marque — le cadrage reste donc centré quelle que soit la valeur. Ne pas y toucher.
+	      · 137.2 / 134.98 = centre de la bbox d'origine
+	      · 128 / 128      = centre du canevas 256×256
+
+	    Repères. C'est la largeur qui contraint : la marque est plus large que haute.
+
+	      scale       largeur   marge gauche/droite
+	      1.116359    208 px    24 px     <- cadrage de logo-monogramme-noir.svg
+	      1.20        224 px    16 px
+	      1.25        233 px    11,5 px
+	      1.30        242 px    7 px
+	      1.3740      256 px    0 px      <- VALEUR ACTUELLE ICI (maximum absolu)
+
+	    Au-delà de 1.3740 la marque déborde du viewBox et sera rognée.
+	-->
+	<g transform="translate(128 128) scale(1.3740) translate(-137.2 -134.98)">
+		<!-- Les deux <path> du "T" n'ont pas de fill : ils héritent de celui posé
+		     par .mark sur ce groupe. -->
+		<g class="mark" mask="url(#terravia-cutout-s)">
+			<path d="M221.32,98.64H53.08c-4.97,0-9.04-4.07-9.04-9.04V52h177.28c4.97,0,9.04,4.07,9.04,9.04V89.6
+				C230.36,94.57,226.29,98.64,221.32,98.64z"/>
+			<path d="M165.37,78.81v129.74c0,5.17-3.5,9.41-7.77,9.41h-36.78c-4.28,0-7.78-4.23-7.78-9.41V78.81c0-5.18,3.5-9.41,7.78-9.41h36.78
+				C161.88,69.4,165.37,73.63,165.37,78.81z"/>
+		</g>
+	</g>
+</svg>

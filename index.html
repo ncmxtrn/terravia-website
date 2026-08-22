@@ -17,6 +17,27 @@
     <title>Solutions Terravia Géomatique &amp; Arpentage, partout au Québec</title>
 
     <!--
+        Icônes du site (monogramme T+S). L'ordre des deux `rel="icon"` est volontaire :
+        le .ico porte un `sizes` explicite, le SVG n'en porte pas — les navigateurs qui
+        savent lire le SVG le préfèrent donc, les autres retombent sur le .ico.
+
+        assets/favicon.svg fait basculer la marque forest → blanc via prefers-color-scheme.
+        Safari ignore les media queries embarquées dans un favicon SVG (WebKit 199134) et
+        rendra toujours la variante forest, y compris en mode sombre.
+
+        favicon.ico et apple-touch-icon.png sont à la racine et non dans assets/ : ce sont
+        des chemins que navigateurs, crawlers et iOS sondent d'eux-mêmes, même sans <link>.
+
+        #1A3C34 est écrit en dur ici et dans favicon.svg : ni <link> ni <meta> ne peuvent
+        lire une variable CSS. C'est la seule sortie assumée de la règle d'or de tokens.css
+        — si --forest-900 change, répercuter aux deux endroits.
+    -->
+    <link rel="icon" href="favicon.ico" sizes="32x32" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="theme-color" content="#1A3C34" />
+
+    <!--
         Les feuilles de style Google (polices + icônes Material Symbols) sont chargées
         avant nos propres CSS afin que la cascade CSS locale puisse les surcharger sans
         recourir à `!important`. En particulier, `font-size` sur `.material-symbols-outlined`

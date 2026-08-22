@@ -149,7 +149,7 @@
   --text-hero:    clamp(2.5rem, 5vw, 3.5rem);   /* H1 hero */
   --text-h2:      clamp(2rem, 4vw, 3rem);        /* Section H2 */
   --text-h2-sm:   2rem;                           /* Tech / projects H2 */
-  --text-display: 5rem;                           /* Numéros de section display (01 / 02 / 03) */
+  --text-display: 5rem;                           /* Icônes de section en taille display (page services) */
   --text-h3:      1.2rem;                         /* Card headings */
   --text-lead:    1.125rem;                       /* Hero subtext */
   --text-body:    1rem;                           /* Body paragraph */

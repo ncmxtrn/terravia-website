@@ -165,7 +165,7 @@
     padding-top: 0;
 }
 
-/* Correction 1 : align-items: start suffit — pas de padding-top sur le numéro */
+/* align-items: start suffit — pas de padding-top sur l'icône */
 .service-block-header {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -174,16 +174,16 @@
     margin-bottom: var(--space-2xl);
 }
 
-/* Numérotation Orbitron — décorative, pas sémantique.
-   line-height: var(--leading-tight) évite un débordement visuel du chiffre. */
-.service-number {
-    font-family: var(--font-display);
+/* Icône de secteur en taille display — décorative (le h2 nomme déjà le secteur),
+   d'où aria-hidden. Reprend la taille, la couleur et le placement du numéro
+   Orbitron qu'elle remplace : --text-display, vert néon en lavis à 0.28.
+   line-height: var(--leading-tight) évite un débordement visuel du glyphe. */
+.service-block-icon {
     font-size: var(--text-display);
-    font-weight: var(--weight-black);
     line-height: var(--leading-tight);
     color: var(--green-400);
     opacity: 0.28;
-    letter-spacing: var(--tracking-tight);
+    font-variation-settings: 'FILL' 0, 'wght' 400;
     user-select: none;
 }
 
@@ -215,14 +215,11 @@
     margin-bottom: var(--space-2xl);
 }
 
-/* Correction 2 : icône + titre côte à côte via CSS Grid 2×2.
-   Aucune modification HTML nécessaire. */
+/* Fiches sans icône : titre puis texte, alignés sur le même axe gauche. */
 .service-sub-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
-    column-gap: var(--space-sm);
-    row-gap: var(--space-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
     background: var(--surface-card);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-xl);
@@ -240,20 +237,7 @@
     transform: translateY(-2px);
 }
 
-.service-sub-icon {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: center;
-    font-size: var(--icon-lg);
-    color: var(--color-forest);
-    margin-bottom: 0;
-    font-variation-settings: 'FILL' 0, 'wght' 300;
-}
-
 .service-sub-item h3 {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: center;
     font-size: var(--text-body);
     font-weight: var(--weight-bold);
     color: var(--color-forest);
@@ -263,8 +247,6 @@
 }
 
 .service-sub-item p {
-    grid-column: 1 / -1;
-    grid-row: 2;
     font-size: var(--text-body);
     color: var(--fg2);
     line-height: var(--leading-relaxed);
@@ -291,11 +273,9 @@
 }
 
 .service-sub-item.has-img .service-sub-body {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
-    column-gap: var(--space-sm);
-    row-gap: var(--space-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
     padding: var(--space-xl);
     flex: 1;
 }
@@ -322,6 +302,9 @@
 .service-sub-grid .service-sub-item.animate-on-scroll:nth-child(2):not(.visible) { transition-delay: 0.1s;   }
 .service-sub-grid .service-sub-item.animate-on-scroll:nth-child(3):not(.visible) { transition-delay: 0.15s;  }
 .service-sub-grid .service-sub-item.animate-on-scroll:nth-child(4):not(.visible) { transition-delay: 0.25s;  }
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(5):not(.visible) { transition-delay: 0.3s;   }
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(6):not(.visible) { transition-delay: 0.35s;  }
+.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(7):not(.visible) { transition-delay: 0.4s;   }
 
 
 /* ============================================================
@@ -420,7 +403,7 @@
         gap: var(--space-md);
     }
 
-    .service-number {
+    .service-block-icon {
         font-size: calc(var(--text-display) * 0.6);
     }
 
@@ -461,7 +444,7 @@
         gap: var(--space-sm);
     }
 
-    .service-number {
+    .service-block-icon {
         font-size: var(--text-h2-sm);
         opacity: 0.2;
     }

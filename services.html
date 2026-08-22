@@ -1,7 +1,7 @@
 <!--
     services.html — Page de détail des services de Solutions Terravia.
-    Structure : en-tête fixe, section intro sombre, layout sidebar + contenu,
-    trois blocs de service, pied de page.
+    Structure : en-tête fixe, section intro, layout sidebar + contenu,
+    six blocs de secteur d'activité, pied de page.
     Aucun JS inline — toute l'interactivité est centralisée dans script.js.
 -->
 <!DOCTYPE html>
@@ -84,42 +84,92 @@
 
                     <!-- ----------------------------------------
                          SIDEBAR — navigation sticky
+                         Un groupe par secteur d'activité ; les sous-liens
+                         reprennent le titre exact de chaque fiche.
                          ---------------------------------------- -->
-                    <aside class="services-sidebar" aria-label="Navigation des services">
+                    <aside class="services-sidebar" aria-label="Navigation des secteurs d'activité">
                         <nav class="sticky-nav">
 
                             <div class="nav-group">
                                 <div class="nav-group-inner">
-                                    <a href="#acquisition" class="nav-link">Capture et Acquisition</a>
+                                    <a href="#arpentage" class="nav-link">Arpentage</a>
                                     <ul class="sub-nav">
-                                        <li><a href="#lidar">Levés LiDAR</a></li>
-                                        <li><a href="#photogrammetrie">Photogrammétrie</a></li>
-                                        <li><a href="#conventionnel">Levés conventionnels</a></li>
-                                        <li><a href="#numerisation">Numérisation</a></li>
+                                        <li><a href="#arp-topo">Relevés topographiques</a></li>
+                                        <li><a href="#arp-mnt">Modèle numérique de terrain</a></li>
+                                        <li><a href="#arp-photogrammetrie">Photogrammétrie de haute précision</a></li>
+                                        <li><a href="#arp-lidar">Relevés LiDAR</a></li>
+                                        <li><a href="#arp-donnees">Données géospatiales fiables</a></li>
+                                        <li><a href="#arp-calcul">Outils de calcul sur mesure</a></li>
+                                        <li><a href="#arp-mesures">Prises de mesures complexes</a></li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="nav-group">
                                 <div class="nav-group-inner">
-                                    <a href="#ingenierie" class="nav-link">Ingénierie des Données</a>
+                                    <a href="#minier" class="nav-link">Secteur Minier</a>
                                     <ul class="sub-nav">
-                                        <li><a href="#volumes">Calculs de volumes</a></li>
-                                        <li><a href="#analyses">Analyses spatiales</a></li>
-                                        <li><a href="#extraction">Extraction de géométries</a></li>
-                                        <li><a href="#automatisation">Automatisation</a></li>
+                                        <li><a href="#min-reserves">Calculs des réserves</a></li>
+                                        <li><a href="#min-orthophotos">Orthophotos d'exploitation</a></li>
+                                        <li><a href="#min-dynamitage">Calculs de dynamitage</a></li>
+                                        <li><a href="#min-bathymetrie">Bathymétrie</a></li>
+                                        <li><a href="#min-webapp">Application Web conviviale</a></li>
+                                        <li><a href="#min-dao">Exportation DAO</a></li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="nav-group">
                                 <div class="nav-group-inner">
-                                    <a href="#diffusion" class="nav-link">Solutions Numériques</a>
+                                    <a href="#civil" class="nav-link">Génie Civil et Construction</a>
                                     <ul class="sub-nav">
-                                        <li><a href="#sig">Plateformes SIG Web</a></li>
-                                        <li><a href="#visualisation">Visualisation immersive</a></li>
-                                        <li><a href="#tableaux">Tableaux de bord</a></li>
-                                        <li><a href="#acces-client">Diffusion et accès client</a></li>
+                                        <li><a href="#civ-infrastructures">Relevés d'infrastructures</a></li>
+                                        <li><a href="#civ-relief">Modélisation du relief</a></li>
+                                        <li><a href="#civ-hydrologie">Analyses hydrologiques</a></li>
+                                        <li><a href="#civ-tel-construit">Plans tel que construit</a></li>
+                                        <li><a href="#civ-chantier">Suivi de chantier</a></li>
+                                        <li><a href="#civ-jumeau">Jumeau numérique 2D/3D</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="nav-group">
+                                <div class="nav-group-inner">
+                                    <a href="#architecture" class="nav-link">Architecture et Bâtiment</a>
+                                    <ul class="sub-nav">
+                                        <li><a href="#arc-scan">Scan laser &amp; Nuages de points</a></li>
+                                        <li><a href="#arc-modeles-3d">Modèles 3D photogrammétriques</a></li>
+                                        <li><a href="#arc-bim">Scan-to-BIM</a></li>
+                                        <li><a href="#arc-jumeaux">Jumeaux numériques immersifs</a></li>
+                                        <li><a href="#arc-inspections">Inspections de bâtiments (Loi 122)</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="nav-group">
+                                <div class="nav-group-inner">
+                                    <a href="#environnement" class="nav-link">Génie de l'Environnement</a>
+                                    <ul class="sub-nav">
+                                        <li><a href="#env-donnees">Données géospatiales fiables</a></li>
+                                        <li><a href="#env-lidar">LiDAR par drone et Orthophotos</a></li>
+                                        <li><a href="#env-canopee">Modèles de terrain et canopée</a></li>
+                                        <li><a href="#env-bathymetrie">Bathymétrie</a></li>
+                                        <li><a href="#env-volumes">Calculs volumétriques</a></li>
+                                        <li><a href="#env-analyses">Analyses spatiales</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="nav-group">
+                                <div class="nav-group-inner">
+                                    <a href="#territoire" class="nav-link">Municipalités</a>
+                                    <ul class="sub-nav">
+                                        <li><a href="#mun-actifs">Inventaire des actifs</a></li>
+                                        <li><a href="#mun-lidar">LiDAR et Orthophotos</a></li>
+                                        <li><a href="#mun-analyses">Analyses spatiales du territoire</a></li>
+                                        <li><a href="#mun-etl">Automatisation de données (ETL)</a></li>
+                                        <li><a href="#mun-bdd">Bases de données spatiales</a></li>
+                                        <li><a href="#mun-jumeaux">Jumeaux numériques urbains</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -128,56 +178,85 @@
                     </aside>
 
                     <!-- ----------------------------------------
-                         CONTENU — blocs de service
+                         CONTENU — blocs de secteur
                          ---------------------------------------- -->
                     <div class="services-content">
 
                         <!-- ====================================
-                             BLOC 01 — CAPTURE ET ACQUISITION
+                             BLOC 01 — ARPENTAGE
                              ==================================== -->
-                        <section id="acquisition" class="service-block">
+                        <section id="arpentage" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="service-number" aria-hidden="true">01</span>
+                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">square_foot</span>
                                 <div>
-                                    <h2>Capture et Acquisition de Précision</h2>
+                                    <h2>Arpentage</h2>
                                     <p class="service-intro">
-                                        Déploiement des technologies les plus avancées pour capturer
-                                        la réalité de votre terrain avec une exactitude millimétrique —
-                                        aérien, terrestre ou mixte selon la complexité du site.
+                                        Données de terrain certifiées pour l'arpenteur-géomètre :
+                                        LiDAR, photogrammétrie et levés conventionnels combinés selon
+                                        la précision recherchée et les contraintes du site.
                                     </p>
                                 </div>
                             </div>
 
                             <div class="service-sub-grid">
-                                <div class="service-sub-item animate-on-scroll has-img" id="lidar">
-                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser — Levés LiDAR" class="service-card-img">
+                                <!-- Toutes les cartes de la page portent l'un des deux visuels de
+                                     gabarit, alternés en damier, en attendant les photos définitives.
+                                     Leur alt décrit l'image réelle, pas le titre de la carte. -->
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-topo">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
                                     <div class="service-sub-body">
-                                        <span class="material-symbols-outlined service-sub-icon">radar</span>
-                                        <h3>Levés LiDAR</h3>
-                                        <p>Drone et scanner laser terrestre pour une densité de points maximale sous la canopée ou dans des environnements à géométrie complexe.</p>
+                                        <h3>Relevés topographiques</h3>
+                                        <p>Acquisition de données de haute précision sur le terrain pour la modélisation et l'ingénierie.</p>
                                     </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll has-img" id="photogrammetrie">
-                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie — Photogrammétrie aérienne" class="service-card-img">
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-mnt">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
                                     <div class="service-sub-body">
-                                        <span class="material-symbols-outlined service-sub-icon">photo_camera</span>
-                                        <h3>Photogrammétrie aérienne</h3>
-                                        <p>Modélisation 3D et orthophotographies haute résolution à partir de vols drone systématiques à altitude calibrée.</p>
+                                        <h3>Modèle numérique de terrain</h3>
+                                        <p>Création de MNT détaillés pour une compréhension parfaite et précise de la topographie.</p>
                                     </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="conventionnel">
-                                    <span class="material-symbols-outlined service-sub-icon">straighten</span>
-                                    <h3>Levés conventionnels</h3>
-                                    <p>GNSS et Station Totale pour l'établissement de points de contrôle terrestres et les levés topographiques de précision.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-photogrammetrie">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Photogrammétrie de haute précision</h3>
+                                        <p>Génération d'orthophotographies et de photomaillages texturés de très haute résolution.</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="numerisation">
-                                    <span class="material-symbols-outlined service-sub-icon">scanner</span>
-                                    <h3>Numérisation d'infrastructures</h3>
-                                    <p>Capture détaillée de bâtiments et d'ouvrages d'art pour la documentation patrimoniale et l'intégration BIM.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-lidar">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Relevés LiDAR</h3>
+                                        <p>Acquisition de nuages de points par systèmes aéroportés (drone), mobiles et statiques.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-donnees">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Données géospatiales fiables</h3>
+                                        <p>Production et livraison de données certifiées servant de base solide à vos projets.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-calcul">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Outils de calcul sur mesure</h3>
+                                        <p>Développement de solutions d'analyse et de calcul adaptées à vos besoins spécifiques.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arp-mesures">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Prises de mesures complexes</h3>
+                                        <p>Déploiement de technologies adaptées pour les environnements difficiles d'accès ou complexes.</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -185,45 +264,69 @@
 
 
                         <!-- ====================================
-                             BLOC 02 — INGÉNIERIE DES DONNÉES
+                             BLOC 02 — SECTEUR MINIER
                              ==================================== -->
-                        <section id="ingenierie" class="service-block">
+                        <section id="minier" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="service-number" aria-hidden="true">02</span>
+                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">terrain</span>
                                 <div>
-                                    <h2>Ingénierie et Intelligence des Données</h2>
+                                    <h2>Secteur Minier</h2>
                                     <p class="service-intro">
-                                        La donnée brute est transformée en information exploitable grâce à
-                                        des processus de traitement rigoureux et automatisés — du nuage de
-                                        points brut au livrable clé en main.
+                                        Suivi volumétrique des réserves, documentation des fronts
+                                        d'exploitation et planification du sautage, avec un historique
+                                        consultable campagne après campagne.
                                     </p>
                                 </div>
                             </div>
 
                             <div class="service-sub-grid">
-                                <div class="service-sub-item animate-on-scroll" id="volumes">
-                                    <span class="material-symbols-outlined service-sub-icon">stacked_bar_chart</span>
-                                    <h3>Calculs de volumes</h3>
-                                    <p>Suivi de stocks, carrières et sablières. Mesures différentielles entre campagnes pour quantifier l'évolution des matériaux.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="min-reserves">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Calculs des réserves</h3>
+                                        <p>Évaluation par drone, scan laser ou méthode traditionnelle, selon le lieu et les conditions d'entreposage.</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="analyses">
-                                    <span class="material-symbols-outlined service-sub-icon">map</span>
-                                    <h3>Analyses spatiales avancées</h3>
-                                    <p>Détection de changements entre levés, classification de nuages de points, génération de MNT et MNS haute précision.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="min-orthophotos">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Orthophotos d'exploitation</h3>
+                                        <p>Imagerie aérienne régulière pour documenter et assurer le suivi visuel de l'exploitation.</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="extraction">
-                                    <span class="material-symbols-outlined service-sub-icon">architecture</span>
-                                    <h3>Extraction de géométries</h3>
-                                    <p>Vectorisation 2D et 3D de structures, modélisation de surfaces et d'ouvrages pour intégration directe dans les flux BIM.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="min-dynamitage">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Calculs de dynamitage</h3>
+                                        <p>Analyses volumétriques et spatiales pour l'optimisation des opérations de forage et de sautage.</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="automatisation">
-                                    <span class="material-symbols-outlined service-sub-icon">automation</span>
-                                    <h3>Automatisation</h3>
-                                    <p>Développement de scripts sur mesure pour accélérer les flux de traitement répétitifs et réduire les délais de livraison.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="min-bathymetrie">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Bathymétrie</h3>
+                                        <p>Levés topographiques sous-marins pour les bassins de rétention et cours d'eau miniers.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="min-webapp">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Application Web conviviale</h3>
+                                        <p>Plateforme dédiée pour la consultation, la comparaison d'historique des données, et la prise de mesures précises.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="min-dao">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Exportation DAO</h3>
+                                        <p>Extraction et intégration fluides de vos données vers des formats standards de conception (DWF, DWG).</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -231,45 +334,270 @@
 
 
                         <!-- ====================================
-                             BLOC 03 — SOLUTIONS NUMÉRIQUES
+                             BLOC 03 — GÉNIE CIVIL ET CONSTRUCTION
                              ==================================== -->
-                        <section id="diffusion" class="service-block">
+                        <section id="civil" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="service-number" aria-hidden="true">03</span>
+                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">construction</span>
                                 <div>
-                                    <h2>Solutions Numériques et Diffusion</h2>
+                                    <h2>Génie Civil et Construction</h2>
                                     <p class="service-intro">
-                                        Des outils sur mesure pour interagir avec vos données géospatiales
-                                        directement depuis le navigateur — sans installation de logiciels lourds
-                                        ni compétences SIG requises.
+                                        De l'avant-projet au tel que construit : modèles de terrain,
+                                        analyses hydrologiques et suivi de chantier documenté à chaque
+                                        étape des travaux.
                                     </p>
                                 </div>
                             </div>
 
                             <div class="service-sub-grid">
-                                <div class="service-sub-item animate-on-scroll" id="sig">
-                                    <span class="material-symbols-outlined service-sub-icon">language</span>
-                                    <h3>Plateformes SIG Web</h3>
-                                    <p>Cartographie interactive 2D et 3D accessible depuis votre navigateur, avec contrôle des couches, exports et partage sécurisé.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="civ-infrastructures">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Relevés d'infrastructures</h3>
+                                        <p>Relevés topographiques de haute précision dédiés aux ouvrages d'art et infrastructures existantes.</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="visualisation">
-                                    <span class="material-symbols-outlined service-sub-icon">view_in_ar</span>
-                                    <h3>Visualisation immersive</h3>
-                                    <p>Hébergement et affichage fluide de nuages de points massifs et de photomaillages — navigation intuitive sans téléchargement.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="civ-relief">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Modélisation du relief</h3>
+                                        <p>Génération de modèles numériques de terrain (MNT), de canopée (MNC) et d'élévation (MNE).</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="tableaux">
-                                    <span class="material-symbols-outlined service-sub-icon">dashboard</span>
-                                    <h3>Tableaux de bord</h3>
-                                    <p>Outils décisionnels sur mesure pour suivre l'avancement de vos projets, visualiser les métriques clés et piloter les interventions.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="civ-hydrologie">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Analyses hydrologiques</h3>
+                                        <p>Études de bassins versants, calculs rigoureux des pentes et détection de micro-dépressions.</p>
+                                    </div>
                                 </div>
 
-                                <div class="service-sub-item animate-on-scroll" id="acces-client">
-                                    <span class="material-symbols-outlined service-sub-icon">share</span>
-                                    <h3>Diffusion et accès client</h3>
-                                    <p>Portail d'accès sécurisé pour consulter, télécharger et partager vos livrables géospatiaux avec vos équipes ou sous-traitants.</p>
+                                <div class="service-sub-item animate-on-scroll has-img" id="civ-tel-construit">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Plans tel que construit</h3>
+                                        <p>Documentation exacte de l'état final des structures et infrastructures après les travaux.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="civ-chantier">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Suivi de chantier</h3>
+                                        <p>Documentation régulière et calculs de déblais/remblais pour contrôler l'avancement des travaux.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="civ-jumeau">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Jumeau numérique 2D/3D</h3>
+                                        <p>Visite virtuelle de votre chantier avec des outils intégrés pour la prise de mesures précises à distance.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+
+
+                        <!-- ====================================
+                             BLOC 04 — ARCHITECTURE ET BÂTIMENT
+                             ==================================== -->
+                        <section id="architecture" class="service-block">
+
+                            <div class="service-block-header animate-on-scroll">
+                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">architecture</span>
+                                <div>
+                                    <h2>Architecture et Bâtiment</h2>
+                                    <p class="service-intro">
+                                        Numérisation des conditions existantes et conversion en maquette
+                                        exploitable, du nuage de points brut au modèle BIM livré dans le
+                                        format de votre chaîne de production.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="service-sub-grid">
+                                <div class="service-sub-item animate-on-scroll has-img" id="arc-scan">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Scan laser &amp; Nuages de points</h3>
+                                        <p>Numérisation millimétrique des bâtiments pour capturer les conditions existantes avec une fidélité absolue.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arc-modeles-3d">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Modèles 3D photogrammétriques</h3>
+                                        <p>Création de modèles texturés de très haute résolution pour une visualisation réaliste des structures.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arc-bim">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Scan-to-BIM</h3>
+                                        <p>Vectorisation des nuages de points pour la création de maquettes intelligentes (Revit, IFC, DWG).</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arc-jumeaux">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Jumeaux numériques immersifs</h3>
+                                        <p>Environnement interactif combinant la réalité (nuages de points/modèles 3D) et le modèle conçu (maquettes BIM).</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="arc-inspections">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Inspections de bâtiments (Loi 122)</h3>
+                                        <p>Solution clé en main : orthofaçades haute résolution, détection préliminaire de déficiences par IA, outils d'annotation et rapports automatisés.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+
+
+                        <!-- ====================================
+                             BLOC 05 — GÉNIE DE L'ENVIRONNEMENT
+                             ==================================== -->
+                        <section id="environnement" class="service-block">
+
+                            <div class="service-block-header animate-on-scroll">
+                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">eco</span>
+                                <div>
+                                    <h2>Génie de l'Environnement</h2>
+                                    <p class="service-intro">
+                                        Capture sous couvert végétal, bathymétrie et modélisation du
+                                        relief pour documenter un milieu naturel et en mesurer l'évolution.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="service-sub-grid">
+                                <div class="service-sub-item animate-on-scroll has-img" id="env-donnees">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Données géospatiales fiables</h3>
+                                        <p>Acquisition de données de confiance et ultra-précises pour supporter vos analyses environnementales.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="env-lidar">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>LiDAR par drone et Orthophotos</h3>
+                                        <p>Déploiement de capteurs permettant de percer la végétation, couplés à une imagerie aérienne haute définition.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="env-canopee">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Modèles de terrain et canopée</h3>
+                                        <p>Génération de modèles numériques révélant la vraie topographie du sol et la structure végétale.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="env-bathymetrie">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Bathymétrie</h3>
+                                        <p>Levés topographiques sous-marins pour l'étude des lits de cours d'eau, des berges et des lacs.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="env-volumes">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Calculs volumétriques</h3>
+                                        <p>Évaluation précise des volumes de matériaux pour les projets de réhabilitation ou d'érosion.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="env-analyses">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Analyses spatiales</h3>
+                                        <p>Création experte de cartes des pentes et modélisation des directions d'écoulement des eaux.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+
+
+                        <!-- ====================================
+                             BLOC 06 — MUNICIPALITÉS
+                             ==================================== -->
+                        <section id="territoire" class="service-block">
+
+                            <div class="service-block-header animate-on-scroll">
+                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">map</span>
+                                <div>
+                                    <h2>Municipalités</h2>
+                                    <p class="service-intro">
+                                        Inventaire des actifs, structuration des bases de données
+                                        spatiales et diffusion cartographique pour appuyer la
+                                        planification du territoire.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="service-sub-grid">
+                                <div class="service-sub-item animate-on-scroll has-img" id="mun-actifs">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Inventaire des actifs</h3>
+                                        <p>Collecte systématique et géolocalisation précise des données pour la gestion des infrastructures municipales.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="mun-lidar">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>LiDAR et Orthophotos</h3>
+                                        <p>Acquisition de données par LiDAR (aérien et terrestre) et génération d'imagerie aérienne du territoire.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="mun-analyses">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Analyses spatiales du territoire</h3>
+                                        <p>Études géospatiales avancées pour supporter la planification urbaine et la prise de décision.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="mun-etl">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Automatisation de données (ETL)</h3>
+                                        <p>Mise en place de solutions d'intégration (ETL) pour transformer et automatiser vos flux de données spatiales.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="mun-bdd">
+                                    <img src="assets/services/levés-lidar.png" alt="Nuage de points laser d'un site levé par drone" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Bases de données spatiales</h3>
+                                        <p>Création, structuration, et gestion optimale de vos données géographiques centralisées.</p>
+                                    </div>
+                                </div>
+
+                                <div class="service-sub-item animate-on-scroll has-img" id="mun-jumeaux">
+                                    <img src="assets/services/photogrammétrie-aérienne.png" alt="Orthophotographie aérienne haute résolution" class="service-card-img">
+                                    <div class="service-sub-body">
+                                        <h3>Jumeaux numériques urbains</h3>
+                                        <p>Cartographie Web interactive et développement de solutions sur mesure selon les besoins de la ville.</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -294,9 +622,9 @@
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="#lidar" class="transition-link">LiDAR aéroporté</a></li>
-                            <li><a href="#photogrammetrie" class="transition-link">Photogrammétrie</a></li>
-                            <li><a href="#numerisation" class="transition-link">Inspection d'ouvrages</a></li>
+                            <li><a href="#arp-lidar" class="transition-link">LiDAR aéroporté</a></li>
+                            <li><a href="#arp-photogrammetrie" class="transition-link">Photogrammétrie</a></li>
+                            <li><a href="#civ-infrastructures" class="transition-link">Inspection d'ouvrages</a></li>
                         </ul>
                     </div>
 

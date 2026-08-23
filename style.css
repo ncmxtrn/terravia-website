@@ -661,6 +661,59 @@ a {
     gap: var(--space-md);
 }
 
+/* Indicateur de défilement — double flèche centrée en bas du hero.
+   C'est un lien vers #services, pas un ornement : d'où la cible tactile
+   --tap-target-min (WCAG 2.5.5) et le focus visible au clavier.
+   L'animation vit sur le <span> interne et non sur le lien : le lien porte déjà
+   translateX(-50%) pour son centrage, et une animation de transform sur le même
+   élément écraserait ce centrage pendant toute la boucle. */
+.scroll-down-indicator {
+    position: absolute;
+    bottom: 6.25rem; /* 100px — cadrage repris du projet nacer : la flèche remonte
+                        au-dessus du bord bas plutôt que de s'y coller. */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--tap-target-min);
+    min-height: var(--tap-target-min);
+    border-radius: var(--radius-pill);
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-header);
+}
+
+.scroll-down-indicator:hover {
+    color: var(--color-white);
+}
+
+.scroll-down-indicator:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+}
+
+.scroll-down-indicator .material-symbols-outlined {
+    font-size: 3.75rem; /* 60px — taille du projet nacer */
+    font-weight: var(--weight-medium);
+    /* Dérive verticale douce, sans overshoot : suggère la direction du scroll
+       sans le rebond proscrit par CLAUDE.md. */
+    animation: scroll-hint 2s var(--ease-header) infinite;
+}
+
+@keyframes scroll-hint {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(8px); }
+}
+
+/* Boucle infinie : neutralisée pour les utilisateurs qui limitent les animations.
+   Le lien, lui, reste pleinement fonctionnel. */
+@media (prefers-reduced-motion: reduce) {
+    .scroll-down-indicator .material-symbols-outlined {
+        animation: none;
+    }
+}
+
 /* =========================================
    5. SECTION SERVICES
    ========================================= */

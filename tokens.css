@@ -67,6 +67,7 @@
   --white:       #ffffff;
   --bg-light:    #ffffff;   /* page background */
   --white-10:    rgba(255, 255, 255, 0.10);   /* overlay/border subtil sur fond sombre */
+  --white-20:    rgba(255, 255, 255, 0.20);   /* bordure d'encart verre dépoli sur photo */
   --gray-200:    #e5e7eb;
 
   /* — Semantic: state —

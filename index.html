@@ -136,7 +136,7 @@
                 </div>
             </section>
 
-            <section class="services-section svc-v2" id="services">
+            <section class="services-section" id="services">
                 <div class="container">
 
                     <!--
@@ -151,63 +151,154 @@
                         <p class="subtitle animate-on-scroll">Des technologies adaptées aux exigences rigoureuses des professionnels.</p>
                     </div>
 
-                    <article class="svc-v2-row animate-on-scroll">
-                        <div class="svc-v2-visual">
-                            <div class="svc-placeholder"></div>
-                        </div>
-                        <div class="svc-v2-content">
-                            <div class="svc-v2-tags">
-                                <span>LiDAR</span>
-                                <span>Photogrammétrie</span>
-                                <span>Multi-capteurs</span>
+                    <!--
+                        Grille des six expertises. Chaque carte porte `.animate-on-scroll` :
+                        l'IntersectionObserver de script.js déclenche l'entrée en fondu, le
+                        décalage entre cartes étant géré en CSS (`:nth-child` + transition-delay).
+
+                        Le CTA porte `.card-link` et NON `.link-arrow` : script.js intercepte
+                        `.link-arrow` pour afficher l'alerte « en construction ». Ici le lien doit
+                        réellement naviguer, vers la section correspondante de services.html.
+                        `.transition-link` ajoute le fondu de page avant la navigation.
+                    -->
+                    <div class="services-grid">
+                        <!-- Carte 1 : Arpentage -->
+                        <div class="service-card animate-on-scroll">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">square_foot</span>
                             </div>
-                            <h3>Capture et acquisition</h3>
-                            <p>Numérisation de terrain, d'infrastructure ou de site industriel avec une précision centimétrique. LiDAR aéroporté, photogrammétrie drone, levé conventionnel - la donnée terrain la plus fiable du secteur.</p>
-                            <a href="services.html" class="transition-link svc-v2-link">
+                            <div class="card-content">
+                                <h3>Arpentage</h3>
+                                <p>Acquisition de données de haute précision, modélisation numérique de terrain (MNT), photogrammétrie et relevés LiDAR pour la livraison de données géospatiales fiables.</p>
+                            </div>
+                            <a href="services.html#arpentage" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
                         </div>
-                    </article>
 
-                    <article class="svc-v2-row svc-v2-row--reverse animate-on-scroll">
-                        <div class="svc-v2-visual">
-                            <div class="svc-placeholder"></div>
-                        </div>
-                        <div class="svc-v2-content">
-                            <div class="svc-v2-tags">
-                                <span>Analyse spatiale</span>
-                                <span>Volumétrie</span>
-                                <span>Automatisation</span>
+                        <!-- Carte 2 : Secteur Minier -->
+                        <div class="service-card animate-on-scroll">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">terrain</span>
                             </div>
-                            <h3>Ingénierie et intelligence des données</h3>
-                            <p>Calculs volumétriques, extraction de géométries, modèles numériques de terrain. Pipelines automatisés pour livrer la bonne donnée au bon décideur, dans le bon format.</p>
-                            <a href="services.html" class="transition-link svc-v2-link">
+                            <div class="card-content">
+                                <h3>Secteur Minier</h3>
+                                <p>Évaluation précise des réserves, bathymétrie, calculs de dynamitage et suivi d'exploitation régulier via nos applications Web interactives dédiées.</p>
+                            </div>
+                            <a href="services.html#minier" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
                         </div>
-                    </article>
 
-                    <article class="svc-v2-row animate-on-scroll">
-                        <div class="svc-v2-visual">
-                            <div class="svc-placeholder"></div>
-                        </div>
-                        <div class="svc-v2-content">
-                            <div class="svc-v2-tags">
-                                <span>SIG Web</span>
-                                <span>3D immersif</span>
-                                <span>Tableaux de bord</span>
+                        <!-- Carte 3 : Génie Civil et Construction -->
+                        <div class="service-card animate-on-scroll">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">construction</span>
                             </div>
-                            <h3>Solutions numériques et diffusion</h3>
-                            <p>Plateformes de consultation interactives, visualisation de nuages de points et de photomaillages, outils décisionnels accessibles depuis un navigateur web standard.</p>
-                            <a href="services.html" class="transition-link svc-v2-link">
+                            <div class="card-content">
+                                <h3>Génie Civil et Construction</h3>
+                                <p>Relevés d'infrastructures, analyses hydrologiques, plans tel que construit et création de jumeaux numériques 2D/3D pour un suivi de chantier rigoureux.</p>
+                            </div>
+                            <a href="services.html#civil" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
                         </div>
-                    </article>
 
+                        <!-- Carte 4 : Architecture et Bâtiment -->
+                        <div class="service-card animate-on-scroll">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">architecture</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>Architecture et Bâtiment</h3>
+                                <p>Numérisation millimétrique par scan laser, modélisation 3D réaliste, vectorisation intelligente (Scan-to-BIM) et inspections de façades (Loi 122).</p>
+                            </div>
+                            <a href="services.html#architecture" class="card-link transition-link">
+                                En savoir plus
+                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            </a>
+                        </div>
+
+                        <!-- Carte 5 : Génie de l'Environnement -->
+                        <div class="service-card animate-on-scroll">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">eco</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>Génie de l'Environnement</h3>
+                                <p>Acquisition LiDAR perçant la canopée, bathymétrie, calculs volumétriques et analyses spatiales poussées pour supporter vos études environnementales.</p>
+                            </div>
+                            <a href="services.html#environnement" class="card-link transition-link">
+                                En savoir plus
+                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            </a>
+                        </div>
+
+                        <!-- Carte 6 : Municipalités -->
+                        <div class="service-card animate-on-scroll">
+                            <div class="icon-box">
+                                <span class="material-symbols-outlined">map</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>Municipalités</h3>
+                                <p>Inventaire géolocalisé des actifs, acquisition LiDAR, automatisation des flux de données (ETL) et jumeaux numériques pour la gestion intelligente du territoire.</p>
+                            </div>
+                            <a href="services.html#territoire" class="card-link transition-link">
+                                En savoir plus
+                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!--
+                Section technologie — mise en valeur de la Plateforme Intelligente (concept de marque).
+                Disposition en deux colonnes asymétriques : texte à gauche, capture d'écran à droite
+                (empilées sous 950px). L'élément `.floating-ui` superposé à l'image simule un widget
+                de l'interface client et ancre visuellement la section dans le produit réel.
+            -->
+            <section class="tech-section" id="technologie">
+                <div class="container">
+                    <div class="split-layout">
+                        <div class="tech-text animate-on-scroll">
+                            <!-- "Plateforme Intelligente" : les deux mots sont capitalisés — concept de marque -->
+                            <div class="label-tech">Plateforme Intelligente</div>
+                            <h2>Visualisez et analysez vos données</h2>
+                            <p>
+                                Accédez à notre application interne dédiée pour visualiser et exploiter tout le
+                                potentiel de vos données. Explorez vos nuages de points LiDAR et modèles
+                                photogrammétriques.
+                            </p>
+                            <ul class="check-list">
+                                <li><span class="material-symbols-outlined check-icon" aria-hidden="true">check_circle</span> Visualisation interactive LiDAR et 3D</li>
+                                <li><span class="material-symbols-outlined check-icon" aria-hidden="true">check_circle</span> Comparaison des relevés historiques</li>
+                                <li><span class="material-symbols-outlined check-icon" aria-hidden="true">check_circle</span> Suivi d'évolution par photo aérienne</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-image-wrapper animate-on-scroll">
+                            <div class="image-container"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'>
+                            </div>
+                            <!--
+                                Widget flottant décoratif positionné en absolu sur l'image.
+                                Il illustre l'interface de la plateforme sans nécessiter une vraie capture d'écran.
+                                Pas de comportement interactif — rôle purement visuel.
+                            -->
+                            <div class="floating-ui">
+                                <div class="file-info">
+                                    <span class="material-symbols-outlined" aria-hidden="true">description</span>
+                                    <span>Relevé_Site_A.dwg</span>
+                                </div>
+                                <span class="status-badge">Prêt</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

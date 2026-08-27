@@ -1357,6 +1357,14 @@ a {
     font-size: 0.9rem;
 }
 
+/* La colonne "Services" est étroite (0.5fr dès 950px, voir .footer-grid) : sans
+   ce nowrap, les libellés les plus longs ("Génie Civil et Construction",
+   "Architecture et Bâtiment") retombent sur deux lignes et cassent l'alignement
+   vertical de la liste. */
+.footer-links a {
+    white-space: nowrap;
+}
+
 .footer-links a:hover,
 .footer-contact a:hover {
     color: var(--color-primary);

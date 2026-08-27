@@ -248,6 +248,23 @@ document.querySelectorAll(".link-arrow, .link-placeholder").forEach(link => {
    où ces éléments n'existent pas.
    ============================================================= */
 
+// --- Focus initial sur le champ email ---
+// L'attribut autofocus est présent dans login.html, mais il ne suffit pas ici :
+// pendant l'anti-FOUC, html.is-loading body est en visibility: hidden, et un élément
+// non rendu n'est pas focusable — le navigateur peut donc ignorer autofocus.
+// Ce listener est enregistré APRÈS celui de la SECTION 1, donc .is-loading est déjà
+// retirée quand il s'exécute : le champ est visible et le focus est fiable.
+// autofocus reste utile pour le cas sans JS, où <noscript> neutralise le masquage.
+// id="email" n'existe que sur login.html (contact.html utilise id="contact-email").
+const loginEmailInput = document.getElementById("email");
+
+if (loginEmailInput) {
+    document.addEventListener("DOMContentLoaded", () => {
+        loginEmailInput.focus();
+    });
+}
+
+
 // --- Toggle visibilité du mot de passe ---
 const passwordToggle = document.querySelector(".password-toggle");
 const passwordInput = document.getElementById("password");

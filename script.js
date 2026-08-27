@@ -256,11 +256,13 @@ document.querySelectorAll(".link-arrow, .link-placeholder").forEach(link => {
 // retirée quand il s'exécute : le champ est visible et le focus est fiable.
 // autofocus reste utile pour le cas sans JS, où <noscript> neutralise le masquage.
 // id="email" n'existe que sur login.html (contact.html utilise id="contact-email").
-const loginEmailInput = document.getElementById("email");
+// Déclaré ici et réutilisé plus bas (validation du formulaire) pour éviter deux
+// références distinctes vers le même nœud #email.
+const emailInput = document.getElementById("email");
 
-if (loginEmailInput) {
+if (emailInput) {
     document.addEventListener("DOMContentLoaded", () => {
-        loginEmailInput.focus();
+        emailInput.focus();
     });
 }
 
@@ -310,7 +312,7 @@ if (passwordInput && capsWarning) {
 // TODO: Brancher sur une API d'authentification (JWT, session, etc.)
 const submitBtn = document.querySelector(".form-stack .btn-primary[type='submit']");
 const errorBanner = document.getElementById("error-banner");
-const emailInput = document.getElementById("email");
+// emailInput est déclaré plus haut (bloc focus initial) et réutilisé ici.
 const passInput = document.getElementById("password");
 
 // Guard double : sur contact.html, errorBanner n'existe pas (id="contact-error"),

@@ -31,8 +31,29 @@
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
          Repli sans JS ci-dessous ; repli sans script.js dans style.css.
          Voir le commentaire détaillé dans le <head> de index.html. -->
-    <noscript><style>html.is-loading body { opacity: 1; visibility: visible; }
-        .animate-on-scroll { opacity: 1; transform: none; }</style></noscript>
+    <noscript><style>
+        /* JavaScript entièrement désactivé : script.js ne lèvera jamais le masquage,
+           on neutralise donc ici tout ce qui dépend de lui.
+
+           `animation: none` est indispensable et non cosmétique : sans lui, le filet
+           de sécurité de style.css se déclenche quand même au bout de 2 s, et son
+           animation repart de `opacity: 0`. Une animation CSS l'emportant sur une
+           déclaration normale, elle écrase le `opacity: 1` ci-dessous — toute la page
+           disparaît puis réapparaît en fondu, deux secondes après le chargement.
+
+           Le header, lui, est masqué par défaut (translateY(-100%)) : c'est JS qui
+           pose .is-floating ou .is-scrolled selon la page et le défilement. Sans JS il
+           resterait hors écran, laissant la page sans barre de navigation. On le
+           laisse dans son état de base — fond blanc opaque, lisible à toute hauteur
+           de défilement, ce que l'état flottant transparent ne garantirait pas. */
+        html.is-loading body { opacity: 1; visibility: visible; animation: none; }
+        html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
+        .site-header:not(.is-floating):not(.show-cta) {
+            transform: none;
+            background-color: var(--white);
+            border-bottom-color: var(--border-subtle);
+        }
+    </style></noscript>
 </head>
 
 <body class="page-transition">

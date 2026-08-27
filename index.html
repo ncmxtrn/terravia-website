@@ -5,7 +5,7 @@
     Aucun JS inline — toute l'interactivité est centralisée dans script.js.
 -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="is-loading">
 
 <head>
     <meta charset="utf-8" />
@@ -53,14 +53,47 @@
     <link rel="stylesheet" href="tokens.css">
     <!-- style.css : styles globaux du site, consomme exclusivement les tokens définis ci-dessus -->
     <link rel="stylesheet" href="style.css">
+
+    <!--
+        La photo du hero est déclarée en `background-image` sur `.hero-background` (plus bas
+        dans ce fichier) : le navigateur ne la découvre donc qu'après application du CSS. Ce
+        preload la met en file d'attente dès le parsing du <head>, sans quoi le hero se peint
+        quelques centaines de ms avec le seul dégradé de l'overlay.
+
+        Placé APRÈS les deux feuilles de style, et sans `fetchpriority="high"` : ces CSS
+        bloquent le rendu ET le DOMContentLoaded qui lève l'anti-FOUC, alors que l'image ne
+        bloque rien. La faire passer devant elles rallongerait l'écran blanc au lieu de
+        l'écourter — d'autant que le fichier pèse ~900 Ko.
+
+        ⚠ L'URL est dupliquée avec le style inline de `.hero-background` plus bas : les deux
+        doivent être modifiées ensemble, sinon le preload télécharge un fichier inutilisé
+        (avertissement console « preloaded but not used ») et la photo est découverte tard.
+    -->
+    <link rel="preload" as="image" href="assets/hero-background.jpg">
+
+    <!--
+        Anti-FOUC — plus aucun JS inline. `is-loading` est écrite en dur sur <html>
+        ci-dessus, et retirée par script.js sur DOMContentLoaded pour déclencher le
+        fondu d'entrée. La règle `html.is-loading body` vit dans style.css.
+
+        Les deux cas dégradés sont couverts sans script :
+          — JavaScript désactivé : le <noscript> ci-dessous rétablit la visibilité,
+            la page s'affiche immédiatement (sans fondu).
+          — script.js absent ou en erreur (404, extension, syntaxe) : le filet de
+            sécurité CSS de style.css révèle la page au bout de 2 s.
+        Voir `html.is-loading body` et @keyframes fouc-safety-net dans style.css.
+    -->
+    <noscript><style>html.is-loading body { opacity: 1; visibility: visible; }
+        .animate-on-scroll { opacity: 1; transform: none; }</style></noscript>
 </head>
 
 <!--
-    La classe `is-loading` masque le body jusqu'à ce que script.js ait terminé
-    l'initialisation, évitant un flash de contenu non stylisé (FOUC).
+    L'anti-FOUC est porté par `is-loading` sur <html> (écrite en dur, retirée par
+    script.js sur DOMContentLoaded), et non par une classe posée ici : elle doit être
+    active dès le parsing du <head>, avant que <body> n'existe.
     La classe `page-transition` orchestre le fondu de sortie lors des navigations internes.
 -->
-<body class="is-loading page-transition">
+<body class="page-transition">
     <div class="site-wrapper">
 
         <!--
@@ -118,7 +151,10 @@
                 son opacité indépendamment du fond et du contenu texte.
             -->
             <section class="hero-section">
-                <!-- Conteneur dédié au fond photographique : séparation fond / overlay / contenu -->
+                <!-- Conteneur dédié au fond photographique : séparation fond / overlay / contenu.
+                     ⚠ Cette URL est dupliquée par le <link rel="preload"> du <head> : toute
+                     modification du chemin doit être reportée là-haut, sinon le preload
+                     télécharge un fichier inutilisé et la photo est découverte trop tard. -->
                 <div class="hero-background"
                     style='background-image: url("assets/hero-background.jpg");'>
                 </div>

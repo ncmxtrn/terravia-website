@@ -80,7 +80,7 @@
    max-width: 30rem (480px) contraint la largeur de la carte pour maintenir
    une ligne de texte confortable dans le formulaire.
    L'animation commence avec opacity: 0 + translateY(20px) pour éviter
-   le flash du contenu avant le chargement des polices (body.is-loading
+   le flash du contenu avant le chargement des polices (html.is-loading body
    masque déjà le body, mais ce délai de 0.2s laisse le temps au CSS
    d'être appliqué avant que le contenu n'apparaisse).
    ========================================= */

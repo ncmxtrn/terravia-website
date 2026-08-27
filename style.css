@@ -29,10 +29,13 @@
 
 body {
     /* opacity: 1 par défaut pour la transition fade-in : script.js retire la classe
-       .is-loading après 100 ms, déclenchant le passage de 0 → 1. */
+       .is-loading sur <html> à DOMContentLoaded, déclenchant le passage de 0 → 1.
+       La DURÉE de ce fondu n'est volontairement pas déclarée ici : les quatre pages
+       portent .page-transition, dont la spécificité (0,1,0) l'emporte sur ce sélecteur
+       d'élément (0,0,1). Une `transition` posée ici serait donc systématiquement morte.
+       Le timing réel est celui de .page-transition, plus bas. */
     opacity: 1;
-    transition: opacity 1s ease-in-out;
-    
+
     font-family: var(--font-main);
     color: var(--fg1);
     background-color: var(--color-bg-light);
@@ -51,12 +54,46 @@ section[id], footer[id] {
 }
 
 /* État initial anti-FOUC (Flash Of Unstyled Content).
+   La classe est écrite en dur sur <html> dans les 4 pages et retirée par script.js
+   sur DOMContentLoaded. Elle est portée par <html> et non <body> pour être active
+   dès le parsing du <head>, avant que <body> n'existe.
    visibility: hidden retire l'élément du flux de rendu visuel sans le cacher
-   via opacity seule, ce qui empêche le focus clavier et les interactions. */
-body.is-loading {
+   via opacity seule, ce qui empêche le focus clavier et les interactions.
+
+   Le filet de sécurité est ici, en CSS, et non dans un setTimeout inline recopié
+   dans chaque <head> : si script.js ne prend jamais le relais (404 après un
+   déploiement, blocage par une extension, erreur de syntaxe), l'animation révèle
+   la page au bout de 2 s au lieu de la laisser blanche indéfiniment. Le délai
+   court depuis le premier rendu, pas depuis la fin du chargement des CSS — ce
+   qu'un script inline placé après les <link rel="stylesheet"> ne pouvait pas faire.
+   Sans .is-loading la règle ne s'applique plus du tout : l'animation disparaît
+   avec elle, et c'est la transition de .page-transition qui joue le fondu normal.
+   Le cas « JavaScript entièrement désactivé » est couvert par le <noscript> de
+   chaque <head>, qui neutralise cette règle immédiatement. */
+html.is-loading body {
     opacity: 0;
     transition: none !important;
     visibility: hidden;
+    animation: fouc-safety-net var(--duration-slow, 0.5s) 2s forwards;
+}
+
+@keyframes fouc-safety-net {
+    from { opacity: 0; visibility: visible; }
+    to   { opacity: 1; visibility: visible; }
+}
+
+/* Second volet du même filet : révéler <body> ne suffit pas, car .animate-on-scroll
+   reste à `opacity: 0` tant que script.js n'a pas posé .visible. Sans cette règle, une
+   page dont le script ne s'exécute jamais affichait son en-tête et son pied de page
+   sur un corps entièrement vide — les 44 blocs de services.html restant invisibles.
+   Comme au-dessus, la règle disparaît dès que .is-loading est retirée : en
+   fonctionnement nominal l'échéance de 2 s n'est jamais atteinte. */
+html.is-loading .animate-on-scroll {
+    animation: fouc-safety-net-reveal var(--duration-slow, 0.6s) 2s forwards;
+}
+
+@keyframes fouc-safety-net-reveal {
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .container {
@@ -104,7 +141,10 @@ a {
     transition: color 0.3s;
 }
 
-/* Transition de page fade entre les pages */
+/* Transition de page fade entre les pages.
+   Cette déclaration gouverne AUSSI le fondu d'entrée de l'anti-FOUC : au retrait de
+   .is-loading, c'est elle — et non la règle `body` plus haut, qu'elle surclasse — qui
+   anime le passage 0 → 1. Modifier la durée ici affecte les deux usages. */
 .page-transition {
     opacity: 1;
     transition: opacity 0.5s ease;
@@ -740,6 +780,21 @@ a {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Le hint promeut la couche compositeur pendant toute la fenêtre qui précède la
+   révélation — soit du chargement de la page jusqu'à l'entrée de l'élément dans le
+   viewport, largement de quoi éviter le à-coup de la première frame.
+   `:not(.visible)` le retire automatiquement à la révélation, sans quoi les 44 éléments
+   de services.html garderaient chacun leur couche GPU pour toute la durée de vie de la
+   page. Le retrait est ici et non dans script.js sur `transitionend` : cette version-là
+   se déclenchait aussi sur les transitions REMONTÉES par les descendants (l'image d'une
+   carte au survol), coupant le hint en pleine animation, et fuyait définitivement si la
+   transition n'aboutissait jamais.
+   Contrairement à `transition-delay`, `will-change` n'est pas une propriété animable :
+   il est lu en direct, pas dans le style d'arrivée, donc `:not(.visible)` fonctionne
+   bien ici — voir la note inverse dans services.css § stagger. */
+.animate-on-scroll:not(.visible) {
     will-change: opacity, transform;
 }
 

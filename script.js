@@ -18,15 +18,61 @@
    SECTION 1 — INITIALISATION (s'exécute sur toutes les pages)
    ============================================================= */
 
-window.addEventListener("load", () => {
+// --- Révélation de la page (anti-FOUC) ---
+// La classe "is-loading" est écrite en dur sur <html> dans les 4 pages. On la retire
+// dès que le DOM est parsé, sans attendre "load" : sinon la page resterait masquée
+// jusqu'au téléchargement de la dernière image.
+// Les deux cas dégradés (JS désactivé, script.js jamais exécuté) sont couverts sans
+// JavaScript — <noscript> dans chaque <head> et @keyframes fouc-safety-net dans
+// style.css — ce qui évite d'avoir un bloc inline recopié dans les quatre pages.
+document.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.classList.remove("is-loading");
+});
 
-    // Révélation de la page
-    // La classe "is-loading" sur le body la gardait invisible pendant le chargement.
-    // On l'enlève maintenant que tout est prêt, pour l'animation d'entrée.
+
+// --- Restauration depuis le bfcache ---
+// Un seul listener pageshow pour tout le fichier : au retour via les boutons
+// précédent/suivant, DOMContentLoaded ne se rejoue pas, pageshow si. Les modules
+// qui ont un état à réappliquer s'enregistrent ici plutôt que d'ajouter chacun leur
+// propre listener, dont l'ordre relatif ne serait garanti par rien d'explicite.
+const onPageRestore = [];
+window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+        document.body.classList.remove("fade-out");
+    }
+    onPageRestore.forEach(fn => fn());
+});
+
+
+// --- Initialisation principale ---
+// DOMContentLoaded et non "load" : rien ici n'a besoin des images téléchargées
+// (observers, menu burger, états du header travaillent sur la mise en page, pas
+// sur les pixels). Attendre "load" retardait toute l'interactivité jusqu'au
+// dernier octet de la dernière image.
+// Listener distinct de celui de l'anti-FOUC ci-dessus, et enregistré après lui :
+// les deux se déclenchent dans l'ordre d'enregistrement, donc une erreur dans ce
+// bloc-ci ne peut jamais empêcher la page de redevenir visible.
+document.addEventListener("DOMContentLoaded", () => {
+
     // --- Animations au scroll (IntersectionObserver) ---
-    // Surveille les éléments .animate-on-scroll.
-    // Dès qu'un élément est visible à 10 %, on lui ajoute la classe "visible"
+    // Surveille les éléments .animate-on-scroll et leur ajoute la classe "visible"
     // (le CSS prend le relais pour l'animation d'apparition).
+    //
+    // Aucune passe de rattrapage n'est nécessaire pour les éléments déjà présents
+    // dans le viewport au chargement : observe() émet toujours une première entrée
+    // (l'index de seuil précédent vaut -1, il diffère donc systématiquement), et
+    // `isIntersecting` y vaut true dès qu'il y a la moindre intersection avec le
+    // root — indépendamment du threshold, qui ne gouverne que les notifications
+    // ultérieures. Un élément n'affleurant que de 2 % est donc révélé dès ce
+    // premier appel, sans test de position supplémentaire.
+    //
+    // Le cycle de vie de `will-change` est entièrement géré par le CSS
+    // (.animate-on-scroll:not(.visible) dans style.css) : ajouter .visible suffit à
+    // libérer la couche compositeur. Une version antérieure le faisait ici, en style
+    // inline sur `transitionend` — mais transitionend REMONTE le DOM, donc la fin de
+    // n'importe quelle transition `transform` d'un descendant (l'image d'une carte au
+    // survol) coupait le hint en pleine révélation, et le listener fuyait si la
+    // transition n'aboutissait jamais.
     const scrollObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -34,24 +80,10 @@ window.addEventListener("load", () => {
                 scrollObserver.unobserve(entry.target); // déclenché une seule fois par élément
             }
         });
-    }, { threshold: 0.1 }); // 10 % visible suffit — les cartes apparaissent dès l'entrée dans le viewport
+    }, { threshold: 0.1 }); // seuil des notifications de défilement ; la première entrée n'y est pas soumise
 
     document.querySelectorAll(".animate-on-scroll")
         .forEach(el => scrollObserver.observe(el));
-
-    setTimeout(() => {
-        document.body.classList.remove("is-loading");
-        // Révèle immédiatement les éléments déjà présents dans le viewport au chargement.
-        // Le threshold 0.1 de l'observer ne déclenche pas pour les éléments partiellement
-        // visibles dès le départ (ex. : premières cartes de services.html).
-        document.querySelectorAll(".animate-on-scroll").forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                el.classList.add("visible");
-                scrollObserver.unobserve(el);
-            }
-        });
-    }, 100);
 
 
     // --- Menu burger (mobile) ---
@@ -145,13 +177,22 @@ window.addEventListener("load", () => {
                 siteHeader.classList.toggle("is-floating", window.scrollY <= 0);
             };
             window.addEventListener("scroll", updateFloatingState, { passive: true });
-            updateFloatingState(); // applique l'état initial sans attendre un scroll
-        } else {
-            // Pages sans section hero (contact.html, login.html) :
-            // le header est toujours opaque et le bouton CTA toujours visible.
-            siteHeader.classList.add("is-scrolled");
-            siteHeader.classList.add("show-cta");
+
+            // L'état initial est appliqué tout de suite, puis RÉAPPLIQUÉ sur "load".
+            // Au DOMContentLoaded le navigateur n'a pas forcément restauré la position de
+            // défilement d'un rechargement (history.scrollRestoration) : scrollY vaut alors
+            // 0 et le header prendrait "is-floating" — fond transparent, texte blanc — sur
+            // un contenu clair. La restauration se fait après le layout, ce qui tombe
+            // couramment APRÈS la première frame : une seule requestAnimationFrame ne suffit
+            // donc pas à la garantir, alors que "load" est postérieur dans tous les cas.
+            updateFloatingState();
+            window.addEventListener("load", updateFloatingState);
+            onPageRestore.push(updateFloatingState);
         }
+        // Pas de branche `else` : sur les pages sans hero (services.html, contact.html),
+        // "is-scrolled show-cta" sont écrites en dur dans le markup du <header>, pour que
+        // le header soit peint dans le bon état dès la première frame. Les poser ici le
+        // faisait glisser depuis le hors-écran par-dessus le fondu d'entrée de la page.
     }
 });
 
@@ -186,14 +227,6 @@ document.querySelectorAll(".transition-link").forEach(link => {
             setTimeout(() => { window.location.href = targetUrl; }, 500);
         }
     });
-});
-
-
-// Retirer fade-out si la page est restaurée depuis le bfcache (bouton retour/avant)
-window.addEventListener("pageshow", (e) => {
-    if (e.persisted) {
-        document.body.classList.remove("fade-out");
-    }
 });
 
 

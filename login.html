@@ -3,8 +3,9 @@
      Structure autonome : reproduit les patterns visuels de la modale de connexion
      (définie dans login.css) mais rendue en pleine page, sans overlay sombre.
      Toute l'interactivité (toggle mot de passe, validation, bannière d'erreur)
-     est gérée dans script.js — aucun JS inline ici. -->
-<html lang="fr">
+     est gérée dans script.js — aucun JS inline ici. L'anti-FOUC est porté par
+     `is-loading` sur <html> (voir le commentaire du <head> de index.html). -->
+<html lang="fr" class="is-loading">
 
 <head>
     <meta charset="utf-8" />
@@ -32,9 +33,14 @@
     <link rel="stylesheet" href="tokens.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">
+    <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
+         Repli sans JS ci-dessous ; repli sans script.js dans style.css.
+         Voir le commentaire détaillé dans le <head> de index.html. -->
+    <noscript><style>html.is-loading body { opacity: 1; visibility: visible; }
+        .animate-on-scroll { opacity: 1; transform: none; }</style></noscript>
 </head>
 
-<body class="is-loading page-transition">
+<body class="page-transition">
     <div class="site-wrapper">
 
         <main class="login-main">

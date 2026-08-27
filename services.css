@@ -225,9 +225,17 @@
     border-radius: var(--radius-xl);
     padding: var(--space-xl);
     scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-xl)));
+    /* `opacity` fait partie de la liste alors que rien ici ne la fait varier au survol :
+       ces fiches portent aussi .animate-on-scroll, et cette déclaration-ci ÉCRASE la
+       sienne (même spécificité 0,1,0, mais services.css est chargé après style.css).
+       Sans `opacity` dans la liste, la révélation au scroll faisait sauter l'opacité de
+       0 à 1 d'un coup au lieu de la faire apparaître en fondu.
+       Corollaire : la révélation utilise les timings ci-dessous, pas ceux déclarés sur
+       .animate-on-scroll dans style.css, qui ne s'appliquent jamais à ces fiches. */
     transition:
         border-color var(--duration-base),
         box-shadow var(--duration-base),
+        opacity var(--duration-slow) ease-out,
         transform var(--duration-base) var(--ease-card);
 }
 
@@ -304,15 +312,24 @@
    5. STAGGER DES CARTES AU SCROLL
    ============================================================ */
 
-/* Cascade d'entrée individuelle par carte. :not(.visible) efface le délai
-   une fois la classe posée, pour ne pas parasiter les transitions de hover. */
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(1):not(.visible) { transition-delay: 0s;     }
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(2):not(.visible) { transition-delay: 0.1s;   }
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(3):not(.visible) { transition-delay: 0.15s;  }
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(4):not(.visible) { transition-delay: 0.25s;  }
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(5):not(.visible) { transition-delay: 0.3s;   }
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(6):not(.visible) { transition-delay: 0.35s;  }
-.service-sub-grid .service-sub-item.animate-on-scroll:nth-child(7):not(.visible) { transition-delay: 0.4s;   }
+/* PAS de cascade d'entrée pour l'instant — et c'est délibéré.
+   Une série de règles `…:nth-child(N):not(.visible) { transition-delay }` a été
+   retirée d'ici : elle ne produisait aucun effet. Une transition CSS lit son
+   `transition-delay` dans le style d'ARRIVÉE ; or ajouter .visible fait cesser
+   `:not(.visible)` de matcher, donc le délai valait 0s pour les sept fiches, qui
+   apparaissaient toutes en même temps. Le code était mort, son commentaire affirmait
+   l'inverse, et script.js s'appuyait dessus dans le sien.
+
+   Poser le délai sur `.visible` ne marche pas non plus : la fiche transitionne
+   `transform` pour la révélation ET pour le lift au survol (.service-sub-item:hover,
+   translateY(-2px)). Un délai posé sur .visible persiste après la révélation et
+   retarderait chaque survol d'autant.
+
+   Un vrai stagger demande donc de séparer les deux : révélation sur un wrapper
+   (.service-sub-item-reveal), survol sur la fiche. C'est un changement de structure
+   HTML, à faire délibérément — pas à remettre sous forme de délais qui ne s'appliquent
+   pas. Voir la note inverse dans style.css § .animate-on-scroll:not(.visible), où le
+   même sélecteur est correct parce que `will-change` n'est pas une propriété animable. */
 
 
 /* ============================================================

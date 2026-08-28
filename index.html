@@ -126,8 +126,18 @@
         <header class="site-header">
             <div class="container header-content">
                 <!-- Lien de retour en haut de page ; href="#" évite une navigation vers une ancre explicite -->
-                <a href="#" class="logo">
-                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                <!-- `logo--adaptive` inscrit ce logo au dispositif de bascule mobile
+                     (section « HEADER — LOGO ADAPTATIF » de style.css) ; sans elle,
+                     le second <img> ci-dessous resterait inerte. -->
+                <a href="#" class="logo logo--adaptive">
+                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
+                    <!-- Marque compacte, affichée seulement sous 555px quand le bouton
+                         « Contactez-nous » occupe la colonne centrale du header (voir la
+                         section « HEADER — LOGO ADAPTATIF » de style.css).
+                         alt vide + aria-hidden : le nom accessible du lien est déjà porté
+                         par le lockup ci-dessus, qui reste dans le DOM en permanence — le
+                         fondu ne joue que sur l'opacité. -->
+                    <img src="assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
                 </a>
 
                 <!-- Navigation principale — liens d'ancre vers les sections de la page -->

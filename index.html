@@ -1,7 +1,7 @@
 <!--
     index.html — Page d'accueil (landing page) de Solutions Terravia.
     Structure : en-tête fixe, hero plein écran, section services,
-    galerie de projets, pied de page avec coordonnées.
+    pied de page avec coordonnées.
     Aucun JS inline — toute l'interactivité est centralisée dans script.js.
 -->
 <!DOCTYPE html>
@@ -137,7 +137,6 @@
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
-                    <a href="#projets" class="transition-link">Projets</a>
                     <!--
                         Lien placeholder : la page "À propos" n'est pas encore publiée.
                         La classe `.link-placeholder` est interceptée par script.js pour
@@ -371,61 +370,6 @@
                 </div>
             </section>
 
-            <!--
-                Section projets — galerie de réalisations récentes.
-                Chaque `<article>` représente un projet indépendant avec sa propre image de fond,
-                son overlay de lisibilité et ses métadonnées (catégorie, titre, détail technique).
-                L'élément `<article>` est sémantiquement approprié car chaque projet est un contenu autonome.
-            -->
-            <section class="projects-section" id="projets">
-                <div class="container">
-                    <div class="projects-header">
-                        <div>
-                            <h2>Projets récents</h2>
-                            <p>Découvrez comment nos données transforment la planification de projets.</p>
-                        </div>
-                    </div>
-
-                    <div class="projects-grid">
-                        <article class="project-card">
-                            <div class="project-bg"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4ula1grEpGV8QlJldq5I7LU6y9m-Ed_RoPBC0VPaEPOz7SEnqZ6fUIX4ucea9VEKNvhICeu0t7gWZXygJYS8c0V6rO1KYcExEvMPdZicozQGNK_SynpbeZWsKInG2HRwneJ59Cj-pkIhBfNvB8dXNBG_p1FnXHWwknFdejUvzsfnB7bzi3JkVnCXf4D83w3VpWt7pE5PLm_sehGnoH1dRyyuscP-Ef-JZZolZLYHkAnqy-yOXi-_WnZCeMd3oeyuh4TwMQAwLqIE");'>
-                            </div>
-                            <div class="project-overlay"></div>
-                            <div class="project-info">
-                                <span class="project-category">Volumétrie</span>
-                                <h3>Carrière Saint-Marc</h3>
-                                <!-- `&lt;` pour afficher le signe < sans casser le parsing HTML -->
-                                <p class="project-detail">Calcul de stock mensuel avec précision &lt; 1&nbsp;%.</p>
-                            </div>
-                        </article>
-
-                        <article class="project-card">
-                            <div class="project-bg"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAq5q63pIWqzAooSxqgkupd4LuhDeeWMsyPAkg1RVpmasKJL8srYtUzfMdGEbcs7USTLHghe3I74oiH_cZ5hzqZol7fxWU77Bo5cwDPRj_9tWQIWoJ-Il635aG-Dqk2lIkBgYw0RVsMgrYvrWZD0PH2vlSZPvmwgcczguT50EaL5i2ogyK1Tooe1-M_fqbiA6k452kTiZ_QnG9_fHIP0Z2HGN2DA6PGEyLrsRL4Q8N6OjaE_2uDwOW0H8yFjss0G_hHSbL1jeA_LA");'>
-                            </div>
-                            <div class="project-overlay"></div>
-                            <div class="project-info">
-                                <span class="project-category">LiDAR</span>
-                                <h3>Route Forestière 117</h3>
-                                <p class="project-detail">MNT sous canopée pour tracé routier.</p>
-                            </div>
-                        </article>
-
-                        <article class="project-card">
-                            <div class="project-bg"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4KIQbMnyZSMMLGYh0SfiQyWUm8RUh9xKWxV_-qCSiVAmKXiIvVh2sxAqMN_yAcbDVNp9M7jqZg7pKQBmuvcRWWT-5aBgAYuUzILM6Bc6FqLH52rpYlmU5YjZrY_uQ3s-_Zj8jKc3W18o4yKdfSaxcTw3EGEFbrzfcGw21IU_V9bmasx5Vzl8ecikI4Gmc7OiAPzSL-yfWLKq8dyNksNiX_TEJC5oqeQXgiAtdTu3kYn8tWHaCsix1p_9YCUWT0hHzNWrh96r975g");'>
-                            </div>
-                            <div class="project-overlay"></div>
-                            <div class="project-info">
-                                <span class="project-category">Suivi de Chantier</span>
-                                <h3>Complexe Condo Rive-Sud</h3>
-                                <p class="project-detail">Orthomosaïque haute résolution hebdomadaire.</p>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
         </main>
 
         <!--

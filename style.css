@@ -339,7 +339,7 @@ a {
     filter: var(--filter-logo-forest);
 }
 
-/* Le monogramme n'existe que dans le header sous 480px (voir « HEADER — LOGO
+/* Le monogramme n'existe que dans le header sous 555px (voir « HEADER — LOGO
    ADAPTATIF »). Ce display:none par défaut le tient hors du layout partout
    ailleurs : desktop, tablette, et les .logo des pieds de page — qui n'en
    portent d'ailleurs pas de second <img>, mais la règle est le garde-fou. */
@@ -583,12 +583,20 @@ a {
 }
 
 /* =========================================
-   HEADER — LOGO ADAPTATIF (≤ 480px)
+   HEADER — LOGO ADAPTATIF (≤ 555px)
    -----------------------------------------
    Le lockup complet fait ≈ 144px de large ; ajouté au bouton « Contactez-nous »
    (≈ 190px) et au burger (48px), la grille 3 colonnes déborde en dessous de
    ~530px et le logo passe sous le bouton. On lui substitue alors le monogramme
    carré (44px), en fondu croisé.
+
+   555px et non 530 : le seuil est posé juste AU-DESSUS du point de collision,
+   pour que la bascule ait déjà eu lieu quand la grille commence à serrer. Un
+   seuil calé pile dessus laisserait une bande de quelques pixels où le lockup
+   est déjà écrasé (img { max-width: 100% } le comprime dans sa colonne 1fr)
+   sans avoir encore cédé la place. C'est un breakpoint propre à cette bascule,
+   qui ne correspond à aucun autre du projet — il dépend de la largeur du logo
+   et du bouton, pas d'une classe d'appareil.
 
    LA BASCULE EST PILOTÉE PAR .show-cta, PAS PAR LA SEULE LARGEUR D'ÉCRAN.
    C'est le bouton qui crée l'encombrement : tant qu'il est absent, il y a la
@@ -613,7 +621,7 @@ a {
    L'animation de cette largeur est déjà couverte par la `transition: all 0.5s`
    de .logo, calée sur la transition max-width du bouton juste au-dessus.
    ========================================= */
-@media (max-width: 480px) {
+@media (max-width: 555px) {
     .logo--adaptive {
         position: relative; /* repère des deux <img> superposés */
         width: var(--logo-lockup-w);

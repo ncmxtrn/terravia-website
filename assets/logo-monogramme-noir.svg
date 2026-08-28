@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     logo-monogramme-noir.svg — Marque seule de Solutions Terravia (le « T » ajouré du « S »),
-    sans le mot-symbole. Sert de logo de header sur mobile étroit : sous 480 px, dès que le
+    sans le mot-symbole. Sert de logo de header sur mobile étroit : sous 555 px, dès que le
     bouton « Contactez-nous » occupe la colonne centrale, le lockup complet (logo-noir.svg,
     ≈ 144 px de large) ne tient plus dans la grille et cède la place à ce carré de 44 px.
     Voir la bascule dans style.css, section « HEADER — LOGO ADAPTATIF ».

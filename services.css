@@ -360,6 +360,18 @@
         border-bottom: 1px solid var(--border-subtle);
         padding: var(--space-sm) 0;
         margin-inline: calc(var(--container-px) * -1);
+        /* Calée sur la transition transform du header, pour que les deux barres
+           bougent d'un seul bloc quand celui-ci s'escamote.
+           `top` et non `transform` : un transform décalerait aussi la barre AVANT
+           qu'elle ne soit collante, et elle chevaucherait le contenu au-dessus. */
+        transition: top var(--duration-medium) var(--ease-header);
+    }
+
+    /* Header escamoté au scroll descendant (classe posée sur <body> par script.js) :
+       la barre récupère la hauteur libérée au lieu de laisser une bande vide
+       au-dessus d'elle, dans laquelle le contenu défilerait à découvert. */
+    body.header-hidden .services-sidebar {
+        top: 0;
     }
 
     .services-sidebar::-webkit-scrollbar {

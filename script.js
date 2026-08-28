@@ -132,14 +132,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // --- Header au scroll ---
-    // Trois états découplés :
+    // Quatre états découplés :
     //   • "is-floating" → tout en haut (scrollY <= 0) : header transparent,
     //                     texte blanc, posé sur le hero.
     //   • "show-cta"    → apparition du bouton "Contactez-nous" dans le header,
     //                     déclenché dès que le CTA hero quitte l'écran.
     //   • "is-scrolled" → glassmorphisme du header, déclenché quand la section
     //                     hero entière quitte le viewport.
-    // L'état "caché" (slide-up hors écran) est dérivé en CSS via
+    //   • "is-hidden"   → escamotage au défilement descendant, sous 840px
+    //                     seulement (voir le bloc « Masquage au scroll
+    //                     descendant » plus bas).
+    // Les trois premiers dépendent de la POSITION du scroll, le quatrième de sa
+    // DIRECTION — d'où un mécanisme séparé plutôt qu'un observer de plus.
+    // L'état "caché" historique (slide-up hors écran) est, lui, dérivé en CSS via
     // :not(.is-floating):not(.show-cta) — pas de classe JS dédiée.
     const siteHeader = document.querySelector(".site-header");
     const heroCtaBtn = document.querySelector("#hero-start-btn");
@@ -157,6 +162,94 @@ document.addEventListener("DOMContentLoaded", () => {
             }, { threshold: 0 });
             ctaObserver.observe(heroCtaBtn);
         }
+
+        // --- Masquage au scroll descendant (mobile) ---
+        // Hors du `if (heroSection)` ci-dessous, à dessein : le dispositif vaut
+        // pour les trois pages qui ont un header, pas seulement pour celles qui
+        // ont un hero.
+        //
+        // Ce bloc n'AJOUTE que du masquage, il ne révèle jamais rien : dans le
+        // haut du hero d'index.html, où l'état caché dérivé
+        // (:not(.is-floating):not(.show-cta)) tient déjà le header hors écran,
+        // retirer "is-hidden" ne le fait pas redescendre. Le comportement y reste
+        // donc identique à ce qu'il était.
+        const MOBILE_MAX = 840; // aligné sur le breakpoint mobile de style.css
+        const DELTA_MIN  = 6;   // px — hystérésis contre le tremblement du doigt
+
+        // Seuil de déclenchement = hauteur du header : tant qu'il ne recouvre
+        // aucun contenu, l'escamoter ne libérerait rien et ne ferait que clignoter.
+        let seuilMasquage  = siteHeader.offsetHeight;
+        let dernierY       = Math.max(0, window.scrollY);
+        let frameEnAttente = false;
+
+        const majMasquageHeader = () => {
+            // Clamp à 0 : l'overscroll élastique d'iOS produit un scrollY négatif,
+            // qui inverserait le signe du delta et ferait osciller le header au
+            // simple rebond en haut de page.
+            const y     = Math.max(0, window.scrollY);
+            const delta = y - dernierY;
+
+            // Trois raisons de rester en retrait — dont la dernière couvre aussi
+            // les sauts instantanés vers le haut (le logo pointe sur href="#"),
+            // qui n'émettent pas forcément de delta négatif exploitable.
+            if (window.innerWidth > MOBILE_MAX
+                || siteHeader.classList.contains("menu-open")
+                || y <= seuilMasquage) {
+                siteHeader.classList.remove("is-hidden");
+                document.body.classList.remove("header-hidden");
+                dernierY = y;
+                return;
+            }
+
+            // Sous le seuil : on sort SANS mettre dernierY à jour, pour que les
+            // micro-déplacements s'accumulent jusqu'à former un geste franc.
+            // Le mettre à jour ici reviendrait à remettre le compteur à zéro à
+            // chaque frame et un scroll très lent ne déclencherait jamais rien.
+            if (Math.abs(delta) < DELTA_MIN) return;
+
+            const masquer = delta > 0;
+            siteHeader.classList.toggle("is-hidden", masquer);
+            // Miroir sur <body> : services.css ne peut pas cibler un ancêtre du
+            // header, c'est ce crochet qui fait remonter la barre de pilules.
+            document.body.classList.toggle("header-hidden", masquer);
+            dernierY = y;
+        };
+
+        // Coalescence par requestAnimationFrame : le scroll émet bien plus
+        // d'événements qu'il n'y a de frames rendues, et tout ce qu'on fait ici
+        // n'a d'effet qu'au prochain rendu.
+        window.addEventListener("scroll", () => {
+            if (frameEnAttente) return;
+            frameEnAttente = true;
+            requestAnimationFrame(() => {
+                majMasquageHeader();
+                frameEnAttente = false;
+            });
+        }, { passive: true });
+
+        // Le passage mobile ↔ desktop doit resynchroniser l'état (sinon un header
+        // escamoté en mobile resterait invisible en desktop, où la règle CSS ne
+        // s'applique plus mais où la classe, elle, serait toujours là au prochain
+        // retour en mobile). La hauteur du header peut aussi changer avec la largeur.
+        window.addEventListener("resize", () => {
+            seuilMasquage = siteHeader.offsetHeight;
+            majMasquageHeader();
+        }, { passive: true });
+
+        // Même raison que pour updateFloatingState plus bas : au DOMContentLoaded
+        // la position de défilement restaurée n'est pas encore appliquée, dernierY
+        // partirait de 0 et le premier geste serait lu comme une descente.
+        window.addEventListener("load", () => {
+            dernierY = Math.max(0, window.scrollY);
+        });
+
+        // Retour via le bouton "précédent" : la page revient telle qu'elle était,
+        // header potentiellement escamoté. On le rend, et on recale la référence.
+        onPageRestore.push(() => {
+            dernierY = Math.max(0, window.scrollY);
+            siteHeader.classList.remove("is-hidden");
+            document.body.classList.remove("header-hidden");
+        });
 
         if (heroSection) {
             // Observer sur la section hero entière pour activer le glassmorphisme

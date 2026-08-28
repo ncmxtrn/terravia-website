@@ -67,8 +67,18 @@
              redescendait en glissant par-dessus le fondu d'entrée de la page. -->
         <header class="site-header is-scrolled show-cta">
             <div class="container header-content">
-                <a href="index.html" class="logo transition-link">
-                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                <!-- `logo--adaptive` inscrit ce logo au dispositif de bascule mobile
+                     (section « HEADER — LOGO ADAPTATIF » de style.css) ; sans elle,
+                     le second <img> ci-dessous resterait inerte. -->
+                <a href="index.html" class="logo logo--adaptive transition-link">
+                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
+                    <!-- Marque compacte, affichée seulement sous 480px quand le bouton
+                         « Contactez-nous » occupe la colonne centrale du header (voir la
+                         section « HEADER — LOGO ADAPTATIF » de style.css).
+                         alt vide + aria-hidden : le nom accessible du lien est déjà porté
+                         par le lockup ci-dessus, qui reste dans le DOM en permanence — le
+                         fondu ne joue que sur l'opacité. -->
+                    <img src="assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
                 </a>
 
                 <nav class="main-nav">

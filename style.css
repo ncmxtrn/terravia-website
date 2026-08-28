@@ -334,8 +334,17 @@ a {
 .logo-icon {
     height: var(--logo-icon-h);
     width: var(--logo-icon-w);
-    transition: filter 0.3s ease, transform 0.3s ease;
+    transition: filter var(--duration-base) ease, transform var(--duration-base) ease,
+                opacity var(--duration-base) ease;
     filter: var(--filter-logo-forest);
+}
+
+/* Le monogramme n'existe que dans le header sous 480px (voir « HEADER — LOGO
+   ADAPTATIF »). Ce display:none par défaut le tient hors du layout partout
+   ailleurs : desktop, tablette, et les .logo des pieds de page — qui n'en
+   portent d'ailleurs pas de second <img>, mais la règle est le garde-fou. */
+.logo-icon--mark {
+    display: none;
 }
 
 .site-footer .logo-icon {
@@ -570,6 +579,78 @@ a {
         max-width: 250px; /* Une largeur suffisante pour contenir le bouton */
         /* On rétablit le padding d'origine (défini plus haut dans .btn) */
         padding: 0.75rem 1.5rem;
+    }
+}
+
+/* =========================================
+   HEADER — LOGO ADAPTATIF (≤ 480px)
+   -----------------------------------------
+   Le lockup complet fait ≈ 144px de large ; ajouté au bouton « Contactez-nous »
+   (≈ 190px) et au burger (48px), la grille 3 colonnes déborde en dessous de
+   ~530px et le logo passe sous le bouton. On lui substitue alors le monogramme
+   carré (44px), en fondu croisé.
+
+   LA BASCULE EST PILOTÉE PAR .show-cta, PAS PAR LA SEULE LARGEUR D'ÉCRAN.
+   C'est le bouton qui crée l'encombrement : tant qu'il est absent, il y a la
+   place pour le lockup. Conséquence voulue — en haut de index.html, header
+   flottant sur le hero (.is-floating, CTA replié à max-width: 0), le lockup
+   complet reste affiché, en blanc. Sur services.html, dont le header porte
+   « is-scrolled show-cta » en dur dans le markup, le monogramme est là dès le
+   premier rendu, sans flash.
+
+   OPT-IN VIA .logo--adaptive, jamais sur .logo seul. Deux raisons :
+     · contact.html est délibérément hors du dispositif — son header porte bien
+       « show-cta », mais uniquement pour ne pas se cacher (l'état masqué dérive
+       de :not(.is-floating):not(.show-cta)) ; son bouton, lui, est neutralisé
+       par contact.css. Rien n'encombre donc sa grille, et il garde son lockup ;
+     · les .logo des pieds de page n'ont pas de second <img> et ne doivent pas
+       voir leur boîte redimensionnée.
+   Ajouter la classe (et le second <img>) à une page = l'inscrire au dispositif.
+
+   Les deux <img> sont superposés en position: absolute et c'est .logo qui porte
+   la largeur : sans ça, la boîte du lien resterait dimensionnée par le lockup
+   (144px) même une fois celui-ci à opacity: 0, et le chevauchement persisterait.
+   L'animation de cette largeur est déjà couverte par la `transition: all 0.5s`
+   de .logo, calée sur la transition max-width du bouton juste au-dessus.
+   ========================================= */
+@media (max-width: 480px) {
+    .logo--adaptive {
+        position: relative; /* repère des deux <img> superposés */
+        width: var(--logo-lockup-w);
+        height: var(--logo-icon-h);
+        /* Clippe le lockup pendant que la boîte se rétracte vers 44px, au lieu
+           de le laisser déborder sur le bouton le temps de la transition. */
+        overflow: hidden;
+    }
+
+    .logo--adaptive .logo-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .logo--adaptive .logo-icon--mark {
+        display: block; /* annule le display:none de base */
+        opacity: 0;
+    }
+
+    .site-header.show-cta .logo--adaptive {
+        width: var(--logo-icon-h); /* le monogramme est carré */
+    }
+
+    .site-header.show-cta .logo--adaptive .logo-icon--full {
+        opacity: 0;
+    }
+
+    .site-header.show-cta .logo--adaptive .logo-icon--mark {
+        opacity: 1;
+    }
+
+    /* À cette largeur on est sur tactile : le scale(1.05) du :hover serait rogné
+       par l'overflow: hidden ci-dessus, et resterait collé après le tap faute
+       d'événement de sortie. */
+    .logo--adaptive:hover .logo-icon {
+        transform: none;
     }
 }
 

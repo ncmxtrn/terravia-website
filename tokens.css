@@ -202,6 +202,15 @@
   --logo-icon-h: 44px;  /* ↕ axe Y — hauteur du logo */
   --logo-icon-w: auto;  /* ← axe X — auto = proportionnel */
 
+  /* --logo-lockup-w : la même largeur, mais écrite en dur (44 × 3,27 ≈ 144).
+     Nécessaire parce que le fondu croisé du header mobile (style.css, section
+     « HEADER — LOGO ADAPTATIF ») anime la largeur de .logo entre le lockup et le
+     monogramme carré : une largeur intrinsèque (max-content) ne s'anime pas.
+     ⚠ COUPLÉ À --logo-icon-h : si la hauteur change, recalculer hauteur × 3,27.
+     Le monogramme (assets/logo-monogramme-noir.svg) étant carré, sa largeur vaut
+     --logo-icon-h — d'où l'absence de token dédié pour lui. */
+  --logo-lockup-w: 144px;
+
   /* ============================================================
      SPACING SCALE
      ------------------------------------------------------------

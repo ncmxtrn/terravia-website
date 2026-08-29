@@ -23,6 +23,13 @@
  *   - Les survols sont conditionnés par `(hover: hover) and (pointer: fine)`.
  *     Sur écran tactile, `:hover` se déclenche au toucher et reste collé jusqu'au
  *     toucher suivant : la carte resterait soulevée sans raison.
+ *   - Un rang de cascade (`--step-delay`) n'est attribué qu'aux paliers où les
+ *     éléments concernés partagent une rangée (§ 7). Sur une pile verticale, chacun
+ *     franchit le seuil du viewport seul : le rang ne cascade plus rien et ne laisse
+ *     qu'un temps mort avant l'élément que le lecteur vient d'atteindre.
+ *   - Le mouvement réduit (§ 8) couvre AUSSI la révélation au défilement de
+ *     style.css, qui est le mouvement principal de la page. Toute animation ajoutée
+ *     ici doit y avoir sa contrepartie, sauf si elle n'anime que l'opacité.
  *
  * Sommaire :
  *   1. GABARIT DE PAGE
@@ -127,6 +134,24 @@
     transition-delay: 0.1s;
 }
 
+/* Course raccourcie pour ce trio, et pour lui seul : c'est le seul groupe de la page
+   qui se révèle au CHARGEMENT et non au défilement — il est toujours au-dessus de la
+   ligne de flottaison. Sa révélation se superpose donc au fondu d'entrée de <body>
+   (`.page-transition`, 0,5s) : les deux opacités se multiplient, et le H1 traverse une
+   zone terne d'autant plus longue que sa course est longue. À 16px il se pose ; à 30px
+   il arrive de loin, ce qui n'a aucun sens pour un contenu déjà à l'écran.
+
+   `:not(.visible)` et non le sélecteur nu : à spécificité égale (0,2,0) avec
+   `.animate-on-scroll.visible` de style.css, une règle écrite ici l'emporterait par
+   l'ordre des fichiers et figerait l'intro à 16px pour toujours. On ne touche donc
+   qu'à l'état de DÉPART, ce que `:not(.visible)` cible exactement — licite ici parce
+   qu'une valeur animée se lit avant le changement, contrairement à un paramètre de
+   transition (délai, durée) qui se lit dans le style d'arrivée. Voir la note inverse
+   de la § « STAGGER DES CARTES AU SCROLL » de services.css. */
+.apropos-intro .animate-on-scroll:not(.visible) {
+    transform: translateY(var(--reveal-shift-sm));
+}
+
 
 /* ============================================================
    3. MANIFESTE (mission / vision)
@@ -147,10 +172,16 @@
     gap: var(--space-3xl);
 }
 
-/* Le retrait à gauche laisse la place au filet d'accent, posé en absolu. */
+/* Le retrait à gauche laisse la place au filet d'accent, posé en absolu.
+
+   `--step-delay` est l'idiome de cascade du fichier, partagé avec la § 5 : le rang est
+   attribué une fois (ici en § 7, uniquement au palier deux colonnes), et tout ce qui
+   doit suivre ce rang le lit par héritage. Repli `0s` en une colonne — voir la note de
+   la § 4 sur le temps mort que produirait une cascade sur une pile verticale. */
 .manifeste-item {
     position: relative;
     padding-left: var(--space-lg);
+    transition-delay: var(--step-delay, 0s);
 }
 
 /* Filet vertical tracé de haut en bas à la révélation du bloc.
@@ -175,7 +206,10 @@
    de survol. Voir la note « STAGGER DES CARTES AU SCROLL » de services.css. */
 .manifeste-item.visible .manifeste-rule {
     transform: scaleY(1);
-    transition-delay: 0.25s;
+    /* Le retard de 0,25s est celui du filet sur SON bloc : en l'ajoutant au rang plutôt
+       qu'en le posant seul, les deux filets gardent leur écart quand les deux blocs
+       cascadent. Sinon ils se traceraient ensemble sous un texte, lui, décalé. */
+    transition-delay: calc(var(--step-delay, 0s) + 0.25s);
 }
 
 /* Le <h2> nomme la section dans le plan du document, mais c'est la phrase qui
@@ -233,11 +267,16 @@
 /* 80 ms de cascade plutôt que les 100 ms de `.services-grid` : cette grille tient
    sur une seule rangée en grand écran, où l'écart entre la première et la dernière
    carte se lit directement — à 100 ms, la quatrième traîne visiblement.
-   Le délai est porté par l'état de repos, qui vaut aussi à l'arrivée. */
-.valeurs-grid .valeur-reveal:nth-child(1) { transition-delay: 0s; }
-.valeurs-grid .valeur-reveal:nth-child(2) { transition-delay: 0.08s; }
-.valeurs-grid .valeur-reveal:nth-child(3) { transition-delay: 0.16s; }
-.valeurs-grid .valeur-reveal:nth-child(4) { transition-delay: 0.24s; }
+   Le délai est porté par l'état de repos, qui vaut aussi à l'arrivée.
+
+   Les rangs eux-mêmes sont attribués en § 7, jamais ici : une cascade suppose que les
+   cartes entrent ENSEMBLE dans le viewport, donc qu'elles partagent une rangée. En une
+   colonne — sous 841px, soit l'essentiel du trafic — chacune franchit le seuil seule,
+   et son rang ne cascade plus rien : il ne reste qu'un temps mort de 80 à 240 ms sur
+   la carte que le lecteur vient d'atteindre, qu'il voit hésiter avant d'apparaître.
+   Le repli `0s` couvre donc le mobile, et une cinquième carte qu'on ajouterait au
+   markup sans lui donner de rang. */
+.valeurs-grid .valeur-reveal { transition-delay: var(--step-delay, 0s); }
 
 /* `overflow: hidden` borne le filet d'accent au rayon de la carte : sans lui, ses
    deux extrémités carrées dépasseraient des coins arrondis. */
@@ -271,10 +310,16 @@
     transition: transform var(--duration-fast) var(--ease-entrance);
 }
 
+/* L'icône monte de 2px quand la carte en monte 4 : le soulèvement paraît alors partir
+   d'elle plutôt que d'arriver sur une carte inerte. Deux et non quatre — à parallaxe
+   nulle, le geste ne se lit plus ; à parallaxe égale, il n'y a plus de geste du tout.
+   Même courbe et même durée que le soulèvement de la carte, sans quoi les deux
+   mouvements se désynchroniseraient au relâchement. */
 .valeur-icon {
     font-size: var(--icon-xl);
     color: var(--color-forest);
-    transition: color var(--duration-medium) ease;
+    transition: color var(--duration-medium) ease,
+                transform var(--duration-medium) var(--ease-card);
 }
 
 .valeur-card h3 {
@@ -312,15 +357,13 @@
    les quatre filets se traceraient ensemble au lieu de suivre la cascade — et il
    faudrait huit règles au lieu de quatre pour l'éviter. */
 /* Le repli `0s` couvre une cinquième étape qu'on ajouterait au markup sans penser
-   à lui donner son rang ci-dessous : elle entrerait sans retard plutôt que de
-   perdre sa transition (une `var()` non résolue invalide la déclaration). */
+   à lui donner son rang : elle entrerait sans retard plutôt que de perdre sa
+   transition (une `var()` non résolue invalide la déclaration). Il couvre aussi et
+   surtout le mobile, où les rangs ne sont pas attribués — voir la § 7 et la note de
+   la § 4 : en une colonne, chaque étape franchit le seuil seule et son rang ne
+   cascade plus rien, il ne reste qu'un temps mort. */
 .approche-steps > li { transition-delay: var(--step-delay, 0s); }
 .approche-steps > li .approche-step::before { transition-delay: calc(var(--step-delay, 0s) + 0.2s); }
-
-.approche-steps > li:nth-child(1) { --step-delay: 0s; }
-.approche-steps > li:nth-child(2) { --step-delay: 0.08s; }
-.approche-steps > li:nth-child(3) { --step-delay: 0.16s; }
-.approche-steps > li:nth-child(4) { --step-delay: 0.24s; }
 
 .approche-step {
     position: relative;
@@ -424,6 +467,19 @@
     text-align: center;
 }
 
+/* --- Cascade d'entrée de la bande ---
+   La révélation est portée par les parties, pas par `.territoire-content` : le bloc
+   fait près de 400px de haut et il montait d'un seul tenant, seul endroit de la page
+   où rien ne se lisait dans l'ordre — alors que c'est sa finale.
+   Les rangs valent à toutes les largeurs, contrairement aux cascades des § 4 et 5 :
+   ces parties sont empilées dans un bloc unique et entrent donc ensemble dans le
+   viewport, en une colonne comme en quatre. */
+.territoire-eyebrow.animate-on-scroll  { transition-delay: 0s; }
+.apropos-territoire h2.animate-on-scroll { transition-delay: 0.08s; }
+.apropos-territoire p.animate-on-scroll  { transition-delay: 0.16s; }
+.territoire-regions.animate-on-scroll    { transition-delay: var(--pill-start); }
+.territoire-cta-reveal                   { transition-delay: 0.5s; }
+
 /* `.label-upper` pose `--fg1` (forest), illisible sur ce fond : on la surcharge. */
 .territoire-eyebrow {
     color: var(--color-primary);
@@ -443,7 +499,12 @@
     margin: 0;
 }
 
+/* `--pill-start` est le rang de la liste dans la cascade ci-dessus. Il est déclaré
+   ici plutôt qu'écrit deux fois : les pastilles enchaînent SUR lui, et l'écrire en
+   dur des deux côtés laisserait la liste et son contenu se désolidariser au premier
+   ajustement. */
 .territoire-regions {
+    --pill-start: 0.24s;
     list-style: none;
     display: flex;
     flex-wrap: wrap;
@@ -454,7 +515,14 @@
 }
 
 /* Pastilles inertes : elles énumèrent, elles ne mènent nulle part. Pas de survol
-   ni de curseur `pointer`, qui promettraient un clic sans le tenir. */
+   ni de curseur `pointer`, qui promettraient un clic sans le tenir.
+
+   Elles s'allument en revanche une à une derrière la montée de la liste : huit
+   pastilles qui apparaissent d'un bloc se lisent comme un pavé, alors qu'un
+   déroulé de 30 ms se lit comme une énumération — ce qu'elles sont.
+   En opacité seule, sans course propre : c'est la liste qui porte le déplacement,
+   et le mouvement réduit (§ 8) laisse donc passer cette animation-ci sans la
+   neutraliser, conformément au principe de la section. */
 .territoire-regions li {
     padding: var(--space-2xs) var(--space-md);
     border: 1px solid var(--white-20);
@@ -463,6 +531,34 @@
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
     color: var(--fg-on-dark);
+    transition: opacity var(--duration-base) ease-out;
+}
+
+/* État de départ conditionné au parent : la liste est l'élément observé, ses
+   pastilles n'ont pas de `.animate-on-scroll` à elles. `:not(.visible)` ne porte ici
+   qu'une valeur animée — pas un paramètre de transition — donc le délai ci-dessous,
+   lui, est bien déclaré hors de ce sélecteur. */
+.territoire-regions:not(.visible) li {
+    opacity: 0;
+}
+
+.territoire-regions li:nth-child(1) { transition-delay: calc(var(--pill-start) + 0.03s); }
+.territoire-regions li:nth-child(2) { transition-delay: calc(var(--pill-start) + 0.06s); }
+.territoire-regions li:nth-child(3) { transition-delay: calc(var(--pill-start) + 0.09s); }
+.territoire-regions li:nth-child(4) { transition-delay: calc(var(--pill-start) + 0.12s); }
+.territoire-regions li:nth-child(5) { transition-delay: calc(var(--pill-start) + 0.15s); }
+.territoire-regions li:nth-child(6) { transition-delay: calc(var(--pill-start) + 0.18s); }
+.territoire-regions li:nth-child(7) { transition-delay: calc(var(--pill-start) + 0.21s); }
+.territoire-regions li:nth-child(8) { transition-delay: calc(var(--pill-start) + 0.24s); }
+
+/* Filet de sécurité, jumeau de `html.is-loading .animate-on-scroll` (style.css) :
+   les pastilles sont les seuls éléments animés de la page dont l'état masqué ne
+   dépend pas de `.animate-on-scroll`, elles échappent donc au filet global. Si
+   script.js ne s'exécute jamais (404, extension, erreur de syntaxe), `.visible`
+   n'arrive pas et la liste des huit régions resterait vide. Le cas « JavaScript
+   désactivé » est couvert séparément par le <noscript> du <head> d'apropos.html. */
+html.is-loading .territoire-regions li {
+    animation: fouc-safety-net-reveal var(--duration-slow) 2s forwards;
 }
 
 /* `.btn` transitionne `all` sur `--duration-base` : trop large (toute propriété
@@ -498,10 +594,27 @@
 
     .valeur-card:hover .valeur-icon {
         color: var(--color-primary-dark);
+        transform: translateY(-2px);
     }
 
+    /* Un halo seul est un retour faible sur fond sombre — il ajoute de la lumière là
+       où le bouton en émet déjà. Le soulèvement, lui, se voit quelle que soit la
+       luminosité du fond. 2px et non les 4px des cartes : la surface est dix fois
+       plus petite, à course égale le bouton sauterait.
+       Il court sur `--duration-press` comme l'enfoncement, puisque `.territoire-cta`
+       n'accorde qu'une durée à `transform` — ce qui tombe juste : un survol de bouton
+       doit répondre au pointeur, pas le suivre. */
     .territoire-cta:hover {
         box-shadow: var(--shadow-glow-hover);
+        transform: translateY(-2px);
+    }
+
+    /* L'enfoncement se compose avec le soulèvement au lieu de l'annuler : sans cette
+       règle, `transform: scale()` remplace le `translateY` et le bouton retombe de
+       2px sous le doigt — un mouvement parasite, dans la direction inverse de celui
+       qu'on attend. Hors survol (tactile), le `:active` de la § 6 s'applique seul. */
+    .territoire-cta:hover:active {
+        transform: translateY(-2px) scale(var(--press-scale));
     }
 }
 
@@ -513,10 +626,21 @@
    950px pour le desktop.
    ============================================================ */
 
+/* Les rangs de cascade (`--step-delay`) sont attribués ICI, avec les colonnes qui les
+   justifient, et jamais à l'état de base : un rang n'a de sens que si les éléments
+   qu'il ordonne entrent ensemble dans le viewport, donc s'ils partagent une rangée.
+   Sur une pile verticale, chacun franchit le seuil seul et son rang ne cascade plus
+   rien — il ne reste qu'un temps mort avant l'apparition de l'élément que le lecteur
+   vient d'atteindre, jusqu'à 240 ms pour le dernier. D'où le repli `0s` en mobile.
+   Le rang suit la POSITION EN RANGÉE et non l'ordre absolu : à deux colonnes, la
+   troisième carte ouvre une nouvelle rangée et repart donc de zéro, sinon elle
+   attendrait le temps d'une rangée déjà entrée. */
 @media (min-width: 841px) {
     .manifeste-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .manifeste-grid .manifeste-item:nth-child(2) { --step-delay: 0.08s; }
 
     /* Deux colonnes seulement à ce palier : à quatre, les cartes tomberaient sous
        les ~150px de large et « Rigueur méthodologique » s'y couperait en trois. */
@@ -524,10 +648,14 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .valeurs-grid .valeur-reveal:nth-child(even) { --step-delay: 0.08s; }
+
     .approche-steps {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-2xl) var(--space-xl);
     }
+
+    .approche-steps > li:nth-child(even) { --step-delay: 0.08s; }
 }
 
 @media (min-width: 950px) {
@@ -535,12 +663,25 @@
         grid-template-columns: repeat(4, 1fr);
     }
 
+    /* Une seule rangée à ce palier : le rang redevient l'ordre absolu. Les valeurs
+       `nth-child(even)` du palier précédent sont écrasées par ces quatre règles, de
+       même spécificité mais postérieures. */
+    .valeurs-grid .valeur-reveal:nth-child(1) { --step-delay: 0s; }
+    .valeurs-grid .valeur-reveal:nth-child(2) { --step-delay: 0.08s; }
+    .valeurs-grid .valeur-reveal:nth-child(3) { --step-delay: 0.16s; }
+    .valeurs-grid .valeur-reveal:nth-child(4) { --step-delay: 0.24s; }
+
     /* Les quatre étapes sur une rangée : la cascade des filets se lit alors
        comme une progression de gauche à droite, ce qui est tout son propos. */
     .approche-steps {
         grid-template-columns: repeat(4, 1fr);
         gap: var(--space-xl);
     }
+
+    .approche-steps > li:nth-child(1) { --step-delay: 0s; }
+    .approche-steps > li:nth-child(2) { --step-delay: 0.08s; }
+    .approche-steps > li:nth-child(3) { --step-delay: 0.16s; }
+    .approche-steps > li:nth-child(4) { --step-delay: 0.24s; }
 }
 
 
@@ -553,6 +694,30 @@
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
+    /* Le mouvement PRINCIPAL de la page est la révélation au défilement de style.css :
+       une course de 30px sur une vingtaine d'éléments, soit exactement le déplacement
+       que le principe en tête de section dit d'écarter. Ce bloc neutralisait tout le
+       reste et la laissait passer.
+       Le fondu reste, et sur une durée courte : à 0,6s sans course, un texte qui ne
+       fait qu'éclaircir paraît hésiter au lieu d'apparaître.
+
+       Deux sélecteurs pour une seule règle : le second n'est pas redondant. La § 2
+       raccourcit la course de l'intro via `.apropos-intro .animate-on-scroll:not(.visible)`,
+       de spécificité (0,3,0) — une règle en (0,2,0) ne la surclasse pas, quel que soit
+       son rang dans le fichier. On répète donc la forme exacte pour l'emporter par
+       l'ordre, à spécificité égale.
+
+       TODO — à remonter dans style.css : les cinq pages ont le même défaut, seule
+       celle-ci est corrigée. */
+    .apropos-main .animate-on-scroll,
+    .apropos-intro .animate-on-scroll:not(.visible) {
+        transform: none;
+        transition: opacity var(--duration-base) ease-out;
+    }
+
+    /* Les pastilles de régions ne sont volontairement pas listées ici : elles
+       n'animent que leur opacité (§ 6), ce que ce mode conserve. */
+
     /* Les deux filets tracés à la révélation sont posés dans leur état d'arrivée
        plutôt que supprimés : sans `transform: none`, ils resteraient à `scale…(0)`,
        donc invisibles — la page perdrait deux repères visuels au lieu d'une
@@ -576,6 +741,15 @@
         transform: none;
     }
 
+    /* L'icône suivait le soulèvement de la carte : elle n'a plus rien à suivre. */
+    .valeur-card:hover .valeur-icon {
+        transform: none;
+    }
+
+    /* Le CTA garde son halo au survol et son changement de fond à l'enfoncement :
+       les trois états restent distinguables sans aucun déplacement. */
+    .territoire-cta:hover,
+    .territoire-cta:hover:active,
     .territoire-cta:active {
         transform: none;
     }

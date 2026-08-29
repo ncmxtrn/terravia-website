@@ -318,6 +318,12 @@
 
      --press-scale : facteur d'échelle d'un élément pressé. Assez marqué pour être
      perçu, assez discret pour ne pas déplacer le texte du bouton sous le doigt.
+
+     --reveal-shift : course verticale d'une révélation au défilement (style.css,
+     § .animate-on-scroll). --reveal-shift-sm est le palier court, réservé aux blocs
+     déjà à l'écran au CHARGEMENT : leur révélation se superpose alors au fondu
+     d'entrée de <body> (.page-transition, 0,5 s), les deux opacités se multiplient,
+     et plus la course est longue plus la zone terne dure. Voir apropos.css § 2.
      ============================================================ */
   --ease-card:     cubic-bezier(0.22, 1, 0.36, 1);
   --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);
@@ -334,6 +340,9 @@
   --duration-reveal: 0.8s;
 
   --press-scale:     0.97;
+
+  --reveal-shift:    30px;
+  --reveal-shift-sm: 16px;
 
   /* ============================================================
      FILTRES CSS

@@ -65,6 +65,12 @@
            de défilement, ce que l'état flottant transparent ne garantirait pas. */
         html.is-loading body { opacity: 1; visibility: visible; animation: none; }
         html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
+        /* Les pastilles de régions ne portent pas .animate-on-scroll : leur état
+           masqué dépend de `.territoire-regions:not(.visible)` (apropos.css § 6),
+           donc de la classe que seul script.js pose. Sans cette ligne, la liste des
+           huit régions resterait vide sans JavaScript. `animation: none` pour la même
+           raison qu'au-dessus : neutraliser le filet à 2 s d'apropos.css. */
+        html.is-loading .territoire-regions li { opacity: 1; animation: none; }
         .site-header:not(.is-floating):not(.show-cta) {
             transform: none;
             background-color: var(--white);
@@ -295,12 +301,23 @@
             -->
             <section class="apropos-territoire" aria-labelledby="titre-territoire">
                 <div class="container">
-                    <div class="territoire-content animate-on-scroll">
-                        <span class="label-upper territoire-eyebrow">Territoire desservi</span>
-                        <h2 id="titre-territoire">Partout où le terrain nous mène</h2>
-                        <p>Basés à Montréal, nous nous déployons sur l'ensemble du Québec — des chantiers urbains les plus contraints aux sites en région éloignée.</p>
+                    <!-- La révélation est portée par chaque partie et non par le bloc :
+                         c'est ici la finale de la page et sa zone la plus dense (huit
+                         pastilles et le seul appel à l'action), et un pavé de cette
+                         hauteur qui monte d'un seul tenant est le seul endroit de la
+                         page où rien ne se lit dans l'ordre. Délais de cascade dans
+                         apropos.css § 6. -->
+                    <div class="territoire-content">
+                        <span class="label-upper territoire-eyebrow animate-on-scroll">Territoire desservi</span>
+                        <h2 id="titre-territoire" class="animate-on-scroll">Partout où le terrain nous mène</h2>
+                        <p class="animate-on-scroll">Basés à Montréal, nous nous déployons sur l'ensemble du Québec — des chantiers urbains les plus contraints aux sites en région éloignée.</p>
 
-                        <ul class="territoire-regions">
+                        <!-- La liste porte la révélation, ses pastilles s'allument
+                             ensuite une à une : le <ul> sert de déclencheur commun.
+                             Huit éléments observés séparément produiraient huit
+                             franchissements de seuil quasi simultanés — du bruit,
+                             pas une cascade. -->
+                        <ul class="territoire-regions animate-on-scroll">
                             <li>Grand Montréal</li>
                             <li>Montérégie</li>
                             <li>Laurentides</li>
@@ -311,7 +328,15 @@
                             <li>Côte-Nord</li>
                         </ul>
 
-                        <a href="contact.html" class="btn btn-primary transition-link territoire-cta">Parlons de votre projet</a>
+                        <!-- Enveloppe de révélation, et non une div de mise en page :
+                             le lien anime déjà `transform` pour son survol et son
+                             enfoncement, sur une durée volontairement courte. Poser la
+                             révélation sur lui ferait écraser l'une des deux
+                             transitions par l'autre — même séparation, et pour la même
+                             raison, que `.valeur-reveal` / `.valeur-card`. -->
+                        <div class="territoire-cta-reveal animate-on-scroll">
+                            <a href="contact.html" class="btn btn-primary transition-link territoire-cta">Parlons de votre projet</a>
+                        </div>
                     </div>
                 </div>
             </section>

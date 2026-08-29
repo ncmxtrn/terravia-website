@@ -244,16 +244,9 @@
        sur les pages sans hero pour éviter que le contenu passe sous le header.
      --container-px / --container-px-md : marges horizontales du conteneur
        selon le breakpoint (mobile → tablette/desktop).
-     --pill-bar-h : hauteur de la barre de pilules de services.html en mobile
-       (12px de padding haut + bas, plus une pilule de ≈37px). Valeur NOMINALE :
-       script.js la remplace par la hauteur réellement mesurée dès le
-       chargement. Elle sert au panneau de verre unique header + barre
-       (services.css, « SURFACE UNIQUE ») : celui-ci déborde du header
-       d'exactement cette hauteur pour couvrir la barre d'une seule couche.
      ============================================================ */
   --width-max:       1280px;
   --header-height:   80px;
-  --pill-bar-h:      61px;
   --container-px:    1.5rem;
   --container-px-md: 2rem;
 

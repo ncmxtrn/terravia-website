@@ -573,16 +573,13 @@ if (servicesLayout) {
         });
     };
 
-    // Hauteur du header, conservée hors des fonctions ci-dessous : le test
-    // d'accostage tourne à chaque événement de scroll et n'a pas à relire une
-    // hauteur qui, elle, ne bouge qu'au redimensionnement.
-    let headerH = 80;
+    const pageHeader = document.querySelector(".site-header");
 
     // Met à jour --sticky-top sur :root = hauteur réelle de la zone collante
     // (header + sidebar sur mobile, header seul sur desktop) + buffer visuel.
     // Utilisé à la fois par le scroll-spy et par scroll-margin-top en CSS.
     const updateStickyTop = () => {
-        headerH        = document.querySelector(".site-header")?.offsetHeight ?? 80;
+        const headerH  = pageHeader?.offsetHeight ?? 80;
         const isMobile = window.innerWidth <= 840;
         const sidebarH = isMobile ? (sidebar?.offsetHeight ?? 0) : 0;
         const buffer   = isMobile ? 16 : 32; // --space-md mobile, --space-xl desktop
@@ -590,58 +587,63 @@ if (servicesLayout) {
             "--sticky-top",
             `${headerH + sidebarH + buffer}px`
         );
-
-        // --pill-bar-h : hauteur réelle de la barre de pilules. Le panneau de verre
-        // du header déborde d'exactement cette valeur pour couvrir la barre d'une
-        // seule couche (services.css, « SURFACE UNIQUE »). Mesure au sous-pixel et
-        // non offsetHeight, qui arrondit : arrondi au-dessus, le verre dépasserait
-        // d'une fraction de pixel sous le trait de fermeture de la barre.
-        // Hors mobile la sidebar redevient une colonne haute, dont la hauteur ne
-        // veut plus rien dire ici : on rend la main à la valeur nominale de
-        // tokens.css au lieu de l'écraser.
-        if (isMobile) {
-            document.documentElement.style.setProperty(
-                "--pill-bar-h",
-                `${sidebar?.getBoundingClientRect().height ?? sidebarH}px`
-            );
-        } else {
-            document.documentElement.style.removeProperty("--pill-bar-h");
-        }
     };
 
-    // Accostage de la barre : vrai dès qu'elle est collée sous le header. C'est
-    // ce qui autorise le panneau de verre à déborder sur elle ; tant qu'elle
-    // descend encore dans le flux, ce débordement flouterait le haut de l'intro.
+    // Jointure header / barre de pilules (services.css, « SURFACE UNIQUE »).
+    // On MESURE la position relative des deux boîtes plutôt que de basculer une
+    // classe : en fin de layout la barre ne disparaît pas d'un coup, elle est
+    // chassée vers le haut par le bas de sa zone collante et passe derrière le
+    // header sur ~62px de défilement. Tout seuil binaire laisse donc, pendant ce
+    // trajet, soit une bande de verre vide sous le header, soit des pilules qui
+    // débordent par-dessus lui.
     //
-    // Le seuil est FIXE, à la hauteur du header — surtout pas la valeur courante
-    // de `top` de la barre (--header-height, ou 0 quand le header est escamoté).
-    // Un seuil qui suit cet état bascule à l'instant où la classe est posée,
-    // alors que la barre, elle, met toute la durée de la transition à descendre
-    // jusqu'à 0 : le débordement sautait pendant ces ~400 ms, et comme le test ne
-    // tourne qu'au scroll, il ne revenait qu'au geste suivant — la barre restait
-    // sans verre, contenu net défilant derrière les pilules.
-    //
-    // Avec un seuil fixe, les deux états restent couverts par le même test :
-    // • header en place — la barre est collée pile à 80, jamais entre 81 et sa
-    //   position de flux, l'accostage colle donc exactement au verre ;
-    // • header escamoté — la barre passe sous 80 bien avant d'accoster, mais le
-    //   panneau est alors translaté hors écran : déborder plus tôt ne se voit pas.
-    // Pendant la transition elle-même, header et barre parcourent 80px avec la
-    // même durée et la même courbe : le bord bas du panneau reste soudé à celui
-    // de la barre d'un bout à l'autre. Encore faut-il qu'il déborde — d'où ce
-    // seuil qui, lui, ne bouge pas.
-    const syncPillDock = () => {
-        document.body.classList.toggle(
-            "pill-nav-stuck",
-            window.innerWidth <= 840
-                && !!sidebar
-                && sidebar.getBoundingClientRect().top <= headerH + 1
-        );
+    // Deux mesures complémentaires, dont la somme fait la hauteur de la barre :
+    // • --pill-glass-overhang : la part de la barre restée visible SOUS le
+    //   header, donc ce dont le panneau de verre doit déborder pour la couvrir ;
+    // • --pill-bar-clip : la part passée DERRIÈRE le header, à écrêter. La barre
+    //   est peinte au-dessus du header pour que le flou n'atteigne pas les
+    //   pilules ; sans cet écrêtage, elles recouvriraient le logo et le CTA en
+    //   glissant vers le haut.
+    let overhangPose = null;
+    let clipPose     = null;
+
+    const syncPillGlass = () => {
+        const racine = document.documentElement;
+        let overhang = 0;
+        let clip     = 0;
+
+        if (sidebar && pageHeader && window.innerWidth <= 840) {
+            const barre  = sidebar.getBoundingClientRect();
+            const basHdr = pageHeader.getBoundingClientRect().bottom;
+
+            // Accostée = son haut a rejoint le bas du header (à un pixel près, le
+            // temps que les sous-pixels se recalent). Sinon elle descend encore
+            // dans le flux et le verre ne doit pas déborder : il flouterait le
+            // haut de l'intro, qui passe précisément dans cette bande.
+            if (barre.top <= basHdr + 1) overhang = Math.max(0, barre.bottom - basHdr);
+            clip = Math.max(0, basHdr - barre.top);
+        }
+
+        // Le bas du header est le seul repère utilisé, et il suit le header quand
+        // il s'escamote : les deux mesures restent donc justes sans rien savoir de
+        // `header-hidden`. Elles restent même valides pendant la transition sans
+        // être recalculées — header et barre parcourent les mêmes 80px avec la
+        // même durée et la même courbe, leur écart ne bouge pas.
+        // Écriture seulement si la valeur change : accostée, elle est constante
+        // sur tout le défilement, inutile d'invalider le style à chaque frame.
+        if (overhang !== overhangPose) {
+            racine.style.setProperty("--pill-glass-overhang", `${overhang}px`);
+            overhangPose = overhang;
+        }
+        if (clip !== clipPose) {
+            racine.style.setProperty("--pill-bar-clip", `${clip}px`);
+            clipPose = clip;
+        }
     };
 
     const updateStickyMetrics = () => {
         updateStickyTop();
-        syncPillDock();
+        syncPillGlass();
     };
 
     updateStickyMetrics();
@@ -675,10 +677,10 @@ if (servicesLayout) {
     };
 
     window.addEventListener("scroll", () => {
-        // Hors du gel : l'accostage est une position, pas une sélection. Le figer
-        // pendant un scroll piloté laisserait le panneau de verre en retard d'un
-        // état sur la barre pendant toute la durée de l'animation.
-        syncPillDock();
+        // Hors du gel : la jointure est une position, pas une sélection. La figer
+        // pendant un scroll piloté laisserait le panneau de verre en retard sur
+        // la barre pendant toute la durée de l'animation.
+        syncPillGlass();
 
         if (navScrollActive) {
             // Détecte la fin du scroll smooth : 150 ms sans événement scroll

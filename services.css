@@ -502,40 +502,42 @@
     /* Le panneau de verre, seul porteur du flou pour les deux surfaces.
        z-index négatif = derrière le contenu du header (logo, nav, CTA) et
        derrière le panneau du menu burger, mais devant le fond du header —
-       lequel est transparent, cf. ci-dessus. */
+       lequel est transparent, cf. ci-dessus.
+
+       `bottom` négatif = le panneau déborde sous le header, de la hauteur de
+       barre effectivement visible sous lui. Cette hauteur est MESURÉE en continu
+       par script.js, elle ne se déduit pas : la barre vaut tantôt zéro (elle
+       descend encore dans le flux, et déborder flouterait le haut de l'intro),
+       tantôt sa pleine hauteur (accostée), tantôt une fraction — en fin de
+       layout, chassée par le bas de sa zone collante, elle glisse derrière le
+       header sur ~62px de défilement. Repli à 0px : sans la mesure, le panneau
+       se limite au header, ce qui est le bon rendu en haut de page.
+       Aucune transition : la valeur suit déjà le défilement image par image,
+       l'amortir la désynchroniserait de la barre. */
     .has-pill-nav .site-header::before {
         content: '';
         position: absolute;
-        inset: 0;
+        inset: 0 0 calc(var(--pill-glass-overhang, 0px) * -1) 0;
         z-index: -1;
         background-color: var(--surface-glass);
         backdrop-filter: var(--blur-glass) var(--saturate-glass);
         -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
     }
 
-    /* Le débordement vers le bas, barre accostée UNIQUEMENT (classe posée par
-       script.js). Le rendre permanent flouterait le haut de l'intro, qui passe
-       précisément dans cette bande alors que rien à l'écran ne l'expliquerait.
-       Aucune transition : à l'instant de l'accostage la bande ne couvre encore
-       que du fond de page, la bascule est donc invisible — l'animer ne ferait
-       que la désynchroniser de la barre.
-       La géométrie tient d'elle-même quand le header s'escamote : le panneau
-       descend jusqu'à --header-height + --pill-bar-h, donc translaté de -100% son
-       bord bas retombe exactement sur celui de la barre, elle-même remontée à
-       top: 0. Rien à recalculer, les deux mouvements partagent déjà durée et
-       courbe. */
-    .has-pill-nav.pill-nav-stuck .site-header::before {
-        bottom: calc(var(--pill-bar-h) * -1);
-    }
-
     /* La barre devient transparente : ce qu'on voit à travers elle, c'est le
        panneau ci-dessus. Encore faut-il qu'elle soit peinte APRÈS lui, sinon le
        flou s'appliquerait aux pilules elles-mêmes — d'où le passage au-dessus du
-       header (100), qu'elle ne recouvre nulle part puisque les deux boîtes sont
-       jointives, jamais superposées. */
+       header (100).
+       Mais passer devant le header oblige à l'écrêter : les deux boîtes sont
+       jointives tant que la barre est accostée, elles se superposent dès qu'elle
+       est chassée vers le haut en fin de layout, et les pilules recouvriraient
+       alors le logo et le CTA. L'inset coupe donc ce qui a dépassé le bas du
+       header — mesuré par script.js, complément exact du débordement ci-dessus.
+       Repli à 0px : pas d'écrêtage, la barre reste entière. */
     .has-pill-nav .services-sidebar {
         background: transparent;
         z-index: 101;
+        clip-path: inset(var(--pill-bar-clip, 0px) 0 0 0);
     }
 
     /* Seule exception : menu burger déployé. Son panneau se déplie exactement sur

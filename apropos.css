@@ -19,13 +19,16 @@
  * Parti pris d'animation, valable pour tout le fichier :
  *   - Aucune boucle infinie et aucun contenu qui se remplace tout seul. La page
  *     se lit, elle ne se regarde pas. Toute la mise en scène est déclenchée par
- *     le lecteur — le défilement ou le pointeur.
- *   - Les filets d'accent (manifeste, cartes, étapes) se tracent en `transform:
- *     scale*()` et jamais en `width` / `height` : seuls `transform` et `opacity`
- *     évitent un passage par la mise en page à chaque frame.
- *   - Les survols sont conditionnés par `(hover: hover) and (pointer: fine)`.
- *     Sur écran tactile, `:hover` se déclenche au toucher et reste collé jusqu'au
- *     toucher suivant : la carte resterait soulevée sans raison.
+ *     le défilement du lecteur, et par lui seul.
+ *   - Les filets d'accent (manifeste, étapes) se tracent en `transform: scale*()`
+ *     et jamais en `width` / `height` : seuls `transform` et `opacity` évitent un
+ *     passage par la mise en page à chaque frame.
+ *   - AUCUN état de survol dans ce fichier, et donc pas de bloc
+ *     `(hover: hover) and (pointer: fine)`. La page ne contient plus un seul
+ *     élément actionnable qui lui soit propre : les cartes de valeurs et les
+ *     rangées du registre informent sans mener nulle part, et un survol y
+ *     promettrait un clic qu'elles ne tiennent pas. Le seul bouton visible sur
+ *     cette page est le CTA du header, stylé par style.css.
  *   - Un rang de cascade (`--step-delay`) n'est attribué qu'aux paliers où les
  *     éléments concernés partagent une rangée (§ 7). Sur une pile verticale, chacun
  *     franchit le seuil du viewport seul : le rang ne cascade plus rien et ne laisse
@@ -40,7 +43,7 @@
  *   3. MANIFESTE (mission / vision)
  *   4. VALEURS
  *   5. APPROCHE
- *   6. TERRITOIRE + APPEL À L'ACTION
+ *   6. TERRITOIRE
  *   7. GRANDS ÉCRANS (≥ 841px, ≥ 950px)
  *   8. MOUVEMENT RÉDUIT
  */
@@ -258,11 +261,14 @@
     gap: var(--space-lg);
 }
 
-/* Enveloppe de révélation : elle porte l'entrée au scroll et son délai de cascade,
-   la carte qu'elle contient porte le survol. La séparation est obligatoire, pas
-   cosmétique — les deux animent `transform`, et sur un même élément le délai de
-   cascade retarderait aussi chaque survol d'autant. Structure et raisonnement
-   repris de `.service-sub-item-reveal` (services.css § 5). */
+/* Enveloppe de révélation : elle porte l'entrée au scroll et son délai de cascade.
+   La séparation d'avec `.valeur-card` était imposée par le survol de la carte —
+   les deux animaient `transform`, et le délai de cascade posé sur l'élément survolé
+   aurait retardé chaque survol d'autant. Ce survol est retiré (§ 4), la contrainte
+   avec lui ; l'enveloppe reste parce qu'elle porte encore la cascade et le `display:
+   flex` qui étire la carte dans sa cellule de grille, et parce que la fusionner
+   demanderait de retoucher le markup des quatre cartes pour rien.
+   Structure reprise de `.service-sub-item-reveal` (services.css § 5). */
 .valeur-reveal {
     display: flex;
 }
@@ -281,11 +287,16 @@
    markup sans lui donner de rang. */
 .valeurs-grid .valeur-reveal { transition-delay: var(--step-delay, 0s); }
 
-/* `overflow: hidden` borne le filet d'accent au rayon de la carte : sans lui, ses
-   deux extrémités carrées dépasseraient des coins arrondis. */
+/* Cartes inertes : elles informent, elles ne mènent nulle part. Aucun état de
+   survol — ni soulèvement, ni ombre, ni filet d'accent, ni changement d'icône.
+   Une carte qui réagit au pointeur promet un clic qu'elle ne tient pas, et ces
+   quatre-là ne sont pas cliquables. C'est le même parti pris que le registre des
+   régions (§ 6), pour la même raison.
+
+   D'où aussi l'absence de `transition` : plus rien ne change d'état, il n'y a
+   donc rien à faire glisser. Et l'absence de `position: relative` / `overflow:
+   hidden`, qui n'existaient que pour porter et rogner le filet d'accent retiré. */
 .valeur-card {
-    position: relative;
-    overflow: hidden;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -294,35 +305,11 @@
     background: var(--surface-card);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-xl);
-    transition: transform var(--duration-medium) var(--ease-card),
-                box-shadow var(--duration-medium) ease,
-                border-color var(--duration-medium) ease;
 }
 
-/* Filet d'accent en tête de carte, tracé de gauche à droite au survol : il
-   confirme la carte pointée sans poser d'aplat coloré — même parti pris que
-   `.icon-box::after` sur les cartes de services. */
-.valeur-card::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 2px;
-    background: var(--color-primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--duration-fast) var(--ease-entrance);
-}
-
-/* L'icône monte de 2px quand la carte en monte 4 : le soulèvement paraît alors partir
-   d'elle plutôt que d'arriver sur une carte inerte. Deux et non quatre — à parallaxe
-   nulle, le geste ne se lit plus ; à parallaxe égale, il n'y a plus de geste du tout.
-   Même courbe et même durée que le soulèvement de la carte, sans quoi les deux
-   mouvements se désynchroniseraient au relâchement. */
 .valeur-icon {
     font-size: var(--icon-xl);
     color: var(--color-forest);
-    transition: color var(--duration-medium) ease,
-                transform var(--duration-medium) var(--ease-card);
 }
 
 .valeur-card h3 {
@@ -433,7 +420,7 @@
 
 
 /* ============================================================
-   6. TERRITOIRE + APPEL À L'ACTION
+   6. TERRITOIRE
    ============================================================ */
 
 /* `--color-forest-light` et non `--surface-dark` : cette bande vient toucher le
@@ -566,7 +553,6 @@
 .apropos-territoire h2.animate-on-scroll { transition-delay: 0.08s; }
 .apropos-territoire p.animate-on-scroll  { transition-delay: 0.16s; }
 .territoire-regions.animate-on-scroll    { transition-delay: var(--registre-start); }
-.territoire-cta-reveal                   { transition-delay: 0.5s; }
 
 /* `.label-upper` pose `--fg1` (forest), illisible sur ce fond : on la surcharge. */
 .territoire-eyebrow {
@@ -611,7 +597,10 @@
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
-    margin: var(--space-xl) 0 var(--space-2xl);
+    /* Plus de marge basse : le registre est devenu le dernier élément de la bande
+       depuis le retrait du CTA, et cette marge s'ajoutait au `--space-5xl` de la
+       section — la bande se serait terminée sur un vide d'un pas et demi. */
+    margin: var(--space-xl) 0 0;
     padding: 0;
     text-align: left;
 }
@@ -665,62 +654,15 @@ html.is-loading .territoire-regions li {
     animation: fouc-safety-net-reveal var(--duration-slow) 2s forwards;
 }
 
-/* `.btn` transitionne `all` sur `--duration-base` : trop large (toute propriété
-   qui change se met à glisser) et trop lent pour un retour d'enfoncement, qui
-   doit se voir AVEC le doigt et non après lui. On redéclare donc la transition en
-   nommant ses propriétés, et on isole `transform` sur `--duration-press`.
-   TODO — à remonter dans `.btn` (style.css) pour les cinq pages. */
-.territoire-cta {
-    transition: background-color var(--duration-base) ease,
-                box-shadow var(--duration-base) ease,
-                transform var(--duration-press) var(--ease-entrance);
-}
+/* Plus aucun état de survol ni d'enfoncement dans ce fichier : le bouton
+   « Parlons de votre projet » a été retiré de la bande, et les cartes de valeurs
+   sont inertes (§ 4). Le seul élément actionnable de la page est le CTA du header,
+   stylé par style.css. D'où l'absence, ici, du bloc
+   `@media (hover: hover) and (pointer: fine)` que portent les autres feuilles.
 
-.territoire-cta:active {
-    transform: scale(var(--press-scale));
-}
-
-
-/* --- Survols (pointeur fin uniquement) --- */
-
-/* Sur écran tactile, `:hover` se déclenche au toucher et reste appliqué jusqu'au
-   toucher suivant : la carte resterait soulevée et le filet tracé sans raison. */
-@media (hover: hover) and (pointer: fine) {
-    .valeur-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: var(--border-hover);
-    }
-
-    .valeur-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .valeur-card:hover .valeur-icon {
-        color: var(--color-primary-dark);
-        transform: translateY(-2px);
-    }
-
-    /* Un halo seul est un retour faible sur fond sombre — il ajoute de la lumière là
-       où le bouton en émet déjà. Le soulèvement, lui, se voit quelle que soit la
-       luminosité du fond. 2px et non les 4px des cartes : la surface est dix fois
-       plus petite, à course égale le bouton sauterait.
-       Il court sur `--duration-press` comme l'enfoncement, puisque `.territoire-cta`
-       n'accorde qu'une durée à `transform` — ce qui tombe juste : un survol de bouton
-       doit répondre au pointeur, pas le suivre. */
-    .territoire-cta:hover {
-        box-shadow: var(--shadow-glow-hover);
-        transform: translateY(-2px);
-    }
-
-    /* L'enfoncement se compose avec le soulèvement au lieu de l'annuler : sans cette
-       règle, `transform: scale()` remplace le `translateY` et le bouton retombe de
-       2px sous le doigt — un mouvement parasite, dans la direction inverse de celui
-       qu'on attend. Hors survol (tactile), le `:active` de la § 6 s'applique seul. */
-    .territoire-cta:hover:active {
-        transform: translateY(-2px) scale(var(--press-scale));
-    }
-}
+   Le TODO qui accompagnait le CTA reste valable ailleurs et n'est pas perdu :
+   `.btn` (style.css) transitionne encore `all` sur `--duration-base`, trop large et
+   trop lent pour un retour d'enfoncement, sur les quatre pages qui ont des boutons. */
 
 
 /* ============================================================
@@ -849,29 +791,8 @@ html.is-loading .territoire-regions li {
         transition: none;
     }
 
-    /* Le filet de carte, lui, dépend du survol : on ne le fige pas, on retire
-       seulement son tracé — il apparaît d'un coup au survol. */
-    .valeur-card::before {
-        transition: none;
-    }
-
-    /* Le soulèvement disparaît ; la bordure et l'ombre continuent de signaler la
-       carte pointée. Déclaré après le bloc `(hover: hover)` de la section 6, donc
-       l'emporte à spécificité égale. */
-    .valeur-card:hover {
-        transform: none;
-    }
-
-    /* L'icône suivait le soulèvement de la carte : elle n'a plus rien à suivre. */
-    .valeur-card:hover .valeur-icon {
-        transform: none;
-    }
-
-    /* Le CTA garde son halo au survol et son changement de fond à l'enfoncement :
-       les trois états restent distinguables sans aucun déplacement. */
-    .territoire-cta:hover,
-    .territoire-cta:hover:active,
-    .territoire-cta:active {
-        transform: none;
-    }
+    /* Ni les cartes de valeurs ni le CTA du territoire ne figurent plus ici : les
+       premières n'animent plus rien (§ 4), le second a été retiré de la page. Il ne
+       reste donc à neutraliser que la révélation au défilement, ci-dessus, et les
+       deux filets tracés, juste avant. */
 }

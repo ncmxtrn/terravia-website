@@ -326,6 +326,16 @@
      --press-scale : facteur d'échelle d'un élément pressé. Assez marqué pour être
      perçu, assez discret pour ne pas déplacer le texte du bouton sous le doigt.
 
+     ⚠ --press-scale et --duration-press ne sont plus consommés par aucune feuille
+     depuis le retrait du CTA de la bande territoire (apropos.html), leur unique
+     usage. Ils sont DORMANTS, pas morts — ne pas les supprimer lors d'un nettoyage
+     de code inutilisé, au même titre que la section « Projets récents » décrite
+     dans CLAUDE.md. Ils portent une décision de design encore à appliquer : `.btn`
+     (style.css) transitionne `all` sur --duration-base sur les cinq pages, ce qui
+     est trop large et trop lent pour un retour d'enfoncement — celui-ci doit se
+     voir AVEC le doigt et non après lui. Le jour où ce retour est généralisé aux
+     boutons, ces deux tokens sont la valeur à reprendre.
+
      --reveal-shift : course verticale d'une révélation au défilement (style.css,
      § .animate-on-scroll). --reveal-shift-sm est le palier court, réservé aux blocs
      déjà à l'écran au CHARGEMENT : leur révélation se superpose alors au fondu

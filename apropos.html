@@ -2,10 +2,14 @@
     apropos.html — Page « À propos » de Solutions Terravia.
 
     Cinq sections, du général au concret : introduction, manifeste (mission et
-    vision), valeurs, approche en quatre étapes, territoire desservi + appel à
-    l'action. La page se lit d'un bout à l'autre sans rien attendre ni rien
-    déclencher : tout le contenu est présent à l'écran, la seule mise en scène
-    est la révélation au défilement partagée avec le reste du site.
+    vision), valeurs, approche en quatre étapes, territoire desservi. La page se
+    lit d'un bout à l'autre sans rien attendre ni rien déclencher : tout le contenu
+    est présent à l'écran, la seule mise en scène est la révélation au défilement
+    partagée avec le reste du site.
+
+    Aucun appel à l'action dans le corps de la page : la conversion passe par le
+    bouton « Contactez-nous » du header, qui porte ici `show-cta` en dur et reste
+    donc visible sur toute la hauteur de la page.
 
     Calquée sur services.html : page sans hero, donc header opaque dès la
     première frame. Aucun JS inline — et, contrairement aux quatre autres pages,
@@ -182,10 +186,11 @@
             <!--
                 3. VALEURS — quatre cartes.
                 Chaque carte est enveloppée dans un `.valeur-reveal` qui porte la
-                révélation et son délai de cascade, tandis que la carte porte le survol.
-                Séparation obligatoire, pas cosmétique : les deux animent `transform`,
-                et un délai posé sur l'élément survolé retarderait aussi chaque survol.
-                Voir la note « STAGGER DES CARTES AU SCROLL » de services.css.
+                révélation et son délai de cascade.
+                Les cartes elles-mêmes sont inertes : aucun état de survol. Elles
+                informent et ne sont pas cliquables — un survol y promettrait un clic
+                qu'elles ne tiennent pas. Voir la note de `.valeur-card` (apropos.css § 4).
+                Voir aussi « STAGGER DES CARTES AU SCROLL » de services.css.
             -->
             <section class="apropos-valeurs" aria-labelledby="titre-valeurs">
                 <div class="container">
@@ -291,7 +296,7 @@
             </section>
 
             <!--
-                5. TERRITOIRE + APPEL À L'ACTION.
+                5. TERRITOIRE.
                 Bande sombre en `--color-forest-light`, soit un ton AU-DESSUS du
                 `--color-forest` du pied de page : les deux surfaces sombres se
                 touchent, et sans cet écart elles fusionneraient en un seul bloc.
@@ -310,10 +315,9 @@
                 <div class="container">
                     <!-- La révélation est portée par chaque partie et non par le bloc :
                          c'est ici la finale de la page et sa zone la plus dense (le
-                         registre des huit régions et le seul appel à l'action), et un
-                         pavé de cette hauteur qui monte d'un seul tenant est le seul
-                         endroit de la page où rien ne se lit dans l'ordre. Délais de
-                         cascade dans apropos.css § 6. -->
+                         registre des huit régions), et un pavé de cette hauteur qui
+                         monte d'un seul tenant est le seul endroit de la page où rien
+                         ne se lit dans l'ordre. Délais de cascade dans apropos.css § 6. -->
                     <div class="territoire-content">
                         <h2 id="titre-territoire" class="animate-on-scroll">Partout où le terrain nous mène</h2>
                         <p class="animate-on-scroll">Nous nous déployons sur l'ensemble du Québec — des chantiers urbains les plus contraints aux sites en région éloignée.</p>
@@ -338,16 +342,6 @@
                             <li>Abitibi-Témiscamingue</li>
                             <li>Côte-Nord</li>
                         </ul>
-
-                        <!-- Enveloppe de révélation, et non une div de mise en page :
-                             le lien anime déjà `transform` pour son survol et son
-                             enfoncement, sur une durée volontairement courte. Poser la
-                             révélation sur lui ferait écraser l'une des deux
-                             transitions par l'autre — même séparation, et pour la même
-                             raison, que `.valeur-reveal` / `.valeur-card`. -->
-                        <div class="territoire-cta-reveal animate-on-scroll">
-                            <a href="contact.html" class="btn btn-primary transition-link territoire-cta">Parlons de votre projet</a>
-                        </div>
                     </div>
                 </div>
             </section>

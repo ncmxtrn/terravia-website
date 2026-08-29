@@ -1,16 +1,38 @@
 /**
  * apropos.css — Styles spécifiques à la page apropos.html
  *
- * Complète style.css, qui fournit déjà tout le gabarit de l'introduction
- * (`.section-header center`, `.subtitle`, `.animate-on-scroll`). Ce fichier
- * ne porte donc que ce qui est propre à la page.
+ * Complète style.css, qui fournit déjà le gabarit des en-têtes de section
+ * (`.section-header center`, `.subtitle`) et la révélation au défilement
+ * (`.animate-on-scroll`). Ce fichier ne porte que ce qui est propre à la page.
  * Toutes les valeurs via tokens.css — aucune valeur brute.
  *
  * Ordre d'import : tokens.css → style.css → apropos.css
  *
+ * Écrit en mobile-first, comme la section 9 de style.css : la mise en page de
+ * base est celle du petit écran, les media queries `min-width` élargissent.
+ * (apropos.css utilisait auparavant des `max-width` ; le fichier a été réécrit
+ * entièrement, il n'y a donc pas de mélange des deux conventions.)
+ *
+ * Parti pris d'animation, valable pour tout le fichier :
+ *   - Aucune boucle infinie et aucun contenu qui se remplace tout seul. La page
+ *     se lit, elle ne se regarde pas. Toute la mise en scène est déclenchée par
+ *     le lecteur — le défilement ou le pointeur.
+ *   - Les filets d'accent (manifeste, cartes, étapes) se tracent en `transform:
+ *     scale*()` et jamais en `width` / `height` : seuls `transform` et `opacity`
+ *     évitent un passage par la mise en page à chaque frame.
+ *   - Les survols sont conditionnés par `(hover: hover) and (pointer: fine)`.
+ *     Sur écran tactile, `:hover` se déclenche au toucher et reste collé jusqu'au
+ *     toucher suivant : la carte resterait soulevée sans raison.
+ *
  * Sommaire :
  *   1. GABARIT DE PAGE
- *   2. INTRODUCTION (H1 + accroche)
+ *   2. INTRODUCTION
+ *   3. MANIFESTE (mission / vision)
+ *   4. VALEURS
+ *   5. APPROCHE
+ *   6. TERRITOIRE + APPEL À L'ACTION
+ *   7. GRANDS ÉCRANS (≥ 841px, ≥ 950px)
+ *   8. MOUVEMENT RÉDUIT
  */
 
 
@@ -18,54 +40,543 @@
    1. GABARIT DE PAGE
    ============================================================ */
 
+/* padding-top = header fixe + espace de respiration, comme `.services-section` :
+   le header est en `position: fixed`, il ne réserve donc aucune place dans le flux.
+
+   Pas de padding-bottom : la page se termine sur la bande sombre du territoire,
+   qui porte le sien et doit venir toucher le pied de page. Le gabarit collant
+   (`.apropos-wrapper`) qui compensait une page trop courte a été retiré — la page
+   dépasse maintenant la hauteur du viewport par son seul contenu. */
 .apropos-main {
-    /* padding-top = header fixe + espace de respiration, comme .services-section :
-       le header est en position fixe, il ne réserve donc aucune place dans le flux. */
-    padding: calc(var(--header-height) + var(--space-3xl)) 0 var(--space-5xl);
+    padding-top: calc(var(--header-height) + var(--space-3xl));
 }
 
-/* Gabarit collant du pied de page.
-   Tant que la page se limite à son introduction, son contenu est plus court que le
-   viewport. Sans rien, le pied de page remonterait au milieu de l'écran ; avec un
-   `min-height: 100vh` sur le <main>, il serait au contraire repoussé SOUS un plein
-   écran de vide — il faudrait défiler tout un écran blanc pour l'atteindre. Le
-   gabarit collant le pose exactement au bas du viewport, sans défilement superflu :
-   la colonne fait au moins la hauteur de l'écran et le <main> absorbe le reste.
-
-   La règle est portée par une classe locale et non par `.site-wrapper` : ce conteneur
-   n'a de style nulle part ailleurs dans le projet, le passer en flex globalement
-   toucherait les quatre autres pages sans nécessité.
-
-   Le header est en `position: fixed` — hors flux — donc il n'entre pas dans la
-   colonne et n'est pas affecté.
-
-   À retirer (ici et dans le markup) quand les sections de contenu rempliront la page. */
-.apropos-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+/* Palier de titre de section, commun aux trois sections qui en ont un.
+   style.css pose `--text-hero` sur `.section-header h2`, soit exactement la taille
+   du H1 de la page. Sur index.html cela ne se voyait pas : le H1 y vit dans le hero,
+   avec sa propre échelle et son propre fond. Ici les titres se suivent dans un même
+   flux, et à taille égale la page perd toute hiérarchie — un palier en dessous suffit
+   à la rétablir sans les rendre timides.
+   Sélecteur commun aux deux emplacements : le titre du territoire n'est pas dans un
+   `.section-header` (bloc centré à part, sur fond sombre) mais doit tenir le même
+   palier que les deux autres. */
+.apropos-main .section-header h2,
+.apropos-territoire h2 {
+    font-size: var(--text-h2);
+    /* Même raison que sur le H1 : sans balance, « Partout où le terrain nous mène »
+       laissait « mène » seul sur sa seconde ligne. */
+    text-wrap: balance;
 }
 
-.apropos-wrapper .apropos-main {
-    flex: 1;
+/* `pretty` et non `balance` sur les accroches : elles font deux à trois lignes,
+   les égaliser les raccourcirait sans nécessité. On demande seulement à éviter le
+   mot esseulé en dernière ligne. */
+.apropos-main .subtitle {
+    text-wrap: pretty;
 }
 
 
 /* ============================================================
-   2. INTRODUCTION (H1 + accroche)
+   2. INTRODUCTION
    ============================================================ */
 
-/* La taille et la graisse du titre viennent déjà du défaut sémantique `h1` de
-   tokens.css ; on ne redéfinit ici que ce qui en diffère. */
-.section-header.apropos-intro h1 {
+/* L'espacement sous l'introduction est porté par la section et non par la marge
+   de 4rem de `.section-header` : celle-ci sépare un en-tête de SON contenu, or
+   l'introduction n'en a pas — ce qui suit est une autre section. Cumuler les deux
+   creusait un vide de 9rem entre le titre de page et le manifeste. */
+.apropos-intro {
+    padding-bottom: var(--space-4xl);
+}
+
+.apropos-intro .section-header {
+    margin-bottom: 0;
+}
+
+/* Le surtitre décharge le H1 de sa fonction d'étiquette : « À propos » reste
+   lisible pour qui balaie la page, et le titre peut porter une affirmation. */
+.apropos-eyebrow {
+    color: var(--color-primary-dark);
+    margin-bottom: var(--space-md);
+}
+
+/* La taille et la graisse viennent du défaut sémantique `h1` de tokens.css ; on
+   ne redéfinit ici que ce qui en diffère.
+
+   `max-width` en ch : à `--text-hero`, la phrase tiendrait presque sur une seule
+   ligne de plus de 1300px en grand écran, illisible d'un seul regard. La mesure en
+   ch suit la taille de police, donc le nombre de lignes reste le même à toutes les
+   tailles. Sans effet sous ~840px, où le conteneur est déjà plus étroit.
+
+   `text-wrap: balance` égalise les deux lignes au lieu de remplir la première :
+   sans lui la coupure tombait après « au » et laissait « livrable. » seul sur la
+   seconde ligne. Ici la coupure de moindre déséquilibre est aussi la coupure
+   naturelle de la phrase, à la virgule. Sans support, la coupure d'origine
+   revient — dégradation sans conséquence fonctionnelle. */
+.apropos-intro h1 {
+    max-width: 26ch;
+    text-wrap: balance;
     color: var(--color-forest);
     letter-spacing: var(--tracking-tight);
     margin-bottom: var(--space-md);
 }
 
-/* Le titre se révèle légèrement avant l'accroche, qui tient son propre délai de
-   0,2 s de style.css (`.section-header .subtitle.animate-on-scroll`) — les deux
-   textes apparaissent donc en cascade plutôt qu'ensemble. */
-.section-header.apropos-intro h1.animate-on-scroll {
+/* Cascade d'entrée : surtitre à 0s, titre à 0,1s, accroche à 0,2s (celle-ci tient
+   son délai de style.css). La règle de style.css ne vise que `h2` — un H1 de page
+   n'y est pas prévu, d'où cette ligne. */
+.apropos-intro h1.animate-on-scroll {
     transition-delay: 0.1s;
+}
+
+
+/* ============================================================
+   3. MANIFESTE (mission / vision)
+   ------------------------------------------------------------
+   Remplace le diaporama qui alternait Mission / Vision / Valeurs toutes les 5 s.
+   Deux textes courts qui tiennent ensemble à l'écran n'ont aucune raison de se
+   cacher l'un l'autre, et une rotation automatique retire au lecteur le contrôle
+   de sa propre lecture — il perd sa phrase en cours. La SECTION 5 de script.js,
+   qui pilotait cette rotation, a été supprimée avec lui.
+   ============================================================ */
+
+.apropos-manifeste {
+    padding-bottom: var(--space-5xl);
+}
+
+.manifeste-grid {
+    display: grid;
+    gap: var(--space-3xl);
+}
+
+/* Le retrait à gauche laisse la place au filet d'accent, posé en absolu. */
+.manifeste-item {
+    position: relative;
+    padding-left: var(--space-lg);
+}
+
+/* Filet vertical tracé de haut en bas à la révélation du bloc.
+   `scaleY` et non `height` : la hauteur passe par la mise en page à chaque frame,
+   l'échelle non. L'origine en haut donne le sens du tracé. */
+.manifeste-rule {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--duration-slow) var(--ease-entrance);
+}
+
+/* `.visible` n'est jamais retirée (script.js fait `unobserve` après le premier
+   passage) : le filet se trace une fois. Son retard sur l'entrée du texte est
+   voulu — le filet suit le texte, il ne l'annonce pas. Le délai est ici, dans
+   l'état d'ARRIVÉE, parce que c'est là qu'une transition lit ses paramètres ;
+   qu'il y persiste ensuite est sans conséquence, le filet n'ayant pas d'état
+   de survol. Voir la note « STAGGER DES CARTES AU SCROLL » de services.css. */
+.manifeste-item.visible .manifeste-rule {
+    transform: scaleY(1);
+    transition-delay: 0.25s;
+}
+
+/* Le <h2> nomme la section dans le plan du document, mais c'est la phrase qui
+   domine à l'œil : hiérarchie sémantique et hiérarchie typographique divergent
+   ici volontairement. Mise en forme reprise de `.label-tech` (style.css), sans
+   réutiliser la classe — celle-ci est réservée à la section technologie. */
+.manifeste-label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-badge);
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-md);
+}
+
+/* `max-width` en ch : mesure de confort de lecture, qui suit la taille de police
+   au lieu d'une largeur figée. Court volontairement — trois à quatre lignes par
+   colonne, pour que les deux blocs se lisent d'un regard. */
+.manifeste-statement {
+    max-width: 34ch;
+    font-size: var(--text-statement);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-forest);
+    margin: 0;
+}
+
+
+/* ============================================================
+   4. VALEURS
+   ============================================================ */
+
+/* Bande à peine teintée : elle sépare les valeurs de l'approche, deux sections
+   claires successives, sans introduire une seconde couleur de fond dans la page. */
+.apropos-valeurs {
+    padding: var(--space-5xl) 0;
+    background-color: var(--surface-muted);
+}
+
+.valeurs-grid {
+    display: grid;
+    gap: var(--space-lg);
+}
+
+/* Enveloppe de révélation : elle porte l'entrée au scroll et son délai de cascade,
+   la carte qu'elle contient porte le survol. La séparation est obligatoire, pas
+   cosmétique — les deux animent `transform`, et sur un même élément le délai de
+   cascade retarderait aussi chaque survol d'autant. Structure et raisonnement
+   repris de `.service-sub-item-reveal` (services.css § 5). */
+.valeur-reveal {
+    display: flex;
+}
+
+/* 80 ms de cascade plutôt que les 100 ms de `.services-grid` : cette grille tient
+   sur une seule rangée en grand écran, où l'écart entre la première et la dernière
+   carte se lit directement — à 100 ms, la quatrième traîne visiblement.
+   Le délai est porté par l'état de repos, qui vaut aussi à l'arrivée. */
+.valeurs-grid .valeur-reveal:nth-child(1) { transition-delay: 0s; }
+.valeurs-grid .valeur-reveal:nth-child(2) { transition-delay: 0.08s; }
+.valeurs-grid .valeur-reveal:nth-child(3) { transition-delay: 0.16s; }
+.valeurs-grid .valeur-reveal:nth-child(4) { transition-delay: 0.24s; }
+
+/* `overflow: hidden` borne le filet d'accent au rayon de la carte : sans lui, ses
+   deux extrémités carrées dépasseraient des coins arrondis. */
+.valeur-card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-xl);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
+    transition: transform var(--duration-medium) var(--ease-card),
+                box-shadow var(--duration-medium) ease,
+                border-color var(--duration-medium) ease;
+}
+
+/* Filet d'accent en tête de carte, tracé de gauche à droite au survol : il
+   confirme la carte pointée sans poser d'aplat coloré — même parti pris que
+   `.icon-box::after` sur les cartes de services. */
+.valeur-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-fast) var(--ease-entrance);
+}
+
+.valeur-icon {
+    font-size: var(--icon-xl);
+    color: var(--color-forest);
+    transition: color var(--duration-medium) ease;
+}
+
+.valeur-card h3 {
+    color: var(--color-forest);
+    margin: 0;
+}
+
+.valeur-card p {
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--fg2);
+    margin: 0;
+}
+
+
+/* ============================================================
+   5. APPROCHE
+   ============================================================ */
+
+.apropos-approche {
+    padding: var(--space-5xl) 0;
+}
+
+.approche-steps {
+    list-style: none;
+    display: grid;
+    gap: var(--space-xl);
+    margin: 0;
+    padding: 0;
+}
+
+/* Cascade des quatre étapes, et cascade décalée de leurs filets d'accent.
+   Le retard commun de 0,2s est écrit une fois, dans le `calc` : le filet part
+   toujours 0,2s après l'entrée de SON étape, quel que soit son rang. Sans cela,
+   les quatre filets se traceraient ensemble au lieu de suivre la cascade — et il
+   faudrait huit règles au lieu de quatre pour l'éviter. */
+/* Le repli `0s` couvre une cinquième étape qu'on ajouterait au markup sans penser
+   à lui donner son rang ci-dessous : elle entrerait sans retard plutôt que de
+   perdre sa transition (une `var()` non résolue invalide la déclaration). */
+.approche-steps > li { transition-delay: var(--step-delay, 0s); }
+.approche-steps > li .approche-step::before { transition-delay: calc(var(--step-delay, 0s) + 0.2s); }
+
+.approche-steps > li:nth-child(1) { --step-delay: 0s; }
+.approche-steps > li:nth-child(2) { --step-delay: 0.08s; }
+.approche-steps > li:nth-child(3) { --step-delay: 0.16s; }
+.approche-steps > li:nth-child(4) { --step-delay: 0.24s; }
+
+.approche-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding-top: var(--space-lg);
+}
+
+/* Filet d'accent en tête d'étape, tracé de gauche à droite. Enchaînés par la
+   cascade ci-dessus, les quatre segments dessinent la progression du procédé
+   dans son sens de lecture — c'est la seule raison d'être de cette animation. */
+.approche-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2.75rem;
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-medium) var(--ease-entrance);
+}
+
+.approche-step-reveal.visible .approche-step::before {
+    transform: scaleX(1);
+}
+
+/* Orbitron via `.font-display` dans le markup — c'est exactement l'usage prévu
+   par tokens.css (« logo et chiffres display uniquement »). Le numéro est un
+   repère visuel, pas l'information : l'ordre est porté par le <ol>. D'où une
+   couleur volontairement en retrait, qui laisse le titre mener. */
+.approche-num {
+    font-size: var(--text-h2-sm);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    color: var(--fg3);
+}
+
+.approche-step h3 {
+    color: var(--color-forest);
+    margin: var(--space-2xs) 0 0;
+}
+
+.approche-step p {
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--fg2);
+    margin: 0;
+}
+
+
+/* ============================================================
+   6. TERRITOIRE + APPEL À L'ACTION
+   ============================================================ */
+
+/* `--color-forest-light` et non `--surface-dark` : cette bande vient toucher le
+   pied de page, qui est en `--color-forest`. À teinte égale, les deux ne feraient
+   qu'un seul bloc sombre ; l'écart d'un ton les distingue comme deux plans.
+   `overflow: hidden` borne la trame décorative ci-dessous. */
+.apropos-territoire {
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-5xl) 0;
+    background-color: var(--color-forest-light);
+    color: var(--fg-on-dark);
+}
+
+/* Trame d'arpentage : un carroyage en lavis blanc, estompé vers les bords par un
+   masque radial pour qu'il ne bute pas franchement sur les limites de la bande.
+   Un pseudo-élément n'entre pas dans l'arbre d'accessibilité : rien à masquer.
+
+   Le noir du masque n'est pas une couleur de design et n'a donc pas de token :
+   `mask-image` ne lit que le canal alpha de son dégradé, la teinte y est
+   indifférente — seule compte l'opposition opaque / transparent.
+   Le préfixe -webkit- reste nécessaire pour Safari. */
+.apropos-territoire::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right,  var(--white-05) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--white-05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 78%);
+            mask-image: radial-gradient(ellipse at center, #000 30%, transparent 78%);
+}
+
+/* `position: relative` sans décalage : suffit à repasser au-dessus de la trame,
+   qui est en absolu dans le même contexte d'empilement. */
+.territoire-content {
+    position: relative;
+    max-width: 44rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* `.label-upper` pose `--fg1` (forest), illisible sur ce fond : on la surcharge. */
+.territoire-eyebrow {
+    color: var(--color-primary);
+    margin-bottom: var(--space-md);
+}
+
+/* La taille est posée avec celle des autres titres de section, en section 1. */
+.apropos-territoire h2 {
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-on-dark);
+    margin: 0 0 var(--space-md);
+}
+
+.apropos-territoire p {
+    line-height: var(--leading-relaxed);
+    color: var(--fg-on-dark-muted);
+    margin: 0;
+}
+
+.territoire-regions {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin: var(--space-xl) 0 var(--space-2xl);
+    padding: 0;
+}
+
+/* Pastilles inertes : elles énumèrent, elles ne mènent nulle part. Pas de survol
+   ni de curseur `pointer`, qui promettraient un clic sans le tenir. */
+.territoire-regions li {
+    padding: var(--space-2xs) var(--space-md);
+    border: 1px solid var(--white-20);
+    border-radius: var(--radius-pill);
+    background: var(--white-10);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--fg-on-dark);
+}
+
+/* `.btn` transitionne `all` sur `--duration-base` : trop large (toute propriété
+   qui change se met à glisser) et trop lent pour un retour d'enfoncement, qui
+   doit se voir AVEC le doigt et non après lui. On redéclare donc la transition en
+   nommant ses propriétés, et on isole `transform` sur `--duration-press`.
+   TODO — à remonter dans `.btn` (style.css) pour les cinq pages. */
+.territoire-cta {
+    transition: background-color var(--duration-base) ease,
+                box-shadow var(--duration-base) ease,
+                transform var(--duration-press) var(--ease-entrance);
+}
+
+.territoire-cta:active {
+    transform: scale(var(--press-scale));
+}
+
+
+/* --- Survols (pointeur fin uniquement) --- */
+
+/* Sur écran tactile, `:hover` se déclenche au toucher et reste appliqué jusqu'au
+   toucher suivant : la carte resterait soulevée et le filet tracé sans raison. */
+@media (hover: hover) and (pointer: fine) {
+    .valeur-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-card-hover);
+        border-color: var(--border-hover);
+    }
+
+    .valeur-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .valeur-card:hover .valeur-icon {
+        color: var(--color-primary-dark);
+    }
+
+    .territoire-cta:hover {
+        box-shadow: var(--shadow-glow-hover);
+    }
+}
+
+
+/* ============================================================
+   7. GRANDS ÉCRANS (≥ 841px, ≥ 950px)
+   ------------------------------------------------------------
+   Mêmes seuils que la section 9 de style.css : 841px pour la tablette,
+   950px pour le desktop.
+   ============================================================ */
+
+@media (min-width: 841px) {
+    .manifeste-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Deux colonnes seulement à ce palier : à quatre, les cartes tomberaient sous
+       les ~150px de large et « Rigueur méthodologique » s'y couperait en trois. */
+    .valeurs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .approche-steps {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2xl) var(--space-xl);
+    }
+}
+
+@media (min-width: 950px) {
+    .valeurs-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Les quatre étapes sur une rangée : la cascade des filets se lit alors
+       comme une progression de gauche à droite, ce qui est tout son propos. */
+    .approche-steps {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-xl);
+    }
+}
+
+
+/* ============================================================
+   8. MOUVEMENT RÉDUIT
+   ------------------------------------------------------------
+   Réduire le mouvement n'est pas le supprimer : les changements de couleur et
+   d'opacité restent, ce sont eux qui portent la compréhension. Seuls les
+   déplacements et les tracés sont neutralisés.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    /* Les deux filets tracés à la révélation sont posés dans leur état d'arrivée
+       plutôt que supprimés : sans `transform: none`, ils resteraient à `scale…(0)`,
+       donc invisibles — la page perdrait deux repères visuels au lieu d'une
+       animation. */
+    .manifeste-rule,
+    .approche-step::before {
+        transform: none;
+        transition: none;
+    }
+
+    /* Le filet de carte, lui, dépend du survol : on ne le fige pas, on retire
+       seulement son tracé — il apparaît d'un coup au survol. */
+    .valeur-card::before {
+        transition: none;
+    }
+
+    /* Le soulèvement disparaît ; la bordure et l'ombre continuent de signaler la
+       carte pointée. Déclaré après le bloc `(hover: hover)` de la section 6, donc
+       l'emporte à spécificité égale. */
+    .valeur-card:hover {
+        transform: none;
+    }
+
+    .territoire-cta:active {
+        transform: none;
+    }
 }

@@ -66,6 +66,7 @@
      le design évolue vers un fond légèrement teinté. */
   --white:       #ffffff;
   --bg-light:    #ffffff;   /* page background */
+  --white-05:    rgba(255, 255, 255, 0.05);   /* trame décorative sur fond sombre (grille d'arpentage) */
   --white-10:    rgba(255, 255, 255, 0.10);   /* overlay/border subtil sur fond sombre */
   --white-20:    rgba(255, 255, 255, 0.20);   /* bordure d'encart verre dépoli sur photo */
   --gray-200:    #e5e7eb;
@@ -111,10 +112,13 @@
   /* Rôles surface — distinctions sémantiques entre les plans de l'UI :
      --surface-page : fond de page, toujours le plus en retrait.
      --surface-card : fond de carte, identique au blanc mais sémantiquement distinct.
+     --surface-muted : bande de section à peine teintée, pour séparer deux sections
+       claires successives sans introduire de seconde couleur de fond.
      --surface-dark : fond footer et sections sombres.
      --surface-header : fond glassmorphism du header au scroll (blanc translucide). */
   --surface-page:   var(--bg-light);
   --surface-card:   var(--white);
+  --surface-muted:  var(--forest-03);
   --surface-dark:   var(--forest-900);
   --surface-header: rgba(255, 255, 255, 0.85);
 
@@ -152,6 +156,11 @@
   --text-h2-sm:   2rem;                           /* Tech / projects H2 */
   --text-display: 5rem;                           /* Icônes de section en taille display (page services) */
   --text-h3:      1.2rem;                         /* Card headings */
+  /* --text-statement : palier éditorial entre --text-lead et --text-h2-sm, pour une
+     phrase courte qui porte à elle seule un bloc (mission / vision d'apropos.html).
+     En clamp() comme --text-h2 : le bloc occupe une demi-largeur de page, sa taille
+     doit suivre celle du viewport et non celle d'un contenant déjà contraint. */
+  --text-statement: clamp(1.25rem, 2.2vw, 1.6rem);
   --text-lead:    1.125rem;                       /* Hero subtext */
   --text-body:    1rem;                           /* Body paragraph */
   --text-sm:      0.9rem;                         /* Small body / footer */
@@ -166,7 +175,7 @@
   --icon-base: 1.1rem;    /* ~17.6px — boutons, bannières */
   --icon-md:   1.25rem;   /* 20px — footers, dropdowns, inputs */
   --icon-lg:   1.5rem;    /* 24px — défaut visuel Material */
-  --icon-xl:   2rem;      /* 32px — cartes services */
+  --icon-xl:   2rem;      /* 32px — cartes services, cartes de valeurs (apropos) */
 
   /* Graisses — alignées sur les valeurs disponibles dans Montserrat Variable. */
   --weight-regular: 400;
@@ -299,10 +308,16 @@
      --ease-scroll   : easeOutCubic classique → reveals au scroll.
 
      Durées :
+     --duration-press  : retour tactile d'un élément pressé — volontairement sous
+       --duration-fast. Au-delà d'environ 160 ms, l'enfoncement se voit APRÈS le
+       doigt plutôt qu'avec lui, et le bouton paraît mou.
      --duration-fast   : interactions immédiates (hover sur icône, toggle checkbox).
      --duration-base   : interactions standard (hover de bouton, bordure d'input).
      --duration-medium : transitions d'état plus substantielles (icône d'input).
      --duration-slow / --duration-reveal : reveals au scroll (600–800 ms selon CLAUDE.md).
+
+     --press-scale : facteur d'échelle d'un élément pressé. Assez marqué pour être
+     perçu, assez discret pour ne pas déplacer le texte du bouton sous le doigt.
      ============================================================ */
   --ease-card:     cubic-bezier(0.22, 1, 0.36, 1);
   --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);
@@ -311,11 +326,14 @@
   /* --ease-elastic : overshoot léger, utilisé pour les micro-interactions (boutons d'action, chips). */
   --ease-elastic:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
+  --duration-press:  0.16s;
   --duration-fast:   0.2s;
   --duration-base:   0.3s;
   --duration-medium: 0.4s;
   --duration-slow:   0.6s;
   --duration-reveal: 0.8s;
+
+  --press-scale:     0.97;
 
   /* ============================================================
      FILTRES CSS

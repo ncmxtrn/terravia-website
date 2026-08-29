@@ -1,11 +1,16 @@
 <!--
     apropos.html — Page « À propos » de Solutions Terravia.
-    État actuel : squelette. Seule l'introduction (H1 + accroche) est en place ; le corps de
-    page — mission, approche, équipe — viendra dans un lot ultérieur. La coquille (en-tête,
-    pied de page, anti-FOUC, transitions) est volontairement complète dès maintenant pour que
-    la page soit cohérente avec le reste du site et navigable depuis les autres pages.
-    Calquée sur services.html : page sans hero, donc header opaque dès la première frame.
-    Aucun JS inline — toute l'interactivité est centralisée dans script.js.
+
+    Cinq sections, du général au concret : introduction, manifeste (mission et
+    vision), valeurs, approche en quatre étapes, territoire desservi + appel à
+    l'action. La page se lit d'un bout à l'autre sans rien attendre ni rien
+    déclencher : tout le contenu est présent à l'écran, la seule mise en scène
+    est la révélation au défilement partagée avec le reste du site.
+
+    Calquée sur services.html : page sans hero, donc header opaque dès la
+    première frame. Aucun JS inline — et, contrairement aux quatre autres pages,
+    aucun JS propre à celle-ci : elle ne consomme que les mécanismes globaux de
+    script.js (anti-FOUC, révélation au scroll, états du header, transitions).
 -->
 <!DOCTYPE html>
 <html lang="fr" class="is-loading">
@@ -38,7 +43,7 @@
     <link rel="stylesheet" href="tokens.css">
     <!-- style.css : styles globaux partagés — header, footer, boutons, .section-header, utilitaires -->
     <link rel="stylesheet" href="style.css">
-    <!-- apropos.css : styles spécifiques à cette page (gabarit du main, intro) -->
+    <!-- apropos.css : styles spécifiques à cette page (manifeste, valeurs, approche, territoire) -->
     <link rel="stylesheet" href="apropos.css">
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
          Repli sans JS ci-dessous ; repli sans script.js dans style.css.
@@ -69,10 +74,7 @@
 </head>
 
 <body class="page-transition">
-    <!-- `apropos-wrapper` : gabarit collant du pied de page, le temps que la page se
-         limite à son introduction (voir apropos.css). Le header étant en position fixe,
-         il reste hors flux et n'est pas affecté par la colonne flex. -->
-    <div class="site-wrapper apropos-wrapper">
+    <div class="site-wrapper">
 
         <!-- `is-scrolled show-cta` sont écrites en dur et non posées par script.js :
              cette page n'a pas de hero, le header y est donc toujours opaque avec son CTA.
@@ -122,25 +124,198 @@
         </header>
 
         <main class="apropos-main">
-            <div class="container">
 
-                <!--
-                    Introduction de page — H1 + accroche.
-                    `.section-header center` est le gabarit global de style.css, déjà utilisé
-                    par l'intro de services.html ; `.apropos-intro` n'ajoute que la couleur du
-                    titre et son délai d'apparition (apropos.css). Le délai de 0,2 s du
-                    `.subtitle` vient, lui, de style.css — les deux textes se révèlent donc
-                    en cascade.
-                -->
-                <section class="section-header center apropos-intro">
-                    <h1 class="animate-on-scroll">À propos de Solutions Terravia</h1>
-                    <p class="subtitle animate-on-scroll">Une équipe technique dédiée à l'acquisition et au traitement de données géospatiales de précision.</p>
-                </section>
+            <!--
+                1. INTRODUCTION
+                `.section-header center` est le gabarit global de style.css, déjà utilisé
+                par l'intro de services.html. Le surtitre « À propos » libère le H1 de sa
+                fonction d'étiquette : le titre peut porter une affirmation, l'étiquette
+                reste lisible pour qui balaie la page.
+                Les trois éléments se révèlent en cascade — 0 s pour le surtitre, 0,1 s
+                pour le H1 (apropos.css), 0,2 s pour l'accroche (style.css).
+            -->
+            <section class="apropos-intro">
+                <div class="container">
+                    <div class="section-header center">
+                        <span class="label-upper apropos-eyebrow animate-on-scroll">À propos</span>
+                        <h1 class="animate-on-scroll">Du terrain au livrable, la mesure juste.</h1>
+                        <p class="subtitle animate-on-scroll">Une équipe technique dédiée à l'acquisition et au traitement de données géospatiales de précision.</p>
+                    </div>
+                </div>
+            </section>
 
-                <!-- TODO — Sections de contenu à venir (mission, approche, équipe, territoire
-                     desservi). Elles s'insèrent ici, sous l'introduction. -->
+            <!--
+                2. MANIFESTE — mission et vision côte à côte.
+                Les deux textes remplacent le diaporama qui les alternait : ils sont
+                courts, ils tiennent ensemble à l'écran, et rien ne justifiait d'en
+                cacher un pour montrer l'autre.
 
-            </div>
+                Le <h2> porte l'étiquette (« Mission ») et non la phrase : c'est bien
+                l'étiquette qui nomme la section dans le plan du document. Sa mise en
+                forme réduite est un choix visuel, assumé dans apropos.css — la
+                hiérarchie sémantique et la hiérarchie typographique divergent ici
+                volontairement.
+            -->
+            <section class="apropos-manifeste" aria-label="Mission et vision">
+                <div class="container manifeste-grid">
+                    <article class="manifeste-item animate-on-scroll">
+                        <!-- Filet d'accent purement décoratif : il se trace de haut en
+                             bas à la révélation et sert de repère de colonne. -->
+                        <span class="manifeste-rule" aria-hidden="true"></span>
+                        <h2 class="manifeste-label">Mission</h2>
+                        <p class="manifeste-statement">Fournir des données géospatiales d'une précision irréprochable, structurées pour s'intégrer directement dans les flux d'ingénierie de nos clients.</p>
+                    </article>
+
+                    <article class="manifeste-item animate-on-scroll">
+                        <span class="manifeste-rule" aria-hidden="true"></span>
+                        <h2 class="manifeste-label">Vision</h2>
+                        <p class="manifeste-statement">Devenir la référence québécoise en intelligence géospatiale appliquée, en connectant chaque relevé à une plateforme de données exploitable et pérenne.</p>
+                    </article>
+                </div>
+            </section>
+
+            <!--
+                3. VALEURS — quatre cartes.
+                Chaque carte est enveloppée dans un `.valeur-reveal` qui porte la
+                révélation et son délai de cascade, tandis que la carte porte le survol.
+                Séparation obligatoire, pas cosmétique : les deux animent `transform`,
+                et un délai posé sur l'élément survolé retarderait aussi chaque survol.
+                Voir la note « STAGGER DES CARTES AU SCROLL » de services.css.
+            -->
+            <section class="apropos-valeurs" aria-labelledby="titre-valeurs">
+                <div class="container">
+                    <div class="section-header center">
+                        <h2 id="titre-valeurs" class="animate-on-scroll">Nos valeurs</h2>
+                        <p class="subtitle animate-on-scroll">Quatre principes qui décident de nos méthodes bien avant de décider de notre discours.</p>
+                    </div>
+
+                    <div class="valeurs-grid">
+                        <!-- Les icônes doublent le titre adjacent : décoratives, donc
+                             retirées de l'arbre d'accessibilité — la ligature Material
+                             serait autrement lue telle quelle (« straighten »). -->
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">straighten</span>
+                                <h3>Précision</h3>
+                                <p>Chaque relevé est contrôlé, documenté et rattaché à un système de référence vérifiable.</p>
+                            </article>
+                        </div>
+
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">checklist</span>
+                                <h3>Rigueur méthodologique</h3>
+                                <p>Des procédures écrites à chaque étape, du plan d'acquisition au contrôle qualité final.</p>
+                            </article>
+                        </div>
+
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">science</span>
+                                <h3>Innovation technique</h3>
+                                <p>LiDAR, photogrammétrie, GNSS : les méthodes évoluent, l'exigence de justesse ne bouge pas.</p>
+                            </article>
+                        </div>
+
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">verified</span>
+                                <h3>Transparence</h3>
+                                <p>Marges d'erreur, méthodes et limites : ce qui conditionne vos décisions est écrit noir sur blanc.</p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!--
+                4. APPROCHE — quatre étapes.
+                <ol> et non <div> : l'ordre des étapes est une information, pas une
+                mise en page. Les numéros affichés en Orbitron sont donc redondants
+                avec la sémantique de la liste, et purement décoratifs à ce titre —
+                mais ils restent lus, car un lecteur d'écran n'annonce pas toujours
+                les puces d'une liste ordonnée stylée `list-style: none`.
+            -->
+            <section class="apropos-approche" aria-labelledby="titre-approche">
+                <div class="container">
+                    <div class="section-header center">
+                        <h2 id="titre-approche" class="animate-on-scroll">Notre approche</h2>
+                        <p class="subtitle animate-on-scroll">Un même déroulé sur tous les mandats, du levé ponctuel au suivi pluriannuel.</p>
+                    </div>
+
+                    <!-- `role="list"` est nécessaire malgré la balise <ol> : sous
+                         VoiceOver / Safari, `list-style: none` retire la liste de
+                         l'arbre d'accessibilité, et avec elle l'annonce « liste de
+                         4 éléments » qui porte ici toute la notion de séquence. -->
+                    <ol class="approche-steps" role="list">
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num font-display">01</span>
+                                <h3>Cadrage</h3>
+                                <p>Définition du besoin, du système de référence et des tolérances attendues, avant toute sortie terrain.</p>
+                            </article>
+                        </li>
+
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num font-display">02</span>
+                                <h3>Acquisition</h3>
+                                <p>Levés GNSS, station totale, LiDAR ou photogrammétrie, selon la précision visée et les contraintes du site.</p>
+                            </article>
+                        </li>
+
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num font-display">03</span>
+                                <h3>Traitement</h3>
+                                <p>Calcul, filtrage et contrôle qualité des observations et des nuages de points, avec rapport de précision.</p>
+                            </article>
+                        </li>
+
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num font-display">04</span>
+                                <h3>Livraison</h3>
+                                <p>Plans, modèles et jeux de données remis au format de vos outils, prêts à entrer dans vos flux d'ingénierie.</p>
+                            </article>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <!--
+                5. TERRITOIRE + APPEL À L'ACTION.
+                Bande sombre en `--color-forest-light`, soit un ton AU-DESSUS du
+                `--color-forest` du pied de page : les deux surfaces sombres se
+                touchent, et sans cet écart elles fusionneraient en un seul bloc.
+
+                TODO — contenu à valider : la liste des régions ci-dessous est
+                plausible (siège à Montréal, mention du secteur minier) mais n'a pas
+                été confirmée. À corriger avant mise en ligne.
+            -->
+            <section class="apropos-territoire" aria-labelledby="titre-territoire">
+                <div class="container">
+                    <div class="territoire-content animate-on-scroll">
+                        <span class="label-upper territoire-eyebrow">Territoire desservi</span>
+                        <h2 id="titre-territoire">Partout où le terrain nous mène</h2>
+                        <p>Basés à Montréal, nous nous déployons sur l'ensemble du Québec — des chantiers urbains les plus contraints aux sites en région éloignée.</p>
+
+                        <ul class="territoire-regions">
+                            <li>Grand Montréal</li>
+                            <li>Montérégie</li>
+                            <li>Laurentides</li>
+                            <li>Lanaudière</li>
+                            <li>Estrie</li>
+                            <li>Mauricie</li>
+                            <li>Abitibi-Témiscamingue</li>
+                            <li>Côte-Nord</li>
+                        </ul>
+
+                        <a href="contact.html" class="btn btn-primary transition-link territoire-cta">Parlons de votre projet</a>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <!--

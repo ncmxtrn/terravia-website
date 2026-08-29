@@ -147,12 +147,7 @@
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
-                    <!--
-                        Lien placeholder : la page "À propos" n'est pas encore publiée.
-                        La classe `.link-placeholder` est interceptée par script.js pour
-                        afficher une alerte "page en construction" au lieu de naviguer.
-                    -->
-                    <a href="#" class="link-placeholder">À propos</a>
+                    <a href="apropos.html" class="transition-link">À propos</a>
                 </nav>
 
                 <div class="header-actions">
@@ -385,8 +380,8 @@
         <!--
             Pied de page — fond solide `--forest-900`, quatre colonnes : marque, services, entreprise, coordonnées.
             L'ancre `id="contact"` permet de pointer vers cette section depuis les boutons CTA de la page.
-            Les liens sous "Services" et "Entreprise" non encore publiés portent `.link-placeholder`
-            pour déclencher l'alerte "en construction" via script.js.
+            Sous "Entreprise", les pages non encore publiées ("Carrières", "Blogue technique")
+            portent `.link-placeholder` pour déclencher l'alerte "en construction" via script.js.
         -->
         <footer class="site-footer" id="contact">
             <div class="container">
@@ -413,7 +408,7 @@
                     <div class="footer-links">
                         <h4>Entreprise</h4>
                         <ul>
-                            <li><a href="#" class="link-placeholder">À propos</a></li>
+                            <li><a href="apropos.html" class="transition-link">À propos</a></li>
                             <li><a href="#" class="link-placeholder">Carrières</a></li>
                             <li><a href="#" class="link-placeholder">Blogue technique</a></li>
                         </ul>

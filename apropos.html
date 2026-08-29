@@ -1,0 +1,445 @@
+<!--
+    apropos.html — Page « À propos » de Solutions Terravia.
+
+    Cinq sections, du général au concret : introduction, manifeste (mission et
+    vision), valeurs, approche en quatre étapes, territoire desservi. La page se
+    lit d'un bout à l'autre sans rien attendre ni rien déclencher : tout le contenu
+    est présent à l'écran, la seule mise en scène est la révélation au défilement
+    partagée avec le reste du site.
+
+    Aucun appel à l'action dans le corps de la page : la conversion passe par le
+    bouton « Contactez-nous » du header, qui porte ici `show-cta` en dur et reste
+    donc visible sur toute la hauteur de la page.
+
+    Calquée sur services.html : page sans hero, donc header opaque dès la
+    première frame. Aucun JS inline — et, contrairement aux quatre autres pages,
+    aucun JS propre à celle-ci : elle ne consomme que les mécanismes globaux de
+    script.js (anti-FOUC, révélation au scroll, états du header, transitions).
+-->
+<!DOCTYPE html>
+<html lang="fr" class="is-loading">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>À propos — Solutions Terravia</title>
+    <meta name="description" content="Solutions Terravia, équipe technique québécoise dédiée à l'acquisition et au traitement de données géospatiales de précision." />
+
+    <!-- Icônes du site — bloc identique à celui du <head> de index.html, où l'ordre
+         des balises et la bascule clair/sombre sont documentés en détail. -->
+    <link rel="icon" href="favicon.ico" sizes="32x32" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="theme-color" content="#1A3C34" />
+
+    <!--
+        Les feuilles de style Google (polices + icônes Material Symbols) sont chargées
+        avant nos propres CSS afin que la cascade CSS locale puisse les surcharger sans
+        recourir à `!important`. Même contrainte d'ordre que dans index.html.
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
+        rel="stylesheet" />
+
+    <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
+    <link rel="stylesheet" href="tokens.css">
+    <!-- style.css : styles globaux partagés — header, footer, boutons, .section-header, utilitaires -->
+    <link rel="stylesheet" href="style.css">
+    <!-- apropos.css : styles spécifiques à cette page (manifeste, valeurs, approche, territoire) -->
+    <link rel="stylesheet" href="apropos.css">
+    <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
+         Repli sans JS ci-dessous ; repli sans script.js dans style.css.
+         Voir le commentaire détaillé dans le <head> de index.html. -->
+    <noscript><style>
+        /* JavaScript entièrement désactivé : script.js ne lèvera jamais le masquage,
+           on neutralise donc ici tout ce qui dépend de lui.
+
+           `animation: none` est indispensable et non cosmétique : sans lui, le filet
+           de sécurité de style.css se déclenche quand même au bout de 2 s, et son
+           animation repart de `opacity: 0`. Une animation CSS l'emportant sur une
+           déclaration normale, elle écrase le `opacity: 1` ci-dessous — toute la page
+           disparaît puis réapparaît en fondu, deux secondes après le chargement.
+
+           Le header, lui, est masqué par défaut (translateY(-100%)) : c'est JS qui
+           pose .is-floating ou .is-scrolled selon la page et le défilement. Sans JS il
+           resterait hors écran, laissant la page sans barre de navigation. On le
+           laisse dans son état de base — fond blanc opaque, lisible à toute hauteur
+           de défilement, ce que l'état flottant transparent ne garantirait pas. */
+        html.is-loading body { opacity: 1; visibility: visible; animation: none; }
+        html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
+        /* Les rangées du registre des régions ne portent pas .animate-on-scroll :
+           leur état masqué dépend de `.territoire-regions:not(.visible)` (apropos.css
+           § 6), donc de la classe que seul script.js pose. Sans cette ligne, la liste
+           des huit régions resterait vide sans JavaScript. `animation: none` pour la
+           même raison qu'au-dessus : neutraliser le filet à 2 s d'apropos.css. */
+        html.is-loading .territoire-regions li { opacity: 1; animation: none; }
+        /* Même cas pour la marque de station : son état masqué dépend de
+           `.apropos-territoire:has(h2:not(.visible))` (apropos.css § 6), donc encore
+           d'une classe que seul script.js pose. `transform` est réaffirmé au centrage
+           parce que la règle neutralisée le décalait ; `animation: none` neutralise la
+           keyframe de secours, qui n'a plus lieu d'être une fois la marque posée ici.
+           Cette règle est à égalité de spécificité avec celle d'apropos.css (0,2,2) et
+           l'emporte par l'ordre : ce <style> suit le <link> qui charge la feuille. */
+        html.is-loading .apropos-territoire::after {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            animation: none;
+        }
+        /* Et l'onde du sonar, qui dépend de la même classe : sans JS elle ne partirait
+           jamais et les six cercles resteraient masqués. On la pose à sa portée
+           finale — le décor entier, sans balayage. */
+        html.is-loading .apropos-territoire::before {
+            --sonar-r: var(--sonar-reach);
+            animation: none;
+        }
+        .site-header:not(.is-floating):not(.show-cta) {
+            transform: none;
+            background-color: var(--white);
+            border-bottom-color: var(--border-subtle);
+        }
+    </style></noscript>
+</head>
+
+<body class="page-transition">
+    <div class="site-wrapper">
+
+        <!-- `is-scrolled show-cta` sont écrites en dur et non posées par script.js :
+             cette page n'a pas de hero, le header y est donc toujours opaque avec son CTA.
+             En les posant en JS, le header était peint une première frame dans son état
+             dérivé `:not(.is-floating):not(.show-cta)` — translateY(-100%) — puis
+             redescendait en glissant par-dessus le fondu d'entrée de la page. -->
+        <header class="site-header is-scrolled show-cta">
+            <div class="container header-content">
+                <!-- `logo--adaptive` inscrit ce logo au dispositif de bascule mobile
+                     (section « HEADER — LOGO ADAPTATIF » de style.css) ; sans elle,
+                     le second <img> ci-dessous resterait inerte. Cette page a un CTA
+                     réellement actif, elle est donc concernée — contrairement à
+                     contact.html, dont le bouton est neutralisé par contact.css. -->
+                <a href="index.html" class="logo logo--adaptive transition-link">
+                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
+                    <!-- Marque compacte, affichée seulement sous 555px quand le bouton
+                         « Contactez-nous » occupe la colonne centrale du header (voir la
+                         section « HEADER — LOGO ADAPTATIF » de style.css).
+                         alt vide + aria-hidden : le nom accessible du lien est déjà porté
+                         par le lockup ci-dessus, qui reste dans le DOM en permanence — le
+                         fondu ne joue que sur l'opacité. -->
+                    <img src="assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
+                </a>
+
+                <!-- Comme sur les autres pages, la navigation omet le lien vers la page
+                     courante : « À propos » n'y figure donc pas. -->
+                <nav class="main-nav">
+                    <a href="index.html" class="transition-link">Accueil</a>
+                    <a href="services.html" class="transition-link">Services</a>
+                    <a href="login.html" class="transition-link client-link">
+                        Espace client
+                        <span class="material-symbols-outlined client-icon">arrow_outward</span>
+                    </a>
+                </nav>
+
+                <div class="header-actions">
+                    <a href="contact.html" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
+                    <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+                        <div class="burger-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="apropos-main">
+
+            <!--
+                1. INTRODUCTION
+                `.section-header center` est le gabarit global de style.css, déjà utilisé
+                par l'intro de services.html. Le surtitre « À propos » libère le H1 de sa
+                fonction d'étiquette : le titre peut porter une affirmation, l'étiquette
+                reste lisible pour qui balaie la page.
+                Les trois éléments se révèlent en cascade — 0 s pour le surtitre, 0,1 s
+                pour le H1 (apropos.css), 0,2 s pour l'accroche (style.css).
+            -->
+            <section class="apropos-intro">
+                <div class="container">
+                    <div class="section-header center">
+                        <h1 class="animate-on-scroll">Du terrain au livrable, la mesure juste.</h1>
+                        <p class="subtitle animate-on-scroll">Une équipe technique dédiée à l'acquisition et au traitement de données géospatiales de précision.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!--
+                2. MANIFESTE — mission et vision côte à côte.
+                Les deux textes remplacent le diaporama qui les alternait : ils sont
+                courts, ils tiennent ensemble à l'écran, et rien ne justifiait d'en
+                cacher un pour montrer l'autre.
+
+                Le <h2> porte l'étiquette (« Mission ») et non la phrase : c'est bien
+                l'étiquette qui nomme la section dans le plan du document. Sa mise en
+                forme réduite est un choix visuel, assumé dans apropos.css — la
+                hiérarchie sémantique et la hiérarchie typographique divergent ici
+                volontairement.
+            -->
+            <section class="apropos-manifeste" aria-label="Mission et vision">
+                <div class="container manifeste-grid">
+                    <article class="manifeste-item animate-on-scroll">
+                        <!-- Filet d'accent purement décoratif : il se trace de haut en
+                             bas à la révélation et sert de repère de colonne. -->
+                        <span class="manifeste-rule" aria-hidden="true"></span>
+                        <h2 class="manifeste-label">Mission</h2>
+                        <p class="manifeste-statement">Fournir des données géospatiales d'une précision irréprochable, structurées pour s'intégrer directement dans les flux d'ingénierie de nos clients.</p>
+                    </article>
+
+                    <article class="manifeste-item animate-on-scroll">
+                        <span class="manifeste-rule" aria-hidden="true"></span>
+                        <h2 class="manifeste-label">Vision</h2>
+                        <p class="manifeste-statement">Devenir la référence québécoise en intelligence géospatiale appliquée, en connectant chaque relevé à une plateforme de données exploitable et pérenne.</p>
+                    </article>
+                </div>
+            </section>
+
+            <!--
+                3. VALEURS — quatre cartes.
+                Chaque carte est enveloppée dans un `.valeur-reveal` qui porte la
+                révélation et son délai de cascade.
+                Les cartes elles-mêmes sont inertes : aucun état de survol. Elles
+                informent et ne sont pas cliquables — un survol y promettrait un clic
+                qu'elles ne tiennent pas. Voir la note de `.valeur-card` (apropos.css § 4).
+                Voir aussi « STAGGER DES CARTES AU SCROLL » de services.css.
+            -->
+            <section class="apropos-valeurs" aria-labelledby="titre-valeurs">
+                <div class="container">
+                    <div class="section-header center">
+                        <h2 id="titre-valeurs" class="animate-on-scroll">Nos valeurs</h2>
+                        <p class="subtitle animate-on-scroll">Quatre principes qui décident de nos méthodes bien avant de décider de notre discours.</p>
+                    </div>
+
+                    <div class="valeurs-grid">
+                        <!-- Les icônes doublent le titre adjacent : décoratives, donc
+                             retirées de l'arbre d'accessibilité — la ligature Material
+                             serait autrement lue telle quelle (« straighten »). -->
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">straighten</span>
+                                <h3>Précision</h3>
+                                <p>Chaque relevé est contrôlé, documenté et rattaché à un système de référence vérifiable.</p>
+                            </article>
+                        </div>
+
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">checklist</span>
+                                <h3>Rigueur méthodologique</h3>
+                                <p>Des procédures écrites à chaque étape, du plan d'acquisition au contrôle qualité final.</p>
+                            </article>
+                        </div>
+
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">science</span>
+                                <h3>Innovation technique</h3>
+                                <p>LiDAR, photogrammétrie, GNSS : les méthodes évoluent, l'exigence de justesse ne bouge pas.</p>
+                            </article>
+                        </div>
+
+                        <div class="valeur-reveal animate-on-scroll">
+                            <article class="valeur-card">
+                                <span class="material-symbols-outlined valeur-icon" aria-hidden="true">verified</span>
+                                <h3>Transparence</h3>
+                                <p>Marges d'erreur, méthodes et limites : ce qui conditionne vos décisions est écrit noir sur blanc.</p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!--
+                4. APPROCHE — quatre étapes.
+                <ol> et non <div> : l'ordre des étapes est une information, pas une
+                mise en page. Les numéros affichés sont donc redondants avec la
+                sémantique de la liste, et purement décoratifs à ce titre — mais ils
+                restent lus, car un lecteur d'écran n'annonce pas toujours les puces
+                d'une liste ordonnée stylée `list-style: none`.
+                D'où `.label-upper` : le numéro reprend l'idiome d'eyebrow des deux
+                autres sections de la page plutôt qu'une police et une taille à lui.
+            -->
+            <section class="apropos-approche" aria-labelledby="titre-approche">
+                <div class="container">
+                    <div class="section-header center">
+                        <h2 id="titre-approche" class="animate-on-scroll">Notre approche</h2>
+                        <p class="subtitle animate-on-scroll">Un même déroulé sur tous les mandats, du levé ponctuel au suivi pluriannuel.</p>
+                    </div>
+
+                    <!-- `role="list"` est nécessaire malgré la balise <ol> : sous
+                         VoiceOver / Safari, `list-style: none` retire la liste de
+                         l'arbre d'accessibilité, et avec elle l'annonce « liste de
+                         4 éléments » qui porte ici toute la notion de séquence. -->
+                    <ol class="approche-steps" role="list">
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num label-upper">01</span>
+                                <h3>Cadrage</h3>
+                                <p>Définition du besoin, du système de référence et des tolérances attendues, avant toute sortie terrain.</p>
+                            </article>
+                        </li>
+
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num label-upper">02</span>
+                                <h3>Acquisition</h3>
+                                <p>Levés GNSS, station totale, LiDAR ou photogrammétrie, selon la précision visée et les contraintes du site.</p>
+                            </article>
+                        </li>
+
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num label-upper">03</span>
+                                <h3>Traitement</h3>
+                                <p>Calcul, filtrage et contrôle qualité des observations et des nuages de points, avec rapport de précision.</p>
+                            </article>
+                        </li>
+
+                        <li class="approche-step-reveal animate-on-scroll">
+                            <article class="approche-step">
+                                <span class="approche-num label-upper">04</span>
+                                <h3>Livraison</h3>
+                                <p>Plans, modèles et jeux de données remis au format de vos outils, prêts à entrer dans vos flux d'ingénierie.</p>
+                            </article>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <!--
+                5. TERRITOIRE.
+                Bande sombre en `--color-forest-light`, soit un ton AU-DESSUS du
+                `--color-forest` du pied de page : les deux surfaces sombres se
+                touchent, et sans cet écart elles fusionneraient en un seul bloc.
+
+                Le décor de la bande est entièrement en CSS (apropos.css § 6) : un
+                tracé de portée depuis un point de station, hors centre. Rien à
+                ajouter ici — pas d'élément vide à porter le motif, les deux
+                pseudo-éléments de la section suffisent, et un pseudo-élément
+                n'entre pas dans l'arbre d'accessibilité.
+
+                TODO — contenu à valider : la liste des régions ci-dessous est
+                plausible (siège à Montréal, mention du secteur minier) mais n'a pas
+                été confirmée. À corriger avant mise en ligne.
+            -->
+            <section class="apropos-territoire" aria-labelledby="titre-territoire">
+                <div class="container">
+                    <!-- La révélation est portée par chaque partie et non par le bloc :
+                         c'est ici la finale de la page et sa zone la plus dense (le
+                         registre des huit régions), et un pavé de cette hauteur qui
+                         monte d'un seul tenant est le seul endroit de la page où rien
+                         ne se lit dans l'ordre. Délais de cascade dans apropos.css § 6. -->
+                    <div class="territoire-content">
+                        <h2 id="titre-territoire" class="animate-on-scroll">Partout où le terrain nous mène</h2>
+                        <p class="animate-on-scroll">Nous nous déployons sur l'ensemble du Québec — des chantiers urbains les plus contraints aux sites en région éloignée.</p>
+
+                        <!-- Registre des régions couvertes. La liste porte la
+                             révélation, ses rangées s'allument ensuite une à une :
+                             le <ul> sert de déclencheur commun. Huit éléments
+                             observés séparément produiraient huit franchissements
+                             de seuil quasi simultanés — du bruit, pas une cascade.
+
+                             L'ordre du DOM est celui de la lecture, y compris à deux
+                             colonnes : la grille d'apropos.css § 7 remplit par
+                             rangées, donc la cascade se lit gauche puis droite.
+                             Réordonner ces huit lignes désordonnerait la cascade. -->
+                        <ul class="territoire-regions animate-on-scroll">
+                            <li>Grand Montréal</li>
+                            <li>Montérégie</li>
+                            <li>Laurentides</li>
+                            <li>Lanaudière</li>
+                            <li>Estrie</li>
+                            <li>Mauricie</li>
+                            <li>Abitibi-Témiscamingue</li>
+                            <li>Côte-Nord</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!--
+            Pied de page — structure identique aux trois autres pages.
+            Les liens « Services » pointent vers les ancres de services.html.
+            Sous « Entreprise », « À propos » pointe vers la page courante : il reste
+            volontairement présent et cliquable pour que la colonne soit identique partout.
+            « Carrières » et « Blogue technique » restent des placeholders interceptés par script.js.
+            Pas d'`id="contact"` sur ce <footer>, contrairement à index.html et services.html :
+            aucune ancre de cette page ne pointe vers lui.
+        -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <a href="index.html" class="logo transition-link">
+                            <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                        </a>
+                        <p>Levés, traitement et livrables<br>géospatiaux.</p>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="services.html#arpentage" class="transition-link">Arpentage</a></li>
+                            <li><a href="services.html#minier" class="transition-link">Secteur Minier</a></li>
+                            <li><a href="services.html#civil" class="transition-link">Génie Civil et Construction</a></li>
+                            <li><a href="services.html#architecture" class="transition-link">Architecture et Bâtiment</a></li>
+                            <li><a href="services.html#environnement" class="transition-link">Environnement</a></li>
+                            <li><a href="services.html#territoire" class="transition-link">Municipalités</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Entreprise</h4>
+                        <ul>
+                            <li><a href="apropos.html" class="transition-link">À propos</a></li>
+                            <li><a href="#" class="link-placeholder">Carrières</a></li>
+                            <li><a href="#" class="link-placeholder">Blogue technique</a></li>
+                        </ul>
+                    </div>
+
+                    <!--
+                        Coordonnées structurées avec `<address>` pour la sémantique HTML correcte.
+                        Les icônes Material Symbols sont purement décoratives ici (pas d'aria-label nécessaire
+                        car le texte adjacent est suffisant pour l'accessibilité).
+                    -->
+                    <div class="footer-contact">
+                        <h4>Contactez-nous</h4>
+                        <ul>
+                            <li><span class="material-symbols-outlined icon">call</span> +1 (999) 999-9999</li>
+                            <li><span class="material-symbols-outlined icon">mail</span> info@solutionsterravia.com</li>
+                            <li>
+                                <span class="material-symbols-outlined icon">location_on</span>
+                                <address>
+                                    1453, rue Beaubien Est<br>
+                                    Montréal, QC H2G 3C6
+                                </address>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2026 Terravia. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!--
+        script.js chargé en fin de body (sans `defer`) pour garantir que le DOM est entièrement
+        parsé avant l'initialisation. Gère sur cette page : anti-FOUC, révélation au scroll,
+        états du header, escamotage mobile, menu hamburger, transitions de page.
+    -->
+    <script src="script.js"></script>
+</body>
+
+</html>

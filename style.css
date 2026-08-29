@@ -30,7 +30,7 @@
 body {
     /* opacity: 1 par défaut pour la transition fade-in : script.js retire la classe
        .is-loading sur <html> à DOMContentLoaded, déclenchant le passage de 0 → 1.
-       La DURÉE de ce fondu n'est volontairement pas déclarée ici : les quatre pages
+       La DURÉE de ce fondu n'est volontairement pas déclarée ici : les cinq pages
        portent .page-transition, dont la spécificité (0,1,0) l'emporte sur ce sélecteur
        d'élément (0,0,1). Une `transition` posée ici serait donc systématiquement morte.
        Le timing réel est celui de .page-transition, plus bas. */
@@ -54,7 +54,7 @@ section[id], footer[id] {
 }
 
 /* État initial anti-FOUC (Flash Of Unstyled Content).
-   La classe est écrite en dur sur <html> dans les 4 pages et retirée par script.js
+   La classe est écrite en dur sur <html> dans les 5 pages et retirée par script.js
    sur DOMContentLoaded. Elle est portée par <html> et non <body> pour être active
    dès le parsing du <head>, avant que <body> n'existe.
    visibility: hidden retire l'élément du flux de rendu visuel sans le cacher
@@ -900,7 +900,7 @@ a {
 
 .animate-on-scroll {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(var(--reveal-shift));
     transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 

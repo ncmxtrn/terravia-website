@@ -19,12 +19,12 @@
    ============================================================= */
 
 // --- Révélation de la page (anti-FOUC) ---
-// La classe "is-loading" est écrite en dur sur <html> dans les 4 pages. On la retire
+// La classe "is-loading" est écrite en dur sur <html> dans les 5 pages. On la retire
 // dès que le DOM est parsé, sans attendre "load" : sinon la page resterait masquée
 // jusqu'au téléchargement de la dernière image.
 // Les deux cas dégradés (JS désactivé, script.js jamais exécuté) sont couverts sans
 // JavaScript — <noscript> dans chaque <head> et @keyframes fouc-safety-net dans
-// style.css — ce qui évite d'avoir un bloc inline recopié dans les quatre pages.
+// style.css — ce qui évite d'avoir un bloc inline recopié dans les cinq pages.
 document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.remove("is-loading");
 });
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // --- Masquage au scroll descendant (mobile) ---
         // Hors du `if (heroSection)` ci-dessous, à dessein : le dispositif vaut
-        // pour les trois pages qui ont un header, pas seulement pour celles qui
+        // pour les quatre pages qui ont un header, pas seulement pour celles qui
         // ont un hero.
         //
         // Ce bloc n'AJOUTE que du masquage, il ne révèle jamais rien : dans le

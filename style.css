@@ -212,6 +212,13 @@ a {
    • .is-scrolled  — glassmorphisme actif (le hero entier a quitté le viewport)
    L'état "caché" (slide hors écran) est dérivé en CSS :
    :not(.is-floating):not(.show-cta) → transform: translateY(-100%)
+
+   S'y ajoute un QUATRIÈME état, .is-hidden, qui n'est pas dérivé mais posé
+   explicitement par script.js selon la DIRECTION du défilement, et qui n'existe
+   que sous 840px (voir « HEADER MOBILE » plus bas). Les deux mécanismes de
+   masquage cohabitent volontairement : le dérivé gouverne le haut du hero
+   d'index.html, l'explicite gouverne tout le reste. Ils posent le même
+   translateY(-100%), donc leur ordre relatif est sans conséquence.
    ========================================= */
 .site-header {
     position: fixed;
@@ -579,6 +586,32 @@ a {
         max-width: 250px; /* Une largeur suffisante pour contenir le bouton */
         /* On rétablit le padding d'origine (défini plus haut dans .btn) */
         padding: 0.75rem 1.5rem;
+    }
+
+    /* --- Masquage au scroll descendant ---
+       Sur un écran étroit, les 80px du header fixe pèsent lourd pendant la
+       lecture : on l'escamote quand l'utilisateur descend, il revient dès qu'il
+       remonte. La classe est posée par script.js (bloc « Masquage au scroll
+       descendant »), qui la retire de lui-même au-dessus de 840px — la garde ici
+       est donc doublée côté JS, pas seulement portée par ce média.
+
+       Aucune transition à redéclarer : .site-header transitionne déjà transform
+       (--duration-medium / --ease-header).
+
+       Le fond n'est PAS remis à transparent, contrairement à l'état caché dérivé
+       plus haut : celui-ci part d'un header déjà peint en opaque et doit s'en
+       aller tel quel, comme une barre qui s'escamote. Le remettre transparent
+       le ferait clignoter avant de glisser. */
+    .site-header.is-hidden {
+        transform: translateY(-100%);
+    }
+
+    /* Filet de sécurité : le scroll du body n'est pas verrouillé quand le menu
+       burger est ouvert : un événement de défilement peut donc survenir menu
+       déployé, et le header ne doit alors jamais partir avec lui. La garde
+       principale est côté JS ; celle-ci ne coûte rien et couvre les courses. */
+    .site-header.menu-open.is-hidden {
+        transform: none;
     }
 }
 

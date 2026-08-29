@@ -343,23 +343,41 @@
     }
 
     /* Sidebar → barre de navigation horizontale scrollable.
-       Même recette glass que .site-header.is-scrolled pour s'y adosser visuellement.
-       Marges négatives = on casse le padding du .container pour aller bord à bord. */
+       Marges négatives = on casse le padding du .container pour aller bord à bord.
+
+       Le fond déclaré ici est le REPLI SANS JS : c'est script.js qui pose
+       .has-pill-nav, et c'est elle qui bascule la barre en transparent pour la
+       laisser voir le verre du header au travers (voir « SURFACE UNIQUE » plus
+       bas). Sans JS, pas de panneau : la barre doit se peindre elle-même, sinon
+       le contenu défilerait à découvert derrière les pilules. */
     .services-sidebar {
         position: sticky;
         top: var(--header-height);
-        z-index: 99; /* juste sous le header (100) pour que son ombre le recouvre */
+        /* Repli sans JS, même raison que le fond : juste sous le header (100),
+           qui porte le panneau du menu burger. Avec JS, .has-pill-nav inverse
+           cet ordre — voir « SURFACE UNIQUE ». */
+        z-index: 99;
         max-height: none;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        background: var(--surface-glass);
-        backdrop-filter: var(--blur-glass) var(--saturate-glass);
-        -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
+        background: var(--white);
         border-bottom: 1px solid var(--border-subtle);
         padding: var(--space-sm) 0;
         margin-inline: calc(var(--container-px) * -1);
+        /* Calée sur la transition transform du header, pour que les deux barres
+           bougent d'un seul bloc quand celui-ci s'escamote.
+           `top` et non `transform` : un transform décalerait aussi la barre AVANT
+           qu'elle ne soit collante, et elle chevaucherait le contenu au-dessus. */
+        transition: top var(--duration-medium) var(--ease-header);
+    }
+
+    /* Header escamoté au scroll descendant (classe posée sur <body> par script.js) :
+       la barre récupère la hauteur libérée au lieu de laisser une bande vide
+       au-dessus d'elle, dans laquelle le contenu défilerait à découvert. */
+    body.header-hidden .services-sidebar {
+        top: 0;
     }
 
     .services-sidebar::-webkit-scrollbar {
@@ -453,12 +471,79 @@
         display: none;
     }
 
-    /* Fusionne visuellement la pill-bar avec le header :
-       supprime le border-bottom du header sur cette page pour ne laisser
-       qu'un seul trait de fermeture (celui du bas de la pill-bar). */
+    /* ------------------------------------------------------------
+       SURFACE UNIQUE — HEADER + BARRE DE PILULES
+       ------------------------------------------------------------
+       Accostée sous le header, la barre lui est jointive : le verre dépoli doit
+       traverser la jointure sans marche de ton. Le poser sur les DEUX surfaces
+       ne marche pas — deux backdrop-filter voisins floutent chacun leur PROPRE
+       arrière-plan en s'écrêtant à leurs propres bords : dès qu'un élément coloré
+       défile derrière, les deux moyennes divergent et la jointure se marque.
+       C'est structurel, aucune valeur de token ne le corrige.
+
+       On ne pose donc qu'UNE couche de verre pour les deux, portée par le header
+       et débordant vers le bas de la hauteur exacte de la barre. Il n'y a plus
+       deux surfaces à accorder : il n'y en a plus qu'une.
+       ------------------------------------------------------------ */
+
+    /* Le header ne peint plus rien lui-même : son fond et son flou partent sur le
+       ::before ci-dessous. Ni trait ni ombre non plus — le seul trait de fermeture
+       de l'ensemble est le border-bottom de la barre.
+       Surcharge .site-header.is-scrolled à spécificité égale (0,2,0) : c'est
+       l'ordre d'import qui tranche, services.css étant chargé après style.css. */
     .has-pill-nav .site-header {
+        background-color: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         border-bottom-color: transparent;
         box-shadow: none;
+    }
+
+    /* Le panneau de verre, seul porteur du flou pour les deux surfaces.
+       z-index négatif = derrière le contenu du header (logo, nav, CTA) et
+       derrière le panneau du menu burger, mais devant le fond du header —
+       lequel est transparent, cf. ci-dessus. */
+    .has-pill-nav .site-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-color: var(--surface-glass);
+        backdrop-filter: var(--blur-glass) var(--saturate-glass);
+        -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
+    }
+
+    /* Le débordement vers le bas, barre accostée UNIQUEMENT (classe posée par
+       script.js). Le rendre permanent flouterait le haut de l'intro, qui passe
+       précisément dans cette bande alors que rien à l'écran ne l'expliquerait.
+       Aucune transition : à l'instant de l'accostage la bande ne couvre encore
+       que du fond de page, la bascule est donc invisible — l'animer ne ferait
+       que la désynchroniser de la barre.
+       La géométrie tient d'elle-même quand le header s'escamote : le panneau
+       descend jusqu'à --header-height + --pill-bar-h, donc translaté de -100% son
+       bord bas retombe exactement sur celui de la barre, elle-même remontée à
+       top: 0. Rien à recalculer, les deux mouvements partagent déjà durée et
+       courbe. */
+    .has-pill-nav.pill-nav-stuck .site-header::before {
+        bottom: calc(var(--pill-bar-h) * -1);
+    }
+
+    /* La barre devient transparente : ce qu'on voit à travers elle, c'est le
+       panneau ci-dessus. Encore faut-il qu'elle soit peinte APRÈS lui, sinon le
+       flou s'appliquerait aux pilules elles-mêmes — d'où le passage au-dessus du
+       header (100), qu'elle ne recouvre nulle part puisque les deux boîtes sont
+       jointives, jamais superposées. */
+    .has-pill-nav .services-sidebar {
+        background: transparent;
+        z-index: 101;
+    }
+
+    /* Seule exception : menu burger déployé. Son panneau se déplie exactement sur
+       la barre et doit la recouvrir, donc le header repasse devant. script.js ne
+       retire `menu-open` qu'à la fin de l'animation de fermeture : le vol retour
+       est couvert lui aussi. */
+    .has-pill-nav .site-header.menu-open {
+        z-index: 102;
     }
 
 }

@@ -1,0 +1,51 @@
+/**
+ * apropos.css — Styles spécifiques à la page apropos.html
+ *
+ * Complète style.css, qui fournit déjà tout le gabarit de l'introduction
+ * (`.section-header center`, `.subtitle`, `.animate-on-scroll`). Ce fichier
+ * ne porte donc que ce qui est propre à la page.
+ * Toutes les valeurs via tokens.css — aucune valeur brute.
+ *
+ * Ordre d'import : tokens.css → style.css → apropos.css
+ *
+ * Sommaire :
+ *   1. GABARIT DE PAGE
+ *   2. INTRODUCTION (H1 + accroche)
+ */
+
+
+/* ============================================================
+   1. GABARIT DE PAGE
+   ============================================================ */
+
+.apropos-main {
+    /* padding-top = header fixe + espace de respiration, comme .services-section :
+       le header est en position fixe, il ne réserve donc aucune place dans le flux. */
+    padding: calc(var(--header-height) + var(--space-3xl)) 0 var(--space-5xl);
+
+    /* Tant que la page se limite à son introduction, son contenu est plus court que
+       le viewport : sans hauteur minimale, le pied de page remonterait au milieu de
+       l'écran, sur une grande zone vide. La règle deviendra inopérante — et pourra
+       être retirée — dès que les sections de contenu rempliront la page. */
+    min-height: 100vh;
+}
+
+
+/* ============================================================
+   2. INTRODUCTION (H1 + accroche)
+   ============================================================ */
+
+/* La taille et la graisse du titre viennent déjà du défaut sémantique `h1` de
+   tokens.css ; on ne redéfinit ici que ce qui en diffère. */
+.section-header.apropos-intro h1 {
+    color: var(--color-forest);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-md);
+}
+
+/* Le titre se révèle légèrement avant l'accroche, qui tient son propre délai de
+   0,2 s de style.css (`.section-header .subtitle.animate-on-scroll`) — les deux
+   textes apparaissent donc en cascade plutôt qu'ensemble. */
+.section-header.apropos-intro h1.animate-on-scroll {
+    transition-delay: 0.1s;
+}

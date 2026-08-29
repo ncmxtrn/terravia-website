@@ -1,0 +1,218 @@
+<!--
+    apropos.html — Page « À propos » de Solutions Terravia.
+    État actuel : squelette. Seule l'introduction (H1 + accroche) est en place ; le corps de
+    page — mission, approche, équipe — viendra dans un lot ultérieur. La coquille (en-tête,
+    pied de page, anti-FOUC, transitions) est volontairement complète dès maintenant pour que
+    la page soit cohérente avec le reste du site et navigable depuis les autres pages.
+    Calquée sur services.html : page sans hero, donc header opaque dès la première frame.
+    Aucun JS inline — toute l'interactivité est centralisée dans script.js.
+-->
+<!DOCTYPE html>
+<html lang="fr" class="is-loading">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>À propos — Solutions Terravia</title>
+    <meta name="description" content="Solutions Terravia, équipe technique québécoise dédiée à l'acquisition et au traitement de données géospatiales de précision." />
+
+    <!-- Icônes du site — bloc identique à celui du <head> de index.html, où l'ordre
+         des balises et la bascule clair/sombre sont documentés en détail. -->
+    <link rel="icon" href="favicon.ico" sizes="32x32" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="theme-color" content="#1A3C34" />
+
+    <!--
+        Les feuilles de style Google (polices + icônes Material Symbols) sont chargées
+        avant nos propres CSS afin que la cascade CSS locale puisse les surcharger sans
+        recourir à `!important`. Même contrainte d'ordre que dans index.html.
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400..900&display=swap"
+        rel="stylesheet" />
+
+    <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
+    <link rel="stylesheet" href="tokens.css">
+    <!-- style.css : styles globaux partagés — header, footer, boutons, .section-header, utilitaires -->
+    <link rel="stylesheet" href="style.css">
+    <!-- apropos.css : styles spécifiques à cette page (gabarit du main, intro) -->
+    <link rel="stylesheet" href="apropos.css">
+    <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
+         Repli sans JS ci-dessous ; repli sans script.js dans style.css.
+         Voir le commentaire détaillé dans le <head> de index.html. -->
+    <noscript><style>
+        /* JavaScript entièrement désactivé : script.js ne lèvera jamais le masquage,
+           on neutralise donc ici tout ce qui dépend de lui.
+
+           `animation: none` est indispensable et non cosmétique : sans lui, le filet
+           de sécurité de style.css se déclenche quand même au bout de 2 s, et son
+           animation repart de `opacity: 0`. Une animation CSS l'emportant sur une
+           déclaration normale, elle écrase le `opacity: 1` ci-dessous — toute la page
+           disparaît puis réapparaît en fondu, deux secondes après le chargement.
+
+           Le header, lui, est masqué par défaut (translateY(-100%)) : c'est JS qui
+           pose .is-floating ou .is-scrolled selon la page et le défilement. Sans JS il
+           resterait hors écran, laissant la page sans barre de navigation. On le
+           laisse dans son état de base — fond blanc opaque, lisible à toute hauteur
+           de défilement, ce que l'état flottant transparent ne garantirait pas. */
+        html.is-loading body { opacity: 1; visibility: visible; animation: none; }
+        html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
+        .site-header:not(.is-floating):not(.show-cta) {
+            transform: none;
+            background-color: var(--white);
+            border-bottom-color: var(--border-subtle);
+        }
+    </style></noscript>
+</head>
+
+<body class="page-transition">
+    <div class="site-wrapper">
+
+        <!-- `is-scrolled show-cta` sont écrites en dur et non posées par script.js :
+             cette page n'a pas de hero, le header y est donc toujours opaque avec son CTA.
+             En les posant en JS, le header était peint une première frame dans son état
+             dérivé `:not(.is-floating):not(.show-cta)` — translateY(-100%) — puis
+             redescendait en glissant par-dessus le fondu d'entrée de la page. -->
+        <header class="site-header is-scrolled show-cta">
+            <div class="container header-content">
+                <!-- `logo--adaptive` inscrit ce logo au dispositif de bascule mobile
+                     (section « HEADER — LOGO ADAPTATIF » de style.css) ; sans elle,
+                     le second <img> ci-dessous resterait inerte. Cette page a un CTA
+                     réellement actif, elle est donc concernée — contrairement à
+                     contact.html, dont le bouton est neutralisé par contact.css. -->
+                <a href="index.html" class="logo logo--adaptive transition-link">
+                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
+                    <!-- Marque compacte, affichée seulement sous 555px quand le bouton
+                         « Contactez-nous » occupe la colonne centrale du header (voir la
+                         section « HEADER — LOGO ADAPTATIF » de style.css).
+                         alt vide + aria-hidden : le nom accessible du lien est déjà porté
+                         par le lockup ci-dessus, qui reste dans le DOM en permanence — le
+                         fondu ne joue que sur l'opacité. -->
+                    <img src="assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
+                </a>
+
+                <!-- Comme sur les autres pages, la navigation omet le lien vers la page
+                     courante : « À propos » n'y figure donc pas. -->
+                <nav class="main-nav">
+                    <a href="index.html" class="transition-link">Accueil</a>
+                    <a href="services.html" class="transition-link">Services</a>
+                    <a href="login.html" class="transition-link client-link">
+                        Espace client
+                        <span class="material-symbols-outlined client-icon">arrow_outward</span>
+                    </a>
+                </nav>
+
+                <div class="header-actions">
+                    <a href="contact.html" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
+                    <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+                        <div class="burger-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="apropos-main">
+            <div class="container">
+
+                <!--
+                    Introduction de page — H1 + accroche.
+                    `.section-header center` est le gabarit global de style.css, déjà utilisé
+                    par l'intro de services.html ; `.apropos-intro` n'ajoute que la couleur du
+                    titre et son délai d'apparition (apropos.css). Le délai de 0,2 s du
+                    `.subtitle` vient, lui, de style.css — les deux textes se révèlent donc
+                    en cascade.
+                -->
+                <section class="section-header center apropos-intro">
+                    <h1 class="animate-on-scroll">À propos de Solutions Terravia</h1>
+                    <p class="subtitle animate-on-scroll">Une équipe technique dédiée à l'acquisition et au traitement de données géospatiales de précision.</p>
+                </section>
+
+                <!-- TODO — Sections de contenu à venir (mission, approche, équipe, territoire
+                     desservi). Elles s'insèrent ici, sous l'introduction. -->
+
+            </div>
+        </main>
+
+        <!--
+            Pied de page — structure identique aux trois autres pages.
+            Les liens « Services » pointent vers les ancres de services.html.
+            Sous « Entreprise », « À propos » pointe vers la page courante : il reste
+            volontairement présent et cliquable pour que la colonne soit identique partout.
+            « Carrières » et « Blogue technique » restent des placeholders interceptés par script.js.
+            Pas d'`id="contact"` sur ce <footer>, contrairement à index.html et services.html :
+            aucune ancre de cette page ne pointe vers lui.
+        -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <a href="index.html" class="logo transition-link">
+                            <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                        </a>
+                        <p>Levés, traitement et livrables<br>géospatiaux.</p>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="services.html#arpentage" class="transition-link">Arpentage</a></li>
+                            <li><a href="services.html#minier" class="transition-link">Secteur Minier</a></li>
+                            <li><a href="services.html#civil" class="transition-link">Génie Civil et Construction</a></li>
+                            <li><a href="services.html#architecture" class="transition-link">Architecture et Bâtiment</a></li>
+                            <li><a href="services.html#environnement" class="transition-link">Environnement</a></li>
+                            <li><a href="services.html#territoire" class="transition-link">Municipalités</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-links">
+                        <h4>Entreprise</h4>
+                        <ul>
+                            <li><a href="apropos.html" class="transition-link">À propos</a></li>
+                            <li><a href="#" class="link-placeholder">Carrières</a></li>
+                            <li><a href="#" class="link-placeholder">Blogue technique</a></li>
+                        </ul>
+                    </div>
+
+                    <!--
+                        Coordonnées structurées avec `<address>` pour la sémantique HTML correcte.
+                        Les icônes Material Symbols sont purement décoratives ici (pas d'aria-label nécessaire
+                        car le texte adjacent est suffisant pour l'accessibilité).
+                    -->
+                    <div class="footer-contact">
+                        <h4>Contactez-nous</h4>
+                        <ul>
+                            <li><span class="material-symbols-outlined icon">call</span> +1 (999) 999-9999</li>
+                            <li><span class="material-symbols-outlined icon">mail</span> info@solutionsterravia.com</li>
+                            <li>
+                                <span class="material-symbols-outlined icon">location_on</span>
+                                <address>
+                                    1453, rue Beaubien Est<br>
+                                    Montréal, QC H2G 3C6
+                                </address>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2026 Terravia. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!--
+        script.js chargé en fin de body (sans `defer`) pour garantir que le DOM est entièrement
+        parsé avant l'initialisation. Gère sur cette page : anti-FOUC, révélation au scroll,
+        états du header, escamotage mobile, menu hamburger, transitions de page.
+    -->
+    <script src="script.js"></script>
+</body>
+
+</html>

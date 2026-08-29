@@ -65,11 +65,11 @@
            de défilement, ce que l'état flottant transparent ne garantirait pas. */
         html.is-loading body { opacity: 1; visibility: visible; animation: none; }
         html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
-        /* Les pastilles de régions ne portent pas .animate-on-scroll : leur état
-           masqué dépend de `.territoire-regions:not(.visible)` (apropos.css § 6),
-           donc de la classe que seul script.js pose. Sans cette ligne, la liste des
-           huit régions resterait vide sans JavaScript. `animation: none` pour la même
-           raison qu'au-dessus : neutraliser le filet à 2 s d'apropos.css. */
+        /* Les rangées du registre des régions ne portent pas .animate-on-scroll :
+           leur état masqué dépend de `.territoire-regions:not(.visible)` (apropos.css
+           § 6), donc de la classe que seul script.js pose. Sans cette ligne, la liste
+           des huit régions resterait vide sans JavaScript. `animation: none` pour la
+           même raison qu'au-dessus : neutraliser le filet à 2 s d'apropos.css. */
         html.is-loading .territoire-regions li { opacity: 1; animation: none; }
         .site-header:not(.is-floating):not(.show-cta) {
             transform: none;
@@ -296,6 +296,12 @@
                 `--color-forest` du pied de page : les deux surfaces sombres se
                 touchent, et sans cet écart elles fusionneraient en un seul bloc.
 
+                Le décor de la bande est entièrement en CSS (apropos.css § 6) : un
+                tracé de portée depuis un point de station, hors centre. Rien à
+                ajouter ici — pas d'élément vide à porter le motif, les deux
+                pseudo-éléments de la section suffisent, et un pseudo-élément
+                n'entre pas dans l'arbre d'accessibilité.
+
                 TODO — contenu à valider : la liste des régions ci-dessous est
                 plausible (siège à Montréal, mention du secteur minier) mais n'a pas
                 été confirmée. À corriger avant mise en ligne.
@@ -303,20 +309,25 @@
             <section class="apropos-territoire" aria-labelledby="titre-territoire">
                 <div class="container">
                     <!-- La révélation est portée par chaque partie et non par le bloc :
-                         c'est ici la finale de la page et sa zone la plus dense (huit
-                         pastilles et le seul appel à l'action), et un pavé de cette
-                         hauteur qui monte d'un seul tenant est le seul endroit de la
-                         page où rien ne se lit dans l'ordre. Délais de cascade dans
-                         apropos.css § 6. -->
+                         c'est ici la finale de la page et sa zone la plus dense (le
+                         registre des huit régions et le seul appel à l'action), et un
+                         pavé de cette hauteur qui monte d'un seul tenant est le seul
+                         endroit de la page où rien ne se lit dans l'ordre. Délais de
+                         cascade dans apropos.css § 6. -->
                     <div class="territoire-content">
                         <h2 id="titre-territoire" class="animate-on-scroll">Partout où le terrain nous mène</h2>
                         <p class="animate-on-scroll">Nous nous déployons sur l'ensemble du Québec — des chantiers urbains les plus contraints aux sites en région éloignée.</p>
 
-                        <!-- La liste porte la révélation, ses pastilles s'allument
-                             ensuite une à une : le <ul> sert de déclencheur commun.
-                             Huit éléments observés séparément produiraient huit
-                             franchissements de seuil quasi simultanés — du bruit,
-                             pas une cascade. -->
+                        <!-- Registre des régions couvertes. La liste porte la
+                             révélation, ses rangées s'allument ensuite une à une :
+                             le <ul> sert de déclencheur commun. Huit éléments
+                             observés séparément produiraient huit franchissements
+                             de seuil quasi simultanés — du bruit, pas une cascade.
+
+                             L'ordre du DOM est celui de la lecture, y compris à deux
+                             colonnes : la grille d'apropos.css § 7 remplit par
+                             rangées, donc la cascade se lit gauche puis droite.
+                             Réordonner ces huit lignes désordonnerait la cascade. -->
                         <ul class="territoire-regions animate-on-scroll">
                             <li>Grand Montréal</li>
                             <li>Montérégie</li>

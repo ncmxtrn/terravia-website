@@ -4,7 +4,10 @@
  * Complète style.css, qui fournit déjà le gabarit des en-têtes de section
  * (`.section-header center`, `.subtitle`) et la révélation au défilement
  * (`.animate-on-scroll`). Ce fichier ne porte que ce qui est propre à la page.
- * Toutes les valeurs via tokens.css — aucune valeur brute.
+ * Toutes les valeurs via tokens.css — aucune valeur brute. Seule exception, la
+ * géométrie du décor de la § 6 (rayons des cercles, diamètre du point) : des
+ * cotes de dessin, sans réemploi possible ailleurs, donc sans token. Les couleurs
+ * et les espacements de ce même décor passent, eux, par tokens.css comme le reste.
  *
  * Ordre d'import : tokens.css → style.css → apropos.css
  *
@@ -436,8 +439,21 @@
 /* `--color-forest-light` et non `--surface-dark` : cette bande vient toucher le
    pied de page, qui est en `--color-forest`. À teinte égale, les deux ne feraient
    qu'un seul bloc sombre ; l'écart d'un ton les distingue comme deux plans.
-   `overflow: hidden` borne la trame décorative ci-dessous. */
+   `overflow: hidden` borne le tracé de portée ci-dessous.
+
+   --station-x / --station-y : l'origine du décor, déclarée UNE fois ici parce que
+   ses trois consommateurs (les cercles, la lumière, le point) doivent partager le
+   même centre. C'est tout le propos du fond : une géométrie et un éclairage qui
+   viennent du même endroit se lisent comme un objet ; écrites trois fois, les
+   valeurs divergeraient au premier ajustement et il ne resterait qu'un décor.
+   Volontairement hors du centre : un décor centré sur son bloc se lit comme un
+   cadre, pas comme une source.
+   --station-size : diamètre du point. Géométrie de dessin, pas valeur de design —
+   d'où sa déclaration locale plutôt qu'un token (voir la note du ::before). */
 .apropos-territoire {
+    --station-x: 18%;
+    --station-y: 78%;
+    --station-size: 7px;
     position: relative;
     overflow: hidden;
     padding: var(--space-5xl) 0;
@@ -445,13 +461,41 @@
     color: var(--fg-on-dark);
 }
 
-/* Trame d'arpentage : un carroyage en lavis blanc, estompé vers les bords par un
-   masque radial pour qu'il ne bute pas franchement sur les limites de la bande.
-   Un pseudo-élément n'entre pas dans l'arbre d'accessibilité : rien à masquer.
+/* Tracé de portée depuis la station — remplace le carroyage qui occupait cette
+   place. Le carroyage n'était pas faux, il était PAVÉ : une trame qui se répète à
+   l'infini n'a ni origine, ni échelle, ni lumière, et se lit comme un papier peint
+   posé derrière le texte. Ici il n'y a qu'un objet, et il dit quelque chose de la
+   section — une portée depuis une base, ce qu'énumère précisément la liste des
+   régions : le Grand Montréal est proche, la Côte-Nord ne l'est pas.
 
+   Deux couches dans un seul pseudo-élément, dans l'ordre de peinture :
+   1. la lumière, une source unique au point de station ;
+   2. les six cercles, dont l'écart CROÎT vers l'extérieur (140, 170, 200, 230,
+      260 px). L'écart constant est la signature du motif généré ; l'écart croissant
+      est celui d'un tracé de portée réel, et c'est aussi ce que fait la perspective.
+   Les rayons sont listés un par un et non produits par `repeating-radial-gradient` :
+   « repeating » redonnerait exactement la régularité qu'on vient de retirer.
+
+   Le premier cercle est à 150px et pas plus près : un petit cercle serré autour du
+   point le transformait en CIBLE — un réticule de visée, lu comme une icône posée
+   là, alors qu'un tracé de portée commence à distance de sa station. Les 150 px
+   laissent la lumière occuper seule le voisinage du point.
+
+   Encre : --white-05 sur les trois cercles proches, --white-03 sur les lointains.
+   Le tracé s'affaiblit avec la distance, comme le ferait un signal.
+
+   Sur les valeurs brutes — l'en-tête du fichier annonce « aucune valeur brute »,
+   et les px ci-dessous en sont. La règle vise les valeurs de DESIGN (couleurs,
+   espacements, typographie), pas la géométrie d'un dessin : un rayon de cercle
+   n'a pas de sens réutilisable ailleurs et n'a donc rien à faire dans tokens.css.
+   Le carroyage remplacé prenait déjà la même liberté (`48px`, arrêts `30%`/`78%`).
+
+   Un pseudo-élément n'entre pas dans l'arbre d'accessibilité : rien à masquer.
    Le noir du masque n'est pas une couleur de design et n'a donc pas de token :
    `mask-image` ne lit que le canal alpha de son dégradé, la teinte y est
-   indifférente — seule compte l'opposition opaque / transparent.
+   indifférente — seule compte l'opposition opaque / transparent. Il est ancré sur
+   la MÊME origine que le reste : l'atténuation part de la station, elle ne borde
+   pas la bande.
    Le préfixe -webkit- reste nécessaire pour Safari. */
 .apropos-territoire::before {
     content: '';
@@ -459,17 +503,50 @@
     inset: 0;
     pointer-events: none;
     background-image:
-        linear-gradient(to right,  var(--white-05) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--white-05) 1px, transparent 1px);
-    background-size: 48px 48px;
-    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 78%);
-            mask-image: radial-gradient(ellipse at center, #000 30%, transparent 78%);
+        radial-gradient(circle at var(--station-x) var(--station-y),
+            var(--white-08) 0, var(--white-03) 26%, transparent 58%),
+        radial-gradient(circle at var(--station-x) var(--station-y),
+            transparent 149px,  var(--white-05) 149px,  var(--white-05) 150px,  transparent 150px,
+            transparent 289px,  var(--white-05) 289px,  var(--white-05) 290px,  transparent 290px,
+            transparent 459px,  var(--white-05) 459px,  var(--white-05) 460px,  transparent 460px,
+            transparent 659px,  var(--white-03) 659px,  var(--white-03) 660px,  transparent 660px,
+            transparent 889px,  var(--white-03) 889px,  var(--white-03) 890px,  transparent 890px,
+            transparent 1149px, var(--white-03) 1149px, var(--white-03) 1150px, transparent 1150px);
+    -webkit-mask-image: radial-gradient(circle at var(--station-x) var(--station-y),
+                            #000 28%, transparent 98%);
+            mask-image: radial-gradient(circle at var(--station-x) var(--station-y),
+                            #000 28%, transparent 98%);
 }
 
-/* `position: relative` sans décalage : suffit à repasser au-dessus de la trame,
-   qui est en absolu dans le même contexte d'empilement. */
+/* La station elle-même : le seul élément appuyé de la bande, et sa signature.
+   Les cercles impliquent déjà leur centre — il ne manquait que le point, et un
+   réticule par-dessus n'aurait fait que l'illustrer deux fois.
+
+   `--shadow-glow` est réemployé et non redéclaré : c'est le halo vert des boutons
+   CTA du site. Le point porte donc la même lumière que le bouton « Contactez-nous »
+   du header, seul bouton visible depuis cette page. */
+.apropos-territoire::after {
+    content: '';
+    position: absolute;
+    left: var(--station-x);
+    top: var(--station-y);
+    width: var(--station-size);
+    height: var(--station-size);
+    transform: translate(-50%, -50%);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-primary);
+    box-shadow: var(--shadow-glow);
+    pointer-events: none;
+}
+
+/* `z-index: 1` et pas seulement `position: relative` : le point de station est un
+   `::after`, donc le DERNIER enfant de la bande, et il se peint après ce bloc à
+   z-index automatique. Sur écran étroit, où le contenu occupe toute la largeur,
+   il tomberait par-dessus une rangée du registre. Un rang explicite le remet
+   dessous à toutes les largeurs. */
 .territoire-content {
     position: relative;
+    z-index: 1;
     max-width: 44rem;
     margin: 0 auto;
     display: flex;
@@ -488,7 +565,7 @@
 .territoire-eyebrow.animate-on-scroll  { transition-delay: 0s; }
 .apropos-territoire h2.animate-on-scroll { transition-delay: 0.08s; }
 .apropos-territoire p.animate-on-scroll  { transition-delay: 0.16s; }
-.territoire-regions.animate-on-scroll    { transition-delay: var(--pill-start); }
+.territoire-regions.animate-on-scroll    { transition-delay: var(--registre-start); }
 .territoire-cta-reveal                   { transition-delay: 0.5s; }
 
 /* `.label-upper` pose `--fg1` (forest), illisible sur ce fond : on la surcharge. */
@@ -510,61 +587,77 @@
     margin: 0;
 }
 
-/* `--pill-start` est le rang de la liste dans la cascade ci-dessus. Il est déclaré
-   ici plutôt qu'écrit deux fois : les pastilles enchaînent SUR lui, et l'écrire en
-   dur des deux côtés laisserait la liste et son contenu se désolidariser au premier
-   ajustement. */
+/* Registre des régions — remplace le tapis de pastilles arrondies qui occupait
+   cette place. Les pastilles disaient « étiquettes » ; or ces huit lignes ne sont
+   pas des étiquettes, c'est une COUVERTURE, et la forme que ce métier donne à une
+   couverture est un registre : des noms alignés sur des filets. C'est aussi ce que
+   promet la page deux sections plus haut — « écrit noir sur blanc ».
+
+   Aucun fond, aucune bordure de contour, aucun arrondi : les filets portent seuls
+   la structure. Toute surface ajoutée ici reviendrait à la pastille.
+
+   `text-align: left` contre le `center` de `.territoire-content` : une énumération
+   ne se lit que si ses entrées partagent un bord gauche. Le bloc, lui, reste centré
+   dans la bande — c'est `width: 100%` qui l'y étale, `align-items: center` du parent
+   le réduirait sinon à la largeur de son plus long nom.
+
+   `--registre-start` est le rang de la liste dans la cascade ci-dessus. Il est
+   déclaré ici plutôt qu'écrit deux fois : les rangées enchaînent SUR lui, et
+   l'écrire en dur des deux côtés laisserait la liste et son contenu se désolidariser
+   au premier ajustement. */
 .territoire-regions {
-    --pill-start: 0.24s;
+    --registre-start: 0.24s;
     list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-sm);
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
     margin: var(--space-xl) 0 var(--space-2xl);
     padding: 0;
+    text-align: left;
 }
 
-/* Pastilles inertes : elles énumèrent, elles ne mènent nulle part. Pas de survol
-   ni de curseur `pointer`, qui promettraient un clic sans le tenir.
+/* Rangées inertes : elles énumèrent, elles ne mènent nulle part. Pas de survol ni
+   de curseur `pointer`, qui promettraient un clic sans le tenir.
 
    Elles s'allument en revanche une à une derrière la montée de la liste : huit
-   pastilles qui apparaissent d'un bloc se lisent comme un pavé, alors qu'un
-   déroulé de 30 ms se lit comme une énumération — ce qu'elles sont.
+   entrées qui apparaissent d'un bloc se lisent comme un pavé, alors qu'un déroulé
+   de 30 ms se lit comme une énumération — ce qu'elles sont.
    En opacité seule, sans course propre : c'est la liste qui porte le déplacement,
    et le mouvement réduit (§ 8) laisse donc passer cette animation-ci sans la
-   neutraliser, conformément au principe de la section. */
+   neutraliser, conformément au principe de la section.
+
+   `border-top` et non `border-bottom` : à deux colonnes (§ 7), la dernière rangée
+   fermerait le registre par deux filets pendants sous les noms, alors qu'un filet
+   au-dessus de chaque entrée ouvre le bloc et le laisse se terminer sur du texte. */
 .territoire-regions li {
-    padding: var(--space-2xs) var(--space-md);
-    border: 1px solid var(--white-20);
-    border-radius: var(--radius-pill);
-    background: var(--white-10);
-    font-size: var(--text-sm);
+    padding: var(--space-sm) 0;
+    border-top: 1px solid var(--white-10);
+    font-size: var(--text-body);
     font-weight: var(--weight-medium);
     color: var(--fg-on-dark);
     transition: opacity var(--duration-base) ease-out;
 }
 
 /* État de départ conditionné au parent : la liste est l'élément observé, ses
-   pastilles n'ont pas de `.animate-on-scroll` à elles. `:not(.visible)` ne porte ici
+   rangées n'ont pas de `.animate-on-scroll` à elles. `:not(.visible)` ne porte ici
    qu'une valeur animée — pas un paramètre de transition — donc le délai ci-dessous,
    lui, est bien déclaré hors de ce sélecteur. */
 .territoire-regions:not(.visible) li {
     opacity: 0;
 }
 
-.territoire-regions li:nth-child(1) { transition-delay: calc(var(--pill-start) + 0.03s); }
-.territoire-regions li:nth-child(2) { transition-delay: calc(var(--pill-start) + 0.06s); }
-.territoire-regions li:nth-child(3) { transition-delay: calc(var(--pill-start) + 0.09s); }
-.territoire-regions li:nth-child(4) { transition-delay: calc(var(--pill-start) + 0.12s); }
-.territoire-regions li:nth-child(5) { transition-delay: calc(var(--pill-start) + 0.15s); }
-.territoire-regions li:nth-child(6) { transition-delay: calc(var(--pill-start) + 0.18s); }
-.territoire-regions li:nth-child(7) { transition-delay: calc(var(--pill-start) + 0.21s); }
-.territoire-regions li:nth-child(8) { transition-delay: calc(var(--pill-start) + 0.24s); }
+.territoire-regions li:nth-child(1) { transition-delay: calc(var(--registre-start) + 0.03s); }
+.territoire-regions li:nth-child(2) { transition-delay: calc(var(--registre-start) + 0.06s); }
+.territoire-regions li:nth-child(3) { transition-delay: calc(var(--registre-start) + 0.09s); }
+.territoire-regions li:nth-child(4) { transition-delay: calc(var(--registre-start) + 0.12s); }
+.territoire-regions li:nth-child(5) { transition-delay: calc(var(--registre-start) + 0.15s); }
+.territoire-regions li:nth-child(6) { transition-delay: calc(var(--registre-start) + 0.18s); }
+.territoire-regions li:nth-child(7) { transition-delay: calc(var(--registre-start) + 0.21s); }
+.territoire-regions li:nth-child(8) { transition-delay: calc(var(--registre-start) + 0.24s); }
 
 /* Filet de sécurité, jumeau de `html.is-loading .animate-on-scroll` (style.css) :
-   les pastilles sont les seuls éléments animés de la page dont l'état masqué ne
-   dépend pas de `.animate-on-scroll`, elles échappent donc au filet global. Si
+   les rangées du registre sont les seuls éléments animés de la page dont l'état
+   masqué ne dépend pas de `.animate-on-scroll` : elles échappent au filet global. Si
    script.js ne s'exécute jamais (404, extension, erreur de syntaxe), `.visible`
    n'arrive pas et la liste des huit régions resterait vide. Le cas « JavaScript
    désactivé » est couvert séparément par le <noscript> du <head> d'apropos.html. */
@@ -667,6 +760,19 @@ html.is-loading .territoire-regions li {
     }
 
     .approche-steps > li:nth-child(even) { --step-delay: 0.08s; }
+
+    /* Registre sur deux colonnes dès qu'il y a la place : huit filets empilés sur
+       une seule colonne tirent la fin de page en longueur, et le registre y perd
+       ce qui le rend lisible d'un coup d'œil — une couverture qu'on embrasse en
+       une fois plutôt qu'une liste qu'on déroule.
+       La gouttière est en `--space-3xl` : sous cet écart, les deux colonnes de
+       filets se lisent comme un tableau à deux entrées, ce qu'elles ne sont pas.
+       Le remplissage reste en rangées (défaut de la grille), donc l'ordre du DOM :
+       la cascade des huit entrées suit ainsi la lecture, gauche puis droite. */
+    .territoire-regions {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: var(--space-3xl);
+    }
 }
 
 @media (min-width: 950px) {
@@ -726,8 +832,12 @@ html.is-loading .territoire-regions li {
         transition: opacity var(--duration-base) ease-out;
     }
 
-    /* Les pastilles de régions ne sont volontairement pas listées ici : elles
-       n'animent que leur opacité (§ 6), ce que ce mode conserve. */
+    /* Les rangées du registre ne sont volontairement pas listées ici : elles
+       n'animent que leur opacité (§ 6), ce que ce mode conserve.
+       Le décor de la bande (cercles, lumière, point de station) n'est pas listé
+       non plus, pour une raison plus simple : il ne s'anime jamais. Un fond qui
+       respire en boucle est le premier réflexe qu'on écarte ici — il attire l'œil
+       sur ce qui n'a rien à dire, et le principe en tête de fichier l'exclut déjà. */
 
     /* Les deux filets tracés à la révélation sont posés dans leur état d'arrivée
        plutôt que supprimés : sans `transform: none`, ils resteraient à `scale…(0)`,

@@ -66,7 +66,14 @@
      le design évolue vers un fond légèrement teinté. */
   --white:       #ffffff;
   --bg-light:    #ffffff;   /* page background */
-  --white-05:    rgba(255, 255, 255, 0.05);   /* trame décorative sur fond sombre (grille d'arpentage) */
+  /* --white-03 / --white-05 : les deux encres du tracé de portée de la bande
+     territoire (apropos.css § 6). Deux pas et non un seul parce que le tracé
+     s'affaiblit avec la distance à la station — les cercles proches sont en 05,
+     les lointains en 03. À 0,03 sur --forest-800, un cercle reste perceptible
+     sans jamais concurrencer le texte qui passe dessus. */
+  --white-03:    rgba(255, 255, 255, 0.03);   /* cercles lointains du tracé de portée */
+  --white-05:    rgba(255, 255, 255, 0.05);   /* cercles proches du tracé de portée */
+  --white-08:    rgba(255, 255, 255, 0.08);   /* cœur de la lumière au point de station */
   --white-10:    rgba(255, 255, 255, 0.10);   /* overlay/border subtil sur fond sombre */
   --white-20:    rgba(255, 255, 255, 0.20);   /* bordure d'encart verre dépoli sur photo */
   --gray-200:    #e5e7eb;

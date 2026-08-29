@@ -22,12 +22,32 @@
     /* padding-top = header fixe + espace de respiration, comme .services-section :
        le header est en position fixe, il ne réserve donc aucune place dans le flux. */
     padding: calc(var(--header-height) + var(--space-3xl)) 0 var(--space-5xl);
+}
 
-    /* Tant que la page se limite à son introduction, son contenu est plus court que
-       le viewport : sans hauteur minimale, le pied de page remonterait au milieu de
-       l'écran, sur une grande zone vide. La règle deviendra inopérante — et pourra
-       être retirée — dès que les sections de contenu rempliront la page. */
+/* Gabarit collant du pied de page.
+   Tant que la page se limite à son introduction, son contenu est plus court que le
+   viewport. Sans rien, le pied de page remonterait au milieu de l'écran ; avec un
+   `min-height: 100vh` sur le <main>, il serait au contraire repoussé SOUS un plein
+   écran de vide — il faudrait défiler tout un écran blanc pour l'atteindre. Le
+   gabarit collant le pose exactement au bas du viewport, sans défilement superflu :
+   la colonne fait au moins la hauteur de l'écran et le <main> absorbe le reste.
+
+   La règle est portée par une classe locale et non par `.site-wrapper` : ce conteneur
+   n'a de style nulle part ailleurs dans le projet, le passer en flex globalement
+   toucherait les quatre autres pages sans nécessité.
+
+   Le header est en `position: fixed` — hors flux — donc il n'entre pas dans la
+   colonne et n'est pas affecté.
+
+   À retirer (ici et dans le markup) quand les sections de contenu rempliront la page. */
+.apropos-wrapper {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+}
+
+.apropos-wrapper .apropos-main {
+    flex: 1;
 }
 
 

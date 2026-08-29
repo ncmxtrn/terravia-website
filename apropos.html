@@ -69,7 +69,10 @@
 </head>
 
 <body class="page-transition">
-    <div class="site-wrapper">
+    <!-- `apropos-wrapper` : gabarit collant du pied de page, le temps que la page se
+         limite à son introduction (voir apropos.css). Le header étant en position fixe,
+         il reste hors flux et n'est pas affecté par la colonne flex. -->
+    <div class="site-wrapper apropos-wrapper">
 
         <!-- `is-scrolled show-cta` sont écrites en dur et non posées par script.js :
              cette page n'a pas de hero, le header y est donc toujours opaque avec son CTA.

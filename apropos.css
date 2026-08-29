@@ -365,12 +365,17 @@
 .approche-steps > li { transition-delay: var(--step-delay, 0s); }
 .approche-steps > li .approche-step::before { transition-delay: calc(var(--step-delay, 0s) + 0.2s); }
 
+/* `padding-top` réserve la place du filet ci-dessous et règle sa distance au
+   numéro. Un cran plus serré depuis que le numéro est un eyebrow et non un
+   chiffre display : le filet et le numéro forment une seule amorce, ils doivent
+   se lire groupés, alors que la valeur précédente les espaçait comme deux
+   éléments distincts — écart calibré sur une hauteur de texte qui a fondu. */
 .approche-step {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
-    padding-top: var(--space-lg);
+    padding-top: var(--space-md);
 }
 
 /* Filet d'accent en tête d'étape, tracé de gauche à droite. Enchaînés par la
@@ -394,15 +399,21 @@
     transform: scaleX(1);
 }
 
-/* Orbitron via `.font-display` dans le markup — c'est exactement l'usage prévu
-   par tokens.css (« logo et chiffres display uniquement »). Le numéro est un
-   repère visuel, pas l'information : l'ordre est porté par le <ol>. D'où une
-   couleur volontairement en retrait, qui laisse le titre mener. */
+/* Le numéro est un repère visuel, pas l'information : l'ordre est porté par le
+   <ol>. Il est donc traité en eyebrow — `.label-upper` dans le markup — et non en
+   chiffre display : même taille, même graisse et même tracking que les eyebrows
+   des sections 1 et 6, une seule famille sur toute la page. La hiérarchie interne
+   à l'étape se fait par graisse et par taille (petit numéro gras → titre plus
+   grand), pas par un second caractère typographique ; c'est le titre qui mène.
+   `.label-upper` pose `--fg1` : on le recule d'un cran pour que le numéro reste
+   un repère et n'entre pas en concurrence avec le <h3>, qui est au même ton. */
 .approche-num {
-    font-size: var(--text-h2-sm);
-    font-weight: var(--weight-bold);
     line-height: var(--leading-tight);
-    color: var(--fg3);
+    color: var(--fg2);
+    /* Chiffres à chasse fixe : les quatre numéros sont alignés côte à côte dans la
+       grille, leurs deux glyphes doivent occuper la même largeur d'une carte à
+       l'autre. Ignoré sans dommage si la fonte n'expose pas `tnum`. */
+    font-variant-numeric: tabular-nums;
 }
 
 .approche-step h3 {

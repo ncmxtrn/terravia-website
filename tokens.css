@@ -355,6 +355,12 @@
   --duration-medium: 0.4s;
   --duration-slow:   0.6s;
   --duration-reveal: 0.8s;
+  /* --duration-sonar : balayage de l'onde de la bande territoire (apropos.css § 6).
+     Hors de l'échelle ci-dessus, et volontairement : les paliers précédents mesurent
+     un changement d'état, celui-ci mesure un TRAJET — l'onde traverse 1400px. À la
+     durée d'une révélation (0,8s) elle file trop vite pour qu'on suive les cercles
+     l'un après l'autre, ce qui est tout son propos. */
+  --duration-sonar:  1.8s;
 
   --press-scale:     0.97;
 

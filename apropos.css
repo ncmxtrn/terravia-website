@@ -423,24 +423,52 @@
    6. TERRITOIRE
    ============================================================ */
 
+/* --sonar-r : le rayon courant de l'onde. Enregistré via `@property` et non laissé
+   en variable libre, parce que c'est la SEULE façon d'obtenir son interpolation :
+   une custom property non enregistrée n'a pas de type, le moteur ne sait pas quoi
+   calculer entre 0px et 1400px, et la transition saute d'une valeur à l'autre.
+   L'enregistrer lui donne le type `<length>` et rend l'onde animable — un seul
+   nombre à animer pour tout le balayage, plutôt que six cercles à décaler un à un.
+
+   `inherits: false` : la valeur ne concerne que le pseudo-élément qui la porte.
+   Sans ça, elle descendrait dans tout le sous-arbre de la bande sans y servir.
+
+   Repli : un navigateur sans `@property` ignore ce bloc, `--sonar-r` redevient une
+   variable libre, et le masque passe de 0 à sa portée d'un coup — les cercles
+   apparaissent ensemble au lieu de s'enchaîner. Le décor reste juste, il perd son
+   balayage. C'est la dégradation voulue, et la raison pour laquelle l'état de
+   départ est écrit en `:not(.visible)` plus bas plutôt que l'état d'arrivée. */
+@property --sonar-r {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
 /* `--color-forest-light` et non `--surface-dark` : cette bande vient toucher le
    pied de page, qui est en `--color-forest`. À teinte égale, les deux ne feraient
    qu'un seul bloc sombre ; l'écart d'un ton les distingue comme deux plans.
    `overflow: hidden` borne le tracé de portée ci-dessous.
 
    --station-x / --station-y : l'origine du décor, déclarée UNE fois ici parce que
-   ses trois consommateurs (les cercles, la lumière, le point) doivent partager le
+   ses trois consommateurs (les cercles, la lumière, la marque) doivent partager le
    même centre. C'est tout le propos du fond : une géométrie et un éclairage qui
    viennent du même endroit se lisent comme un objet ; écrites trois fois, les
    valeurs divergeraient au premier ajustement et il ne resterait qu'un décor.
    Volontairement hors du centre : un décor centré sur son bloc se lit comme un
    cadre, pas comme une source.
-   --station-size : diamètre du point. Géométrie de dessin, pas valeur de design —
-   d'où sa déclaration locale plutôt qu'un token (voir la note du ::before). */
+   --station-size : côté de la marque, carrée. Géométrie de dessin, pas valeur de
+   design — d'où sa déclaration locale plutôt qu'un token (voir la note du
+   ::before). Volontairement PAS `--logo-icon-h` : ce token dimensionne le logo du
+   header, et l'y raccrocher ferait bouger la station à chaque réglage du header.
+   --sonar-reach : rayon atteint par l'onde en fin de course, donc aussi le rayon du
+   masque au repos. Déclaré ici et lu à trois endroits (l'état d'arrivée du ::before,
+   la keyframe de secours, le repli sans JS du <head>) pour que la portée n'ait qu'une
+   seule définition. */
 .apropos-territoire {
-    --station-x: 18%;
+    --station-x: 82%;
     --station-y: 78%;
-    --station-size: 7px;
+    --station-size: 56px;
+    --sonar-reach: 1400px;
     position: relative;
     overflow: hidden;
     padding: var(--space-5xl) 0;
@@ -489,6 +517,10 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
+    /* État d'ARRIVÉE de l'onde. Déclaré sur le pseudo-élément et pas sur la section :
+       `--sonar-r` est enregistrée `inherits: false`, elle ne descendrait donc pas
+       jusqu'ici depuis un ancêtre. */
+    --sonar-r: var(--sonar-reach);
     background-image:
         radial-gradient(circle at var(--station-x) var(--station-y),
             var(--white-08) 0, var(--white-03) 26%, transparent 58%),
@@ -500,18 +532,71 @@
             transparent 889px,  var(--white-03) 889px,  var(--white-03) 890px,  transparent 890px,
             transparent 1149px, var(--white-03) 1149px, var(--white-03) 1150px, transparent 1150px);
     -webkit-mask-image: radial-gradient(circle at var(--station-x) var(--station-y),
-                            #000 28%, transparent 98%);
+                            #000 0,
+                            #000 calc(var(--sonar-r) * 0.28),
+                            transparent var(--sonar-r));
             mask-image: radial-gradient(circle at var(--station-x) var(--station-y),
-                            #000 28%, transparent 98%);
+                            #000 0,
+                            #000 calc(var(--sonar-r) * 0.28),
+                            transparent var(--sonar-r));
+    transition: --sonar-r var(--duration-sonar) var(--ease-scroll) 0.35s;
+}
+
+/* État de DÉPART de l'onde — même inversion, et pour la même raison, que la marque
+   ci-dessous : sans `:has()`, la règle ne matche jamais et le décor s'affiche
+   d'emblée, entier. Le pire cas est l'absence d'animation, jamais l'absence de
+   décor.
+
+   0,35s de retard sur la marque (déclaré dans la transition ci-dessus) : la
+   station se pose d'abord, l'onde part ensuite d'elle. C'est l'ordre que décrit un
+   sonar, et l'inverse — une onde qui arrive avant son émetteur — se lit comme deux
+   animations sans rapport. */
+.apropos-territoire:has(h2:not(.visible))::before {
+    --sonar-r: 0px;
+}
+
+/* Filet de sécurité, jumeau de celui de la marque. `var(--sonar-reach)` est lu sur
+   l'élément au moment où l'animation joue : la portée reste donc déclarée à un seul
+   endroit, avec le reste de la géométrie de la station. */
+@keyframes sonar-safety-net-sweep {
+    to { --sonar-r: var(--sonar-reach); }
+}
+
+html.is-loading .apropos-territoire::before {
+    animation: sonar-safety-net-sweep var(--duration-sonar) 2s forwards;
 }
 
 /* La station elle-même : le seul élément appuyé de la bande, et sa signature.
-   Les cercles impliquent déjà leur centre — il ne manquait que le point, et un
-   réticule par-dessus n'aurait fait que l'illustrer deux fois.
+   Les cercles impliquent déjà leur centre — il ne manquait que la marque à y poser.
+   C'est le monogramme de Terravia : la station d'où part la portée, c'est
+   l'entreprise, et le dire avec sa propre marque plutôt qu'avec un symbole
+   d'arpentage générique évite d'illustrer deux fois la même idée.
 
-   `--shadow-glow` est réemployé et non redéclaré : c'est le halo vert des boutons
-   CTA du site. Le point porte donc la même lumière que le bouton « Contactez-nous »
-   du header, seul bouton visible depuis cette page. */
+   Posé en `background-image` sur un pseudo-élément, et non en <img> dans le
+   markup : la marque est ici décorative — le nom de l'entreprise est déjà porté
+   par le logo du header et par le pied de page — et un pseudo-élément n'entre pas
+   dans l'arbre d'accessibilité, ce qui est exactement le comportement voulu.
+
+   `background-size: contain` plutôt qu'une taille en dur : le SVG est carré (même
+   note que dans CLAUDE.md), il remplit donc son carré sans déformation quelle que
+   soit la valeur de --station-size.
+
+   Plus de `box-shadow: var(--shadow-glow)` : un halo de boîte suivait le carré du
+   pseudo-élément et non la silhouette du logo, ce qui aurait posé une lueur
+   rectangulaire autour d'une marque qui ne l'est pas. La station reste éclairée —
+   c'est la couche de lumière du ::before ci-dessus, centrée sur la même origine,
+   qui s'en charge.
+
+   La marque se révèle au défilement comme le reste de la page — fondu et montée,
+   mêmes durées et mêmes courbes que `.animate-on-scroll` de style.css. Elle ne peut
+   pas porter cette classe : c'est un pseudo-élément, script.js n'observe que des
+   éléments réels. Son état de départ est donc conditionné à celui du titre de la
+   bande, via `:has()` (règle suivante).
+
+   Le décalage de la révélation compose avec le centrage au lieu de le remplacer :
+   `translate(-50%, calc(-50% + …))`. Écrire `translateY()` seul, comme le fait la
+   règle globale, ferait perdre le `-50%` horizontal et la marque sauterait d'une
+   demi-largeur à l'arrivée. */
 .apropos-territoire::after {
     content: '';
     position: absolute;
@@ -520,10 +605,40 @@
     width: var(--station-size);
     height: var(--station-size);
     transform: translate(-50%, -50%);
-    border-radius: var(--radius-pill);
-    background-color: var(--color-primary);
-    box-shadow: var(--shadow-glow);
+    background-image: url('assets/logo-monogramme-noir.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
     pointer-events: none;
+    transition: opacity var(--duration-slow) ease-out,
+                transform var(--duration-reveal) var(--ease-scroll);
+}
+
+/* État de DÉPART, et non état d'arrivée : la condition est inversée exprès.
+   Écrite dans l'autre sens — `:has(h2.visible)` portant l'apparition — un
+   navigateur sans `:has()` ne la verrait jamais matcher et la marque resterait
+   invisible pour toujours. Ainsi, le pire cas est une marque affichée d'emblée,
+   sans animation : une dégradation qu'on ne remarque pas.
+
+   Accroché au H2 et non à la liste des régions : la station est l'origine d'où
+   part la portée, elle se pose donc avec le titre, avant l'énumération qu'elle
+   commande. `:has()` est ici le seul moyen de lier un pseudo-élément à l'état
+   d'un descendant — le CSS ne remonte pas autrement. */
+.apropos-territoire:has(h2:not(.visible))::after {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + var(--reveal-shift)));
+}
+
+/* Filet de sécurité, jumeau de celui des rangées du registre plus bas. Keyframe
+   dédiée et NON `fouc-safety-net-reveal` de style.css : celle-ci finit sur
+   `transform: translateY(0)`, ce qui écraserait le centrage `translate(-50%,-50%)`
+   et enverrait la marque un demi-carré trop bas et trop à droite. */
+@keyframes station-safety-net-reveal {
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+html.is-loading .apropos-territoire::after {
+    animation: station-safety-net-reveal var(--duration-slow) 2s forwards;
 }
 
 /* `z-index: 1` et pas seulement `position: relative` : le point de station est un
@@ -791,8 +906,25 @@ html.is-loading .territoire-regions li {
         transition: none;
     }
 
+    /* La marque de station garde son fondu et perd sa montée — le principe de la
+       section : ce qui aide à comprendre reste, ce qui déplace part.
+       `transform` est ramené à sa valeur de CENTRAGE et surtout pas à `none` :
+       `none` retirerait aussi le `translate(-50%,-50%)`, ce qui décalerait la
+       marque d'un demi-carré au lieu de l'immobiliser. */
+    .apropos-territoire:has(h2:not(.visible))::after {
+        transform: translate(-50%, -50%);
+    }
+
+    /* L'onde du sonar est supprimée, pas raccourcie : c'est un balayage de 1400px
+       sur toute la largeur de la bande, exactement le grand objet en mouvement que
+       ce mode existe pour écarter. Le décor est posé d'emblée dans son état final —
+       les cercles sont là, ils n'arrivent simplement plus l'un après l'autre. */
+    .apropos-territoire:has(h2:not(.visible))::before {
+        --sonar-r: var(--sonar-reach);
+    }
+
     /* Ni les cartes de valeurs ni le CTA du territoire ne figurent plus ici : les
        premières n'animent plus rien (§ 4), le second a été retiré de la page. Il ne
-       reste donc à neutraliser que la révélation au défilement, ci-dessus, et les
-       deux filets tracés, juste avant. */
+       reste donc à neutraliser que la révélation au défilement, ci-dessus, les deux
+       filets tracés, et la montée de la marque juste au-dessus. */
 }

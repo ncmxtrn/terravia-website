@@ -75,6 +75,25 @@
            des huit régions resterait vide sans JavaScript. `animation: none` pour la
            même raison qu'au-dessus : neutraliser le filet à 2 s d'apropos.css. */
         html.is-loading .territoire-regions li { opacity: 1; animation: none; }
+        /* Même cas pour la marque de station : son état masqué dépend de
+           `.apropos-territoire:has(h2:not(.visible))` (apropos.css § 6), donc encore
+           d'une classe que seul script.js pose. `transform` est réaffirmé au centrage
+           parce que la règle neutralisée le décalait ; `animation: none` neutralise la
+           keyframe de secours, qui n'a plus lieu d'être une fois la marque posée ici.
+           Cette règle est à égalité de spécificité avec celle d'apropos.css (0,2,2) et
+           l'emporte par l'ordre : ce <style> suit le <link> qui charge la feuille. */
+        html.is-loading .apropos-territoire::after {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            animation: none;
+        }
+        /* Et l'onde du sonar, qui dépend de la même classe : sans JS elle ne partirait
+           jamais et les six cercles resteraient masqués. On la pose à sa portée
+           finale — le décor entier, sans balayage. */
+        html.is-loading .apropos-territoire::before {
+            --sonar-r: var(--sonar-reach);
+            animation: none;
+        }
         .site-header:not(.is-floating):not(.show-cta) {
             transform: none;
             background-color: var(--white);

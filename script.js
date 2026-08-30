@@ -577,17 +577,25 @@ if (servicesLayout) {
 
     const pageHeader = document.querySelector(".site-header");
 
-    // Met à jour --sticky-top sur :root = hauteur réelle de la zone collante
-    // (header + sidebar sur mobile, header seul sur desktop) + buffer visuel.
-    // Utilisé à la fois par le scroll-spy et par scroll-margin-top en CSS.
-    const updateStickyTop = () => {
-        const headerH  = pageHeader?.offsetHeight ?? 80;
+    // Hauteur de ce qui reste collé en haut de l'écran : le header seul en desktop,
+    // le header PLUS la barre de pilules en mobile. C'est la hauteur sous laquelle un
+    // contenu est masqué, donc la position exacte où poser une section pour qu'elle
+    // arrive à ras du header, sans bande vide au-dessus d'elle.
+    const hauteurZoneCollante = () => {
+        const headerH = pageHeader?.offsetHeight ?? 80;
         const isMobile = window.innerWidth <= 840;
-        const sidebarH = isMobile ? (sidebar?.offsetHeight ?? 0) : 0;
-        const buffer   = isMobile ? 16 : 32; // --space-md mobile, --space-xl desktop
+        return headerH + (isMobile ? (sidebar?.offsetHeight ?? 0) : 0);
+    };
+
+    // Met à jour --sticky-top sur :root = zone collante + buffer visuel.
+    // Utilisé à la fois par le scroll-spy et par scroll-margin-top en CSS.
+    // Le buffer est délibérément ABSENT de hauteurZoneCollante : les fiches gagnent à
+    // respirer sous le header, les sections doivent au contraire y être jointives.
+    const updateStickyTop = () => {
+        const buffer = window.innerWidth <= 840 ? 16 : 32; // --space-md mobile, --space-xl desktop
         document.documentElement.style.setProperty(
             "--sticky-top",
-            `${headerH + sidebarH + buffer}px`
+            `${hauteurZoneCollante() + buffer}px`
         );
     };
 
@@ -814,8 +822,37 @@ if (servicesLayout) {
     // du seul mapping proportionnel jusqu'au premier défilement.
     syncSidebarScroll();
 
+    // Exécute fn quand le défilement de la page est retombé. Le minuteur initial est
+    // plus long que les suivants : si la cible était déjà en place, le clic ne produit
+    // AUCUN événement scroll, et sans lui fn ne partirait jamais.
+    let annulerAttente = null;
+
+    const apresScroll = (fn) => {
+        annulerAttente?.(); // un clic plus récent annule l'attente précédente, sinon
+                            // l'ancienne cible recalerait la page par-dessus la nouvelle
+        let minuteur = setTimeout(terminer, 250);
+        const onScroll = () => {
+            clearTimeout(minuteur);
+            minuteur = setTimeout(terminer, 120);
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        annulerAttente = () => {
+            clearTimeout(minuteur);
+            window.removeEventListener("scroll", onScroll);
+            annulerAttente = null;
+        };
+        function terminer() { annulerAttente?.(); fn(); }
+    };
+
     // Tous les liens principaux : activation immédiate de la pill cliquée,
-    // puis scroll manuel vers la section avec le bon décalage.
+    // puis scroll manuel vers la section.
+    //
+    // La cible est la zone collante NUE, sans le buffer de --sticky-top : une section
+    // demandée explicitement doit venir à ras du header. Avec --sticky-top elle se
+    // posait 32px plus bas, laissant une bande vide entre le header et son filet.
+    // C'est aussi ce que donnent déjà les autres chemins d'ancrage (liens du pied de
+    // page, sous-liens de première rangée), qui passent par le scroll-margin-top des
+    // sections — les trois concordent donc désormais.
     sidebarNavLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -828,11 +865,23 @@ if (servicesLayout) {
 
             const targetEl = document.getElementById(targetId);
             if (!targetEl) return;
-            const stickyTop = parseFloat(
-                getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
-            ) || 112;
-            const top = targetEl.getBoundingClientRect().top + window.scrollY - stickyTop;
+            const top = targetEl.getBoundingClientRect().top + window.scrollY
+                        - hauteurZoneCollante();
             window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+
+            // Même recalage que pour les sous-liens, et pour la même raison : les images
+            // en `loading="lazy"` sans dimensions se posent pendant le trajet et
+            // déplacent la cible, alors que le navigateur vise la position calculée au
+            // clic. On mesure contre la zone collante — la même référence que le scroll
+            // ci-dessus, et non le scroll-margin-top de la section, qui ignore la barre
+            // de pilules en mobile. Au-delà de 60px, c'est l'utilisateur qui a repris la
+            // main pendant le trajet : on ne lui arrache pas le défilement.
+            apresScroll(() => {
+                const ecart = targetEl.getBoundingClientRect().top - hauteurZoneCollante();
+                if (Math.abs(ecart) > 1 && Math.abs(ecart) <= 60) {
+                    window.scrollBy({ top: ecart, behavior: "auto" });
+                }
+            });
         });
     });
 
@@ -856,30 +905,8 @@ if (servicesLayout) {
     // L'animation est pilotée par la classe .is-highlighted (et non :target)
     // pour pouvoir être relancée même si on clique plusieurs fois le même lien.
     //
-    // Tout ce qui suit l'arrivée est différé à la fin du défilement, pour deux raisons
-    // mesurées sur cette page — voir apresScroll ci-dessous.
-    let annulerAttente = null;
-
-    // Exécute fn quand le défilement de la page est retombé. Le minuteur initial est
-    // plus long que les suivants : si la cible était déjà en place, le clic ne produit
-    // AUCUN événement scroll, et sans lui fn ne partirait jamais.
-    const apresScroll = (fn) => {
-        annulerAttente?.(); // un clic plus récent annule l'attente précédente, sinon
-                            // l'ancienne cible recalerait la page par-dessus la nouvelle
-        let minuteur = setTimeout(terminer, 250);
-        const onScroll = () => {
-            clearTimeout(minuteur);
-            minuteur = setTimeout(terminer, 120);
-        };
-        window.addEventListener("scroll", onScroll, { passive: true });
-        annulerAttente = () => {
-            clearTimeout(minuteur);
-            window.removeEventListener("scroll", onScroll);
-            annulerAttente = null;
-        };
-        function terminer() { annulerAttente?.(); fn(); }
-    };
-
+    // Tout ce qui suit l'arrivée est différé à la fin du défilement (apresScroll, défini
+    // plus haut avec les liens de section), pour deux raisons mesurées sur cette page.
     document.querySelectorAll(".services-sidebar .sub-nav a, .site-footer a[href^='#']").forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();

@@ -169,15 +169,13 @@
    3. BLOCS DE SERVICE
    ============================================================ */
 
+/* Aucune exception sur le premier bloc : « Arpentage » porte le même filet et le
+   même dégagement haut que les cinq secteurs suivants. Le filet du premier sépare
+   la grille des blocs de l'intro de page, les autres séparent deux secteurs. */
 .service-block {
     border-top: 1px solid var(--border-subtle);
     padding: var(--space-4xl) 0;
     scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-xl)));
-}
-
-.service-block:first-child {
-    border-top: none;
-    padding-top: 0;
 }
 
 /* align-items: start suffit — pas de padding-top sur l'icône */
@@ -443,10 +441,6 @@
 
     .sub-nav {
         display: none;
-    }
-
-    .services-content {
-        padding-top: var(--space-2xl);
     }
 
     .service-block {

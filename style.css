@@ -167,8 +167,25 @@ a {
     font-weight: var(--weight-bold);
     font-size: 0.95rem;
     cursor: pointer;         /* Le curseur devient une main */
-    transition: all var(--duration-base) ease;
+    /* Liste explicite et non `all` : `all` transitionnait aussi le `transform`,
+       ce qui imposait --duration-base (0,3s) à l'enfoncement ci-dessous. Un retour
+       tactile doit se voir AVEC le doigt et non après lui — d'où deux durées
+       distinctes dans la même déclaration. */
+    transition: background-color var(--duration-base) ease,
+                box-shadow var(--duration-base) ease,
+                color var(--duration-base) ease,
+                border-color var(--duration-base) ease,
+                transform var(--duration-press) var(--ease-header);
     border: none;
+}
+
+/* Retour d'enfoncement — consomme enfin --press-scale et --duration-press, laissés
+   dormants dans tokens.css en attendant précisément cette règle.
+   Pas de garde `(hover: hover) and (pointer: fine)` ici, contrairement aux survols :
+   `:active` est exactement le retour dont le tactile a besoin, et il se relâche de
+   lui-même au touchend — aucun état ne peut rester collé. */
+.btn:active {
+    transform: scale(var(--press-scale));
 }
 
 /* Le bouton principal (Vert) */
@@ -510,6 +527,14 @@ a {
     visibility: hidden;
 }
 
+/* Le CTA du header porte ses propres `transform` d'état, sélectionnés par un ID :
+   `.btn:active` (0,2,0) ne les atteint jamais. On répète donc l'enfoncement à une
+   spécificité qui l'emporte (1,1,0). Miroir dans le média mobile, où l'état déployé
+   est posé par `.site-header.show-cta #header-quote-btn` (1,2,0). */
+#header-quote-btn:active {
+    transform: scale(var(--press-scale));
+}
+
 /* =========================================
    HEADER MOBILE (≤ 840px)
    -----------------------------------------
@@ -601,6 +626,12 @@ a {
         max-width: 250px; /* Une largeur suffisante pour contenir le bouton */
         /* On rétablit le padding d'origine (défini plus haut dans .btn) */
         padding: 0.75rem 1.5rem;
+    }
+
+    /* L'enfoncement doit surclasser le `scale(1)` ci-dessus (1,2,0), sans quoi il
+       serait muet sur mobile — là où le retour tactile compte le plus. */
+    .site-header.show-cta #header-quote-btn:active {
+        transform: scale(var(--press-scale));
     }
 
     /* --- Masquage au scroll descendant ---

@@ -775,9 +775,10 @@ html.is-loading .territoire-regions li {
    stylé par style.css. D'où l'absence, ici, du bloc
    `@media (hover: hover) and (pointer: fine)` que portent les autres feuilles.
 
-   Le TODO qui accompagnait le CTA reste valable ailleurs et n'est pas perdu :
-   `.btn` (style.css) transitionne encore `all` sur `--duration-base`, trop large et
-   trop lent pour un retour d'enfoncement, sur les quatre pages qui ont des boutons. */
+   Le TODO qui accompagnait le CTA est réglé : `.btn` (style.css § 2) ne transitionne
+   plus `all` et porte son retour d'enfoncement en `--press-scale` / `--duration-press`.
+   Il vaut donc pour les quatre pages qui ont des boutons — celle-ci n'en a qu'un,
+   celui du header. */
 
 
 /* ============================================================

@@ -542,7 +542,9 @@ if (channelsRoot) {
 
 /* =============================================================
    SECTION 4.5 — PAGE SERVICES (services.html uniquement)
-   Active le lien sidebar correspondant à la section visible.
+   Active le lien sidebar correspondant à la section visible, puis fait suivre
+   le sommaire : centrage horizontal de la pill sur mobile, défilement interne
+   synchronisé sur la progression de la page en desktop.
    Guard: s'exécute uniquement si .services-layout est présent.
    ============================================================= */
 
@@ -641,14 +643,110 @@ if (servicesLayout) {
         }
     };
 
+    // --- Sommaire synchronisé au scroll (desktop uniquement) ---
+    // Le sommaire fait ~1700px pour 650-800px de fenêtre visible : sans pilotage,
+    // le lien actif et sa barre verte se retrouvent hors de vue dès le 4e secteur,
+    // dans un conteneur que l'utilisateur n'a jamais fait défiler — et dont les
+    // barres de défilement sont masquées, donc rien n'indique qu'il le peut.
+    //
+    // Le report se fait SECTION PAR SECTION, et non par une règle de trois sur toute
+    // la page : c'est ce qui le rend à la fois continu et toujours juste. L'avancement
+    // dans la section courante est reporté sur le groupe qui lui correspond, si bien
+    // que les hauteurs des blocs n'ont pas besoin d'être proportionnelles à celles des
+    // groupes — chaque section pilote exactement son groupe, quelles que soient leurs
+    // tailles respectives.
+    //
+    // Un mapping proportionnel global, lui, aurait exigé un garde-fou pour ramener le
+    // groupe actif dans la fenêtre, et ce garde-fou aurait produit des SAUTS : exiger
+    // qu'un groupe soit entièrement visible épingle le sommaire en butée pendant toute
+    // une section — le premier groupe commence à l'offset 0, il ne peut être entièrement
+    // visible qu'à scrollTop 0 — puis le relâche d'un coup à la bascule suivante.
+    //
+    // L'asymétrie est voulue : la page pilote le sommaire, jamais l'inverse. Elle
+    // tient sans état supplémentaire ici — c'est `overscroll-behavior: contain`
+    // (services.css) qui empêche le sommaire de faire bouger la page. Tant que
+    // l'utilisateur le parcourt à la molette, aucun événement scroll de page ne part
+    // et rien n'écrase sa position ; la synchronisation ne reprend la main qu'au
+    // prochain défilement de la page, l'autorité correcte.
+
+    // Marge d'arrondi avec laquelle le scroll-spy considère un bloc comme franchi.
+    // Partagée avec syncSidebarScroll et non recopiée : c'est elle qui fait coïncider
+    // la bascule du spy avec la fin de course du groupe (voir le calcul de q), et deux
+    // valeurs qui divergeraient rouvriraient un micro-saut à chaque changement de section.
+    const TOLERANCE_SPY = 4;
+    let rafSommaire = null;
+
+    const syncSidebarScroll = () => {
+        rafSommaire = null;
+        if (!sidebar || window.innerWidth <= 840) return;
+
+        const course = sidebar.scrollHeight - sidebar.clientHeight;
+        if (course <= 0) return; // sommaire plus court que sa fenêtre : rien à suivre
+
+        // On repart du verdict du scroll-spy plutôt que de le recalculer : les deux
+        // ne peuvent donc pas diverger, et le sommaire suit toujours la barre verte.
+        const lienActif = sidebar.querySelector(".nav-link.is-active");
+        if (!lienActif) return; // avant le tout premier syncSidebar
+        const groupeActif = lienActif.closest(".nav-group");
+        const blocActif   = document.getElementById(lienActif.getAttribute("href").slice(1));
+        if (!groupeActif || !blocActif) return;
+
+        const seuil = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
+        ) || 112;
+
+        // Avancement DANS la section courante : 0 quand son haut franchit le seuil
+        // collant, 1 quand celui de la section suivante le franchit à son tour. Les
+        // blocs étant jointifs — ils s'espacent par padding, jamais par marge — la
+        // hauteur du bloc courant mesure exactement cette distance.
+        // Le seuil est décalé de la MÊME tolérance que le spy, et c'est ce qui rend la
+        // trajectoire exactement continue : q atteint 1 à la frame précise où le spy
+        // bascule sur la section suivante, ni avant ni après.
+        const bloc = blocActif.getBoundingClientRect();
+        const q = Math.min(1, Math.max(0, (seuil + TOLERANCE_SPY - bloc.top) / bloc.height));
+
+        // Point de lecture reporté dans le sommaire : il descend le long du groupe
+        // actif au rythme où la page descend la section. À la bascule, q retombe de
+        // 1 à 0 et le point vaut le bas du groupe sortant, soit très exactement le
+        // haut du groupe entrant — la trajectoire reste continue, sans raccord.
+        // offsetTop est relatif à .services-sidebar : position: sticky en fait une
+        // boîte positionnée, donc l'offsetParent, et la valeur se compare directement
+        // à scrollTop sans lecture de rect supplémentaire.
+        const point = groupeActif.offsetTop + q * groupeActif.offsetHeight;
+
+        // Centré dans la fenêtre : le groupe actif garde du contexte au-dessus et en
+        // dessous, et les deux butées — haut de page, fin de course — deviennent des
+        // plateaux où le sommaire attend, jamais des à-coups.
+        const cible = Math.min(course, Math.max(0, point - sidebar.clientHeight / 2));
+
+        // Comparaison au scrollTop LIVE, et non à une dernière valeur mémorisée comme
+        // le fait syncPillGlass : après un défilement manuel du sommaire, un cache
+        // ferait croire la cible déjà atteinte et le sommaire resterait désynchronisé
+        // jusqu'au prochain changement de section.
+        if (Math.abs(cible - sidebar.scrollTop) >= 0.5) sidebar.scrollTop = cible;
+    };
+
+    // Coalescence : le calcul lit des géométries puis écrit un scrollTop. Un scroll
+    // rapide émet plus d'événements que de frames — sans rAF, plusieurs cycles
+    // lecture/écriture se succèderaient dans la même frame pour un seul rendu.
+    const demanderSyncSommaire = () => {
+        if (rafSommaire === null) rafSommaire = requestAnimationFrame(syncSidebarScroll);
+    };
+
     const updateStickyMetrics = () => {
         updateStickyTop();
         syncPillGlass();
+        // Appel direct et non différé : updateStickyTop vient de réécrire le seuil
+        // dont dépend le calcul, autant le consommer tout de suite.
+        syncSidebarScroll();
     };
 
     updateStickyMetrics();
     window.addEventListener("resize", updateStickyMetrics, { passive: true });
     window.addEventListener("load", updateStickyMetrics, { once: true });
+    // Retour via précédent/suivant : DOMContentLoaded ne rejoue pas et aucun
+    // événement scroll n'est garanti, alors que la page est restaurée à sa position.
+    onPageRestore.push(updateStickyMetrics);
 
     // Gel du scroll-spy pendant un scroll piloté (clic sur pill).
     // navScrollActive = true → syncSidebar est gelé.
@@ -668,7 +766,7 @@ if (servicesLayout) {
         let activeId = serviceBlocks[0].id;
 
         serviceBlocks.forEach(block => {
-            if (block.getBoundingClientRect().top <= threshold + 4) {
+            if (block.getBoundingClientRect().top <= threshold + TOLERANCE_SPY) {
                 activeId = block.id;
             }
         });
@@ -682,6 +780,12 @@ if (servicesLayout) {
         // la barre pendant toute la durée de l'animation.
         syncPillGlass();
 
+        // Hors du gel pour la même raison. Le clic sur un .nav-link a déjà posé
+        // .is-active sur sa cible avant de lancer le scroll : laisser tourner la
+        // synchronisation fait glisser le sommaire vers ce groupe PENDANT
+        // l'animation, au lieu de l'y faire sauter une fois celle-ci terminée.
+        demanderSyncSommaire();
+
         if (navScrollActive) {
             // Détecte la fin du scroll smooth : 150 ms sans événement scroll
             clearTimeout(navScrollDebounce);
@@ -694,6 +798,11 @@ if (servicesLayout) {
         }
     }, { passive: true });
     syncSidebar(); // état initial sans attendre un scroll
+    // Après syncSidebar, et non seulement dans updateStickyMetrics plus haut : le
+    // garde-fou a besoin de .is-active, que seul syncSidebar vient de poser. Sans ce
+    // second appel, un chargement en cours de page (rechargement, lien profond) part
+    // du seul mapping proportionnel jusqu'au premier défilement.
+    syncSidebarScroll();
 
     // Tous les liens principaux : activation immédiate de la pill cliquée,
     // puis scroll manuel vers la section avec le bon décalage.

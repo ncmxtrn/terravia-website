@@ -38,11 +38,26 @@
    2. SIDEBAR STICKY
    ============================================================ */
 
+/* Le sommaire déborde largement sa fenêtre (~1700px de liens pour 650-800px
+   visibles) : il défile donc en interne, et script.js reporte sur son scrollTop
+   la progression de la page — voir « Sommaire synchronisé » en SECTION 4.5. */
 .services-sidebar {
     position: sticky;
     top: calc(var(--header-height) + var(--space-xl));
     max-height: calc(100vh - var(--header-height) - var(--space-3xl));
     overflow-y: auto;
+    /* La page pilote le sommaire, jamais l'inverse : sans `contain`, l'inertie du
+       trackpad se propagerait au scroller de la page en fin de course du sommaire
+       (scroll chaining) et le contenu se mettrait à bouger sous lui.
+       La déclaration cascade dans le média ≤840px, qui ne la réinitialise pas —
+       elle y empêche le swipe horizontal des pilules de déclencher la navigation
+       arrière du navigateur. */
+    overscroll-behavior: contain;
+    /* Affirmé plutôt que laissé au défaut : `html` porte scroll-behavior: smooth
+       (style.css). La propriété ne s'hérite pas, mais si elle s'appliquait ici un
+       jour, CHAQUE écriture de scrollTop s'animerait et le sommaire traînerait de
+       plusieurs centaines de ms derrière la page — panne coûteuse à diagnostiquer. */
+    scroll-behavior: auto;
     scrollbar-width: none;
 }
 

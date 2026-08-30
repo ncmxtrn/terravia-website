@@ -669,11 +669,25 @@ if (servicesLayout) {
     // et rien n'écrase sa position ; la synchronisation ne reprend la main qu'au
     // prochain défilement de la page, l'autorité correcte.
 
-    // Marge d'arrondi avec laquelle le scroll-spy considère un bloc comme franchi.
-    // Partagée avec syncSidebarScroll et non recopiée : c'est elle qui fait coïncider
-    // la bascule du spy avec la fin de course du groupe (voir le calcul de q), et deux
-    // valeurs qui divergeraient rouvriraient un micro-saut à chaque changement de section.
-    const TOLERANCE_SPY = 4;
+    // Ligne de lecture : hauteur à laquelle une section est réputée être celle qu'on
+    // est en train de lire. C'est un repère PERCEPTUEL, à ne pas confondre avec
+    // --sticky-top, qui est physique — où une section se pose quand on clique un lien,
+    // et la valeur des scroll-margin-top. Les deux ont longtemps été confondus, et le
+    // symptôme était net : une section prenait 60 % de l'écran alors que le sommaire
+    // désignait encore la précédente, son bord haut n'ayant pas atteint le header.
+    //
+    // On place donc la ligne à 40 % de la zone de lecture (sous le header) : une
+    // section devient active quand elle en occupe 60 %, c'est-à-dire quand elle domine
+    // franchement. La marge de 10 points au-delà de la simple majorité évite qu'un
+    // aller-retour d'un ou deux pixels ne fasse osciller la sélection.
+    const PART_LECTURE = 0.4;
+    const ligneDeLecture = () => {
+        const stickyTop = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
+        ) || 112;
+        return stickyTop + (window.innerHeight - stickyTop) * PART_LECTURE;
+    };
+
     let rafSommaire = null;
 
     const syncSidebarScroll = () => {
@@ -691,19 +705,16 @@ if (servicesLayout) {
         const blocActif   = document.getElementById(lienActif.getAttribute("href").slice(1));
         if (!groupeActif || !blocActif) return;
 
-        const seuil = parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
-        ) || 112;
-
-        // Avancement DANS la section courante : 0 quand son haut franchit le seuil
-        // collant, 1 quand celui de la section suivante le franchit à son tour. Les
+        // Avancement DANS la section courante : 0 quand son haut franchit la ligne de
+        // lecture, 1 quand celui de la section suivante la franchit à son tour. Les
         // blocs étant jointifs — ils s'espacent par padding, jamais par marge — la
         // hauteur du bloc courant mesure exactement cette distance.
-        // Le seuil est décalé de la MÊME tolérance que le spy, et c'est ce qui rend la
+        // C'est la MÊME ligne que celle du spy, et c'est ce partage qui rend la
         // trajectoire exactement continue : q atteint 1 à la frame précise où le spy
-        // bascule sur la section suivante, ni avant ni après.
+        // bascule sur la section suivante, ni avant ni après. Recopier la valeur ici
+        // au lieu d'appeler ligneDeLecture() rouvrirait un saut à chaque bascule.
         const bloc = blocActif.getBoundingClientRect();
-        const q = Math.min(1, Math.max(0, (seuil + TOLERANCE_SPY - bloc.top) / bloc.height));
+        const q = Math.min(1, Math.max(0, (ligneDeLecture() - bloc.top) / bloc.height));
 
         // Point de lecture reporté dans le sommaire : il descend le long du groupe
         // actif au rythme où la page descend la section. À la bascule, q retombe de
@@ -754,19 +765,18 @@ if (servicesLayout) {
     let navScrollActive   = false;
     let navScrollDebounce = null;
 
-    // Scroll-spy : la section active est la dernière dont le haut du bloc
-    // a franchi le seuil --sticky-top (header + sidebar mobile + buffer).
-    // Itérer dans l'ordre du DOM garantit que la plus basse l'emporte.
-    // Par défaut, le premier bloc est actif (haut de page).
+    // Scroll-spy : la section active est la dernière dont le haut du bloc a franchi
+    // la ligne de lecture — donc celle qui occupe le plus de l'écran, et non celle
+    // qui effleure le header. Itérer dans l'ordre du DOM garantit que la plus basse
+    // l'emporte. Par défaut, le premier bloc est actif (haut de page), ce qui couvre
+    // le cas où aucune section n'a encore atteint la ligne.
     const syncSidebar = () => {
         if (navScrollActive) return;
-        const threshold = parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
-        ) || 112;
+        const ligne = ligneDeLecture();
         let activeId = serviceBlocks[0].id;
 
         serviceBlocks.forEach(block => {
-            if (block.getBoundingClientRect().top <= threshold + TOLERANCE_SPY) {
+            if (block.getBoundingClientRect().top <= ligne) {
                 activeId = block.id;
             }
         });

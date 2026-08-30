@@ -332,8 +332,9 @@
      --reveal-shift : course verticale d'une révélation au défilement (style.css,
      § .animate-on-scroll). --reveal-shift-sm est le palier court, réservé aux blocs
      déjà à l'écran au CHARGEMENT : leur révélation se superpose alors au fondu
-     d'entrée de <body> (.page-transition, 0,5 s), les deux opacités se multiplient,
-     et plus la course est longue plus la zone terne dure. Voir apropos.css § 2.
+     d'entrée de <body> (.page-transition, --duration-page-fade), les deux opacités
+     se multiplient, et plus la course est longue plus la zone terne dure. Voir
+     apropos.css § 2 et le hero d'index.html (style.css § 4).
      ============================================================ */
   --ease-card:     cubic-bezier(0.22, 1, 0.36, 1);
   --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);
@@ -348,6 +349,16 @@
   --duration-medium: 0.4s;
   --duration-slow:   0.6s;
   --duration-reveal: 0.8s;
+  /* --duration-page-fade : fondu de sortie avant une navigation interne
+     (.page-transition, style.css § 1), et par la même déclaration fondu d'ENTRÉE
+     de <body> au retrait de l'anti-FOUC.
+     C'est le seul mouvement du site qui retarde une action : au clic, la page
+     suivante est déjà décidée et l'utilisateur ne regarde plus rien. 0,25s suffit
+     à masquer le flash de navigation ; les 0,5s d'avant s'ajoutaient purement et
+     simplement au temps de chargement de la page suivante.
+     ⚠ script.js lit ce token via getComputedStyle (SECTION 2) pour caler son
+     minuteur de navigation : la valeur n'est plus recopiée nulle part. */
+  --duration-page-fade: 0.25s;
   /* --duration-sonar : balayage de l'onde de la bande territoire (apropos.css § 6).
      Hors de l'échelle ci-dessus, et volontairement : les paliers précédents mesurent
      un changement d'état, celui-ci mesure un TRAJET — l'onde traverse 1400px. À la

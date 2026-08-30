@@ -309,6 +309,26 @@ document.addEventListener("DOMContentLoaded", () => {
 // on ajoute "fade-out" sur le body avant de naviguer.
 // Les ancres vers la même page (ex : index.html#services depuis index.html)
 // sont exclues et laissent le navigateur gérer le scroll natif.
+
+/**
+ * Durée du fondu de sortie, en millisecondes, LUE dans le CSS.
+ *
+ * La valeur est celle de --duration-page-fade, que consomme aussi la transition de
+ * .page-transition (style.css § 1). Elle était auparavant recopiée en dur ici : deux
+ * écritures d'un même nombre finissent toujours par diverger, et la navigation
+ * partirait alors soit avant la fin du fondu, soit après un temps mort.
+ *
+ * Lue à chaque clic plutôt que mémorisée : le coût est nul à cette fréquence, et une
+ * valeur mise au point dans l'inspecteur reste ainsi suivie par le minuteur.
+ */
+const dureeFonduPage = () => {
+    const brut = getComputedStyle(document.documentElement)
+        .getPropertyValue("--duration-page-fade").trim();
+    const ms = brut.endsWith("ms") ? parseFloat(brut) : parseFloat(brut) * 1000;
+    // Repli si le token disparaît : mieux vaut naviguer trop tôt que jamais.
+    return Number.isFinite(ms) ? ms : 250;
+};
+
 document.querySelectorAll(".transition-link").forEach(link => {
     link.addEventListener("click", function (e) {
         const targetUrl = this.getAttribute("href");
@@ -326,8 +346,8 @@ document.querySelectorAll(".transition-link").forEach(link => {
         if (targetUrl && !isSamePageAnchor && !isCurrentPageAnchor) {
             e.preventDefault();
             document.body.classList.add("fade-out");
-            // Délai aligné sur la transition CSS fade-out (0.5 s dans style.css)
-            setTimeout(() => { window.location.href = targetUrl; }, 500);
+            // Délai lu dans le CSS, jamais recopié — voir dureeFonduPage ci-dessus.
+            setTimeout(() => { window.location.href = targetUrl; }, dureeFonduPage());
         }
     });
 });

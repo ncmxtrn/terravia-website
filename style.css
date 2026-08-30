@@ -144,10 +144,11 @@ a {
 /* Transition de page fade entre les pages.
    Cette déclaration gouverne AUSSI le fondu d'entrée de l'anti-FOUC : au retrait de
    .is-loading, c'est elle — et non la règle `body` plus haut, qu'elle surclasse — qui
-   anime le passage 0 → 1. Modifier la durée ici affecte les deux usages. */
+   anime le passage 0 → 1. Modifier --duration-page-fade affecte donc les deux usages,
+   et le minuteur de navigation de script.js, qui lit le même token. */
 .page-transition {
     opacity: 1;
-    transition: opacity 0.5s ease;
+    transition: opacity var(--duration-page-fade) ease;
 }
 
 .page-transition.fade-out {

@@ -174,15 +174,16 @@
     margin-bottom: var(--space-2xl);
 }
 
-/* Icône de secteur en taille display — décorative (le h2 nomme déjà le secteur),
-   d'où aria-hidden. Reprend la taille, la couleur et le placement du numéro
-   Orbitron qu'elle remplace : --text-display, vert néon en lavis à 0.28.
+/* Icône de secteur en taille display — purement décorative : le h2 voisin nomme
+   déjà le secteur, d'où aria-hidden dans le markup et user-select: none, qui la
+   tient hors des sélections de texte.
+   L'opacité ne dépend pas de la largeur : le média 480px ne réduit que la taille.
    line-height: var(--leading-tight) évite un débordement visuel du glyphe. */
 .service-block-icon {
     font-size: var(--text-display);
     line-height: var(--leading-tight);
     color: var(--green-400);
-    opacity: 0.28;
+    opacity: 0.8;
     font-variation-settings: 'FILL' 0, 'wght' 400;
     user-select: none;
 }
@@ -558,7 +559,6 @@
 
     .service-block-icon {
         font-size: var(--text-h2-sm);
-        opacity: 0.2;
     }
 }
 

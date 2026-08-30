@@ -138,7 +138,7 @@ img {
 a {
     text-decoration: none;
     color: inherit;
-    transition: color 0.3s;
+    transition: color var(--duration-base) ease;
 }
 
 /* Transition de page fade entre les pages.
@@ -331,17 +331,23 @@ a {
     box-shadow: none;
 }
 
+/* Pas de transition ici : rien dans ce conteneur n'a vocation à s'animer. Le
+   `transition: all` qu'il portait animait le `padding` et la bascule flex → grid au
+   redimensionnement, seuls changements que ce sélecteur voit passer. */
 .header-content {
     display: flex;
     justify-content: space-between; /* Écarte les éléments au maximum */
     align-items: center;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Seule la largeur s'anime — celle du fondu croisé du logo adaptatif (voir « HEADER —
+   LOGO ADAPTATIF »). Le `filter`, le `transform` et l'`opacity` sont portés par
+   .logo-icon, qui a sa propre transition. Durée et courbe calées sur le CTA du header :
+   les deux boîtes se redimensionnent dans le même geste. */
 .logo {
     display: flex;
     align-items: center;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width var(--duration-medium) var(--ease-header);
 }
 
 /* Déplacement réservé aux pointeurs précis — même garde que contact.css, services.css
@@ -424,9 +430,9 @@ a {
 
 /* Contreparties en mouvement réduit des deux animations ci-dessus : même fondu,
    sans la course de 10px (voir le bloc prefers-reduced-motion de la section 5).
-   Déclarées ICI, au niveau global, et surtout pas en réutilisant `fadeIn` : celui-ci
-   vit à l'intérieur du média `min-width: 841px` et n'existe donc pas sous ce seuil,
-   là même où le menu mobile s'ouvre. */
+   Déclarées ICI, au niveau global, et pas dans un média : le menu mobile n'existe
+   que sous 841px, une keyframe posée dans le média desktop ne serait pas définie
+   là où elle sert. */
 @keyframes menu-fade-in  { from { opacity: 0; } to { opacity: 1; } }
 @keyframes menu-fade-out { from { opacity: 1; } to { opacity: 0; } }
 
@@ -479,7 +485,7 @@ a {
     bottom: 0;
     left: 0;
     background-color: var(--color-primary);
-    transition: width 0.3s ease;
+    transition: width var(--duration-base) ease;
 }
 
 .main-nav a:hover {
@@ -500,7 +506,8 @@ a {
     font-size: var(--icon-lg);
     margin-left: 0.2rem;
     color: var(--color-primary); /* Même vert que le trait de soulignement */
-    transition: all var(--duration-base) var(--ease-elastic);
+    /* `transform` seul : c'est la seule propriété que le survol change ci-dessous. */
+    transition: transform var(--duration-base) var(--ease-elastic);
     opacity: 1; /* Visible par défaut pour mobile/tablette */
     transform: translate(0, 0) scale(1);
     white-space: nowrap;
@@ -712,8 +719,8 @@ a {
    Les deux <img> sont superposés en position: absolute et c'est .logo qui porte
    la largeur : sans ça, la boîte du lien resterait dimensionnée par le lockup
    (144px) même une fois celui-ci à opacity: 0, et le chevauchement persisterait.
-   L'animation de cette largeur est déjà couverte par la `transition: all 0.5s`
-   de .logo, calée sur la transition max-width du bouton juste au-dessus.
+   L'animation de cette largeur est déjà couverte par la `transition: width` de
+   .logo, calée sur la transition max-width du bouton juste au-dessus.
    ========================================= */
 @media (max-width: 555px) {
     .logo--adaptive {
@@ -781,7 +788,6 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: fadeInScale 0.4s ease-out forwards;
 }
 
 /* On dessine les barres du burger nous-mêmes avec des <span> */
@@ -800,10 +806,13 @@ a {
     height: 3px;
     background-color: var(--color-forest);
     border-radius: 3px;
-    /* TODO: cubic-bezier(0.68, -0.6, 0.32, 1.6) est une courbe à surtension (bounce).
-       CLAUDE.md l'interdit sur les éléments de contenu ; ici, c'est un feedback
-       interactif ponctuel sur le burger — à remplacer par --ease-card si jugé trop expressif. */
-    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    /* Propriétés explicites, --ease-card, et 0,2s : le morphing burger → croix est un
+       toggle, pas une mise en scène. Il portait `all 0.4s` sur une courbe à surtension
+       négative — le trait repartait en arrière avant de tourner, deux fois trop
+       lentement pour un retour d'interaction. */
+    transition: transform var(--duration-fast) var(--ease-card),
+                opacity var(--duration-fast) ease,
+                width var(--duration-fast) var(--ease-card);
     transform-origin: center;
 }
 
@@ -823,12 +832,6 @@ a {
 .menu-toggle.is-active .burger-icon span:nth-of-type(3) {
     width: 100%;
     transform: translateY(-8.5px) rotate(-45deg);
-}
-
-/* Petite animation d'apparition */
-@keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
 }
 
 /* =========================================
@@ -1018,8 +1021,10 @@ a {
     transform: translateY(0);
 }
 
-.section-header h2.animate-on-scroll { transition-delay: 0.1s; }
-.section-header .subtitle.animate-on-scroll { transition-delay: 0.2s; }
+/* 0,08s, le pas de cascade du site (apropos.css § 6 et § 7, hero d'index.html) :
+   titre et sous-titre sont adjacents, ils franchissent le seuil ensemble. */
+.section-header h2.animate-on-scroll { transition-delay: 0.08s; }
+.section-header .subtitle.animate-on-scroll { transition-delay: 0.16s; }
 
 /* Révélations au défilement : on coupe la COURSE, pas le fondu.
    Réduire les animations ne veut pas dire n'avoir plus aucun retour visuel —
@@ -1104,14 +1109,14 @@ a {
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    transition: color 0.3s ease;
+    transition: color var(--duration-base) ease;
 }
 
 .link-arrow span,
 .card-link span {
     font-size: 1rem;
     margin-left: 0.4rem;
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--duration-base) var(--ease-card);
 }
 
 /* Grille des expertises — mobile-first : une colonne, puis 2 (>= 841px)
@@ -1160,9 +1165,11 @@ a {
     transition: color var(--duration-medium) ease;
 }
 
+/* Pas de transition : aucune règle du dépôt ne change le `transform` de cette icône.
+   La hiérarchie au survol passe par la couleur de .icon-box et la barre d'accent
+   ci-dessous. */
 .icon-box .material-symbols-outlined {
     font-size: var(--icon-xl);
-    transition: transform var(--duration-slow) var(--ease-card);
 }
 
 .icon-box::after {
@@ -1219,16 +1226,21 @@ a {
     }
 }
 
-/* Stagger du reveal : 100 ms entre cartes (convention CLAUDE.md).
+/* Stagger du reveal.
    Le délai est porté par l'état de repos et non par `:not(.visible)` — une transition
    lit ses paramètres dans l'état d'arrivée, et .visible n'est jamais retirée
-   (script.js fait `unobserve` après le premier passage). */
-.services-grid .service-card:nth-child(1) { transition-delay: 0.1s; }
-.services-grid .service-card:nth-child(2) { transition-delay: 0.2s; }
-.services-grid .service-card:nth-child(3) { transition-delay: 0.3s; }
-.services-grid .service-card:nth-child(4) { transition-delay: 0.4s; }
-.services-grid .service-card:nth-child(5) { transition-delay: 0.5s; }
-.services-grid .service-card:nth-child(6) { transition-delay: 0.6s; }
+   (script.js fait `unobserve` après le premier passage).
+
+   Le RANG, lui, n'est attribué que dans les médias qui donnent des colonnes à la
+   grille (section 9). Un rang n'a de sens que s'il ordonne des éléments qui entrent
+   ENSEMBLE dans le viewport, donc s'ils partagent une rangée : sur la colonne unique
+   du mobile, chaque carte franchit le seuil seule, le rang ne cascade plus rien et
+   n'ajoute qu'un temps mort avant la carte que le lecteur vient d'atteindre — jusqu'à
+   600 ms pour la sixième, avec la série fixe qui était écrite ici. D'où le repli à 0s
+   porté par le `var()`. Même dispositif qu'apropos.css § 7. */
+.services-grid .service-card {
+    transition-delay: var(--step-delay, 0s);
+}
 
 /* ===== VARIANTE 2 — Split Cinématique ===== */
 .svc-v2 {
@@ -1366,7 +1378,7 @@ a {
 .link-view-all span {
     font-size: 1.1rem;
     margin-left: 0.25rem;
-    transition: transform 0.2s;
+    transition: transform var(--duration-fast) var(--ease-card);
 }
 
 .link-view-all:hover {
@@ -1393,8 +1405,8 @@ a {
     box-shadow: 0 10px 25px -8px var(--forest-20);
     cursor: pointer;
     isolation: isolate;
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.5s ease;
+    transition: transform var(--duration-medium) var(--ease-card),
+                box-shadow var(--duration-medium) ease;
 }
 
 .project-card:hover {
@@ -1408,7 +1420,7 @@ a {
     inset: 0;
     background-size: cover;
     background-position: center;
-    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--duration-reveal) var(--ease-card);
 }
 
 .project-card:hover .project-bg {
@@ -1420,7 +1432,7 @@ a {
     inset: 0;
     background:
         linear-gradient(to top, var(--forest-95) 0%, var(--forest-55) 40%, transparent 75%);
-    transition: opacity 0.5s ease;
+    transition: opacity var(--duration-medium) ease;
 }
 
 
@@ -1470,7 +1482,9 @@ a {
     opacity: 0;
     max-height: 0;
     transform: translateY(8px);
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), max-height 0.4s ease;
+    transition: opacity var(--duration-medium) ease,
+                transform var(--duration-medium) var(--ease-card),
+                max-height var(--duration-medium) ease;
 }
 
 /* Hover : max-height passe à 4rem, opacity à 1. */
@@ -1737,17 +1751,14 @@ a {
         display: none;
     }
 
+    /* Aucune animation d'apparition ici, pas plus que sur .menu-toggle : la nav est du
+       mobilier permanent, elle est là avant qu'on la cherche. Son entrée faisait
+       doublon avec le fondu de page, qui la porte déjà. */
     .main-nav {
         display: flex;
         align-items: center;
-        animation: fadeIn 0.5s ease-out forwards;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
     .hero-buttons {
         flex-direction: row; /* Boutons côte à côte */
     }
@@ -1759,6 +1770,9 @@ a {
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    /* Deux colonnes : la seconde carte de chaque rangée suit la première. */
+    .services-grid .service-card:nth-child(even) { --step-delay: 0.08s; }
 
     .projects-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1786,6 +1800,16 @@ a {
     .services-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    /* Trois colonnes : la cascade se lit de gauche à droite dans chaque rangée, et
+       repart de zéro à la suivante — les deux rangées entrent souvent ensemble à
+       cette largeur, mais chacune se lit pour elle-même.
+       Le `:nth-child(even)` du média 841px reste actif ici (même condition remplie) :
+       on le remet donc explicitement à 0s pour les cartes 4 et 6, que la règle 3n+1
+       ne couvre pas. */
+    .services-grid .service-card:nth-child(3n+1) { --step-delay: 0s; }
+    .services-grid .service-card:nth-child(3n+2) { --step-delay: 0.08s; }
+    .services-grid .service-card:nth-child(3n)   { --step-delay: 0.16s; }
 
     /* 3 colonnes pour les projets */
     .projects-grid {

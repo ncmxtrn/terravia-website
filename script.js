@@ -836,10 +836,47 @@ if (servicesLayout) {
         });
     });
 
-    // Sous-liens : scroll vers la section parente pour montrer le numéro
-    // et le titre (01/02/03), puis flash sur la carte cible.
+    // Sous-liens du sommaire et liens d'ancre du pied de page : on scrolle vers la
+    // cible ELLE-MÊME, puis on la fait flasher.
+    //
+    // Viser la section parente plutôt que la fiche — ce que faisait ce handler — ne
+    // marchait visiblement que pour les deux premières fiches de chaque secteur : la
+    // grille ayant deux colonnes, se poser en haut d'un secteur ne montre que
+    // l'en-tête et la première rangée. Les cinq autres fiches recevaient bien leur
+    // flash, mais hors écran.
+    //
+    // Aucun décalage à calculer ici : .service-sub-item et .service-block portent
+    // tous deux `scroll-margin-top: var(--sticky-top, …)` (services.css), que
+    // scrollIntoView honore. La cible se pose donc sous le header — et sous la barre
+    // de pilules en mobile, où --sticky-top inclut sa hauteur.
+    //
     // L'animation est pilotée par la classe .is-highlighted (et non :target)
     // pour pouvoir être relancée même si on clique plusieurs fois le même lien.
+    //
+    // Tout ce qui suit l'arrivée est différé à la fin du défilement, pour deux raisons
+    // mesurées sur cette page — voir apresScroll ci-dessous.
+    let annulerAttente = null;
+
+    // Exécute fn quand le défilement de la page est retombé. Le minuteur initial est
+    // plus long que les suivants : si la cible était déjà en place, le clic ne produit
+    // AUCUN événement scroll, et sans lui fn ne partirait jamais.
+    const apresScroll = (fn) => {
+        annulerAttente?.(); // un clic plus récent annule l'attente précédente, sinon
+                            // l'ancienne cible recalerait la page par-dessus la nouvelle
+        let minuteur = setTimeout(terminer, 250);
+        const onScroll = () => {
+            clearTimeout(minuteur);
+            minuteur = setTimeout(terminer, 120);
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        annulerAttente = () => {
+            clearTimeout(minuteur);
+            window.removeEventListener("scroll", onScroll);
+            annulerAttente = null;
+        };
+        function terminer() { annulerAttente?.(); fn(); }
+    };
+
     document.querySelectorAll(".services-sidebar .sub-nav a, .site-footer a[href^='#']").forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -847,18 +884,52 @@ if (servicesLayout) {
             const targetEl = document.getElementById(targetId);
             if (!targetEl) return;
 
-            const parentSection = targetEl.closest(".service-block");
-            if (parentSection) {
-                parentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
+            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
 
-            // Force le redémarrage de l'animation même si la carte était déjà active
-            targetEl.classList.remove("is-highlighted");
-            void targetEl.offsetWidth; // force reflow
-            targetEl.classList.add("is-highlighted");
-            targetEl.addEventListener("animationend", () => {
+            apresScroll(() => {
+                // 1. Recalage. Les images de fiches sont en `loading="lazy"` SANS
+                //    attributs width/height : elles se posent pendant le trajet et
+                //    déplacent la cible dans le document, alors que le navigateur vise
+                //    la position calculée au clic. Mesuré : la fiche arrivait 30px trop
+                //    haut, partiellement sous le header. On ne corrige que les petits
+                //    écarts — un grand écart signifie que l'utilisateur a repris la main
+                //    pendant le trajet, et lui reprendre le défilement serait pire que
+                //    le décalage. `behavior: "auto"` est explicite et nécessaire : sans
+                //    lui, scrollIntoView hérite du `scroll-behavior: smooth` de <html>
+                //    (style.css) et le recalage se rejouerait en fondu.
+                //
+                //    La référence est le `scroll-margin-top` PROPRE à la cible, pas
+                //    --sticky-top : c'est lui que scrollIntoView applique, et les deux
+                //    diffèrent selon la cible. Une fiche reçoit bien les 112px de
+                //    services.css, mais une section se voit imposer les 80px du
+                //    `section[id]` de style.css, plus spécifique. Mesurer contre
+                //    --sticky-top ferait croire à un écart permanent de 32px sur les
+                //    sections, et déclencherait à chaque clic un recalage sans effet.
+                const marge = parseFloat(getComputedStyle(targetEl).scrollMarginTop) || 0;
+                const ecart = targetEl.getBoundingClientRect().top - marge;
+                if (Math.abs(ecart) > 1 && Math.abs(ecart) <= 60) {
+                    targetEl.scrollIntoView({ behavior: "auto", block: "start" });
+                }
+
+                // 2. Flash, réservé aux fiches : les liens du pied de page visent des
+                //    .service-block, pour lesquels aucune règle .is-highlighted n'existe.
+                //    Sans ce garde, la classe serait posée sans qu'aucune animation ne
+                //    démarre — donc sans `animationend` pour la retirer : elle resterait
+                //    à demeure et un écouteur {once:true} s'accumulerait à chaque clic.
+                if (!targetEl.classList.contains("service-sub-item")) return;
+
+                // Déclenché à l'arrivée, et non au clic : le trajet fluide dure de 0,5 à
+                // 1,7 s selon la distance, si bien qu'une fiche lointaine voyait son halo
+                // déjà aux deux tiers éteint en apparaissant, là où une fiche proche
+                // l'avait presque entier. Le retour est maintenant le même pour les 36.
+                // Force le redémarrage de l'animation même si la carte était déjà active.
                 targetEl.classList.remove("is-highlighted");
-            }, { once: true });
+                void targetEl.offsetWidth; // force reflow
+                targetEl.classList.add("is-highlighted");
+                targetEl.addEventListener("animationend", () => {
+                    targetEl.classList.remove("is-highlighted");
+                }, { once: true });
+            });
         });
     });
 }

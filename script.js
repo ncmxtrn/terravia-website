@@ -263,11 +263,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             /**
              * Met à jour la classe "is-floating" selon la position du scroll.
-             * "is-floating" est actif uniquement quand scrollY === 0 (tout en haut de page).
              * Listener passif pour ne pas bloquer le thread de rendu.
+             *
+             * Un SEUIL, et non `<= 0` : perdre "is-floating" fait basculer le header
+             * dans l'état caché dérivé de style.css tant que "show-cta" n'est pas encore
+             * posée — il quitte donc l'écran sur 80px. Sans marge, le résidu cinétique
+             * d'un trackpad ou une molette effleurée suffisait à lancer ce trajet, rejoué
+             * en sens inverse dès le retour à 0 : un aller-retour complet pour un pixel.
+             * Même parti pris que le seuil du masquage mobile plus haut — on ne réagit
+             * qu'à un geste franc. 24px : au-dessus du tremblement, bien en dessous d'un
+             * cran de molette.
              */
+            const SEUIL_FLOTTANT = 24; // px
+
             const updateFloatingState = () => {
-                siteHeader.classList.toggle("is-floating", window.scrollY <= 0);
+                siteHeader.classList.toggle("is-floating", window.scrollY <= SEUIL_FLOTTANT);
             };
             window.addEventListener("scroll", updateFloatingState, { passive: true });
 
@@ -299,6 +309,26 @@ document.addEventListener("DOMContentLoaded", () => {
 // on ajoute "fade-out" sur le body avant de naviguer.
 // Les ancres vers la même page (ex : index.html#services depuis index.html)
 // sont exclues et laissent le navigateur gérer le scroll natif.
+
+/**
+ * Durée du fondu de sortie, en millisecondes, LUE dans le CSS.
+ *
+ * La valeur est celle de --duration-page-fade, que consomme aussi la transition de
+ * .page-transition (style.css § 1). Elle était auparavant recopiée en dur ici : deux
+ * écritures d'un même nombre finissent toujours par diverger, et la navigation
+ * partirait alors soit avant la fin du fondu, soit après un temps mort.
+ *
+ * Lue à chaque clic plutôt que mémorisée : le coût est nul à cette fréquence, et une
+ * valeur mise au point dans l'inspecteur reste ainsi suivie par le minuteur.
+ */
+const dureeFonduPage = () => {
+    const brut = getComputedStyle(document.documentElement)
+        .getPropertyValue("--duration-page-fade").trim();
+    const ms = brut.endsWith("ms") ? parseFloat(brut) : parseFloat(brut) * 1000;
+    // Repli si le token disparaît : mieux vaut naviguer trop tôt que jamais.
+    return Number.isFinite(ms) ? ms : 250;
+};
+
 document.querySelectorAll(".transition-link").forEach(link => {
     link.addEventListener("click", function (e) {
         const targetUrl = this.getAttribute("href");
@@ -316,8 +346,8 @@ document.querySelectorAll(".transition-link").forEach(link => {
         if (targetUrl && !isSamePageAnchor && !isCurrentPageAnchor) {
             e.preventDefault();
             document.body.classList.add("fade-out");
-            // Délai aligné sur la transition CSS fade-out (0.5 s dans style.css)
-            setTimeout(() => { window.location.href = targetUrl; }, 500);
+            // Délai lu dans le CSS, jamais recopié — voir dureeFonduPage ci-dessus.
+            setTimeout(() => { window.location.href = targetUrl; }, dureeFonduPage());
         }
     });
 });
@@ -542,7 +572,9 @@ if (channelsRoot) {
 
 /* =============================================================
    SECTION 4.5 — PAGE SERVICES (services.html uniquement)
-   Active le lien sidebar correspondant à la section visible.
+   Active le lien sidebar correspondant à la section visible, puis fait suivre
+   le sommaire : centrage horizontal de la pill sur mobile, défilement interne
+   synchronisé sur la progression de la page en desktop.
    Guard: s'exécute uniquement si .services-layout est présent.
    ============================================================= */
 
@@ -575,17 +607,25 @@ if (servicesLayout) {
 
     const pageHeader = document.querySelector(".site-header");
 
-    // Met à jour --sticky-top sur :root = hauteur réelle de la zone collante
-    // (header + sidebar sur mobile, header seul sur desktop) + buffer visuel.
-    // Utilisé à la fois par le scroll-spy et par scroll-margin-top en CSS.
-    const updateStickyTop = () => {
-        const headerH  = pageHeader?.offsetHeight ?? 80;
+    // Hauteur de ce qui reste collé en haut de l'écran : le header seul en desktop,
+    // le header PLUS la barre de pilules en mobile. C'est la hauteur sous laquelle un
+    // contenu est masqué, donc la position exacte où poser une section pour qu'elle
+    // arrive à ras du header, sans bande vide au-dessus d'elle.
+    const hauteurZoneCollante = () => {
+        const headerH = pageHeader?.offsetHeight ?? 80;
         const isMobile = window.innerWidth <= 840;
-        const sidebarH = isMobile ? (sidebar?.offsetHeight ?? 0) : 0;
-        const buffer   = isMobile ? 16 : 32; // --space-md mobile, --space-xl desktop
+        return headerH + (isMobile ? (sidebar?.offsetHeight ?? 0) : 0);
+    };
+
+    // Met à jour --sticky-top sur :root = zone collante + buffer visuel.
+    // Utilisé à la fois par le scroll-spy et par scroll-margin-top en CSS.
+    // Le buffer est délibérément ABSENT de hauteurZoneCollante : les fiches gagnent à
+    // respirer sous le header, les sections doivent au contraire y être jointives.
+    const updateStickyTop = () => {
+        const buffer = window.innerWidth <= 840 ? 16 : 32; // --space-md mobile, --space-xl desktop
         document.documentElement.style.setProperty(
             "--sticky-top",
-            `${headerH + sidebarH + buffer}px`
+            `${hauteurZoneCollante() + buffer}px`
         );
     };
 
@@ -641,14 +681,121 @@ if (servicesLayout) {
         }
     };
 
+    // --- Sommaire synchronisé au scroll (desktop uniquement) ---
+    // Le sommaire fait ~1700px pour 650-800px de fenêtre visible : sans pilotage,
+    // le lien actif et sa barre verte se retrouvent hors de vue dès le 4e secteur,
+    // dans un conteneur que l'utilisateur n'a jamais fait défiler — et dont les
+    // barres de défilement sont masquées, donc rien n'indique qu'il le peut.
+    //
+    // Le report se fait SECTION PAR SECTION, et non par une règle de trois sur toute
+    // la page : c'est ce qui le rend à la fois continu et toujours juste. L'avancement
+    // dans la section courante est reporté sur le groupe qui lui correspond, si bien
+    // que les hauteurs des blocs n'ont pas besoin d'être proportionnelles à celles des
+    // groupes — chaque section pilote exactement son groupe, quelles que soient leurs
+    // tailles respectives.
+    //
+    // Un mapping proportionnel global, lui, aurait exigé un garde-fou pour ramener le
+    // groupe actif dans la fenêtre, et ce garde-fou aurait produit des SAUTS : exiger
+    // qu'un groupe soit entièrement visible épingle le sommaire en butée pendant toute
+    // une section — le premier groupe commence à l'offset 0, il ne peut être entièrement
+    // visible qu'à scrollTop 0 — puis le relâche d'un coup à la bascule suivante.
+    //
+    // L'asymétrie est voulue : la page pilote le sommaire, jamais l'inverse. Elle
+    // tient sans état supplémentaire ici — c'est `overscroll-behavior: contain`
+    // (services.css) qui empêche le sommaire de faire bouger la page. Tant que
+    // l'utilisateur le parcourt à la molette, aucun événement scroll de page ne part
+    // et rien n'écrase sa position ; la synchronisation ne reprend la main qu'au
+    // prochain défilement de la page, l'autorité correcte.
+
+    // Ligne de lecture : hauteur à laquelle une section est réputée être celle qu'on
+    // est en train de lire. C'est un repère PERCEPTUEL, à ne pas confondre avec
+    // --sticky-top, qui est physique — où une section se pose quand on clique un lien,
+    // et la valeur des scroll-margin-top. Les deux ont longtemps été confondus, et le
+    // symptôme était net : une section prenait 60 % de l'écran alors que le sommaire
+    // désignait encore la précédente, son bord haut n'ayant pas atteint le header.
+    //
+    // On place donc la ligne à 40 % de la zone de lecture (sous le header) : une
+    // section devient active quand elle en occupe 60 %, c'est-à-dire quand elle domine
+    // franchement. La marge de 10 points au-delà de la simple majorité évite qu'un
+    // aller-retour d'un ou deux pixels ne fasse osciller la sélection.
+    const PART_LECTURE = 0.4;
+    const ligneDeLecture = () => {
+        const stickyTop = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
+        ) || 112;
+        return stickyTop + (window.innerHeight - stickyTop) * PART_LECTURE;
+    };
+
+    let rafSommaire = null;
+
+    const syncSidebarScroll = () => {
+        rafSommaire = null;
+        if (!sidebar || window.innerWidth <= 840) return;
+
+        const course = sidebar.scrollHeight - sidebar.clientHeight;
+        if (course <= 0) return; // sommaire plus court que sa fenêtre : rien à suivre
+
+        // On repart du verdict du scroll-spy plutôt que de le recalculer : les deux
+        // ne peuvent donc pas diverger, et le sommaire suit toujours la barre verte.
+        const lienActif = sidebar.querySelector(".nav-link.is-active");
+        if (!lienActif) return; // avant le tout premier syncSidebar
+        const groupeActif = lienActif.closest(".nav-group");
+        const blocActif   = document.getElementById(lienActif.getAttribute("href").slice(1));
+        if (!groupeActif || !blocActif) return;
+
+        // Avancement DANS la section courante : 0 quand son haut franchit la ligne de
+        // lecture, 1 quand celui de la section suivante la franchit à son tour. Les
+        // blocs étant jointifs — ils s'espacent par padding, jamais par marge — la
+        // hauteur du bloc courant mesure exactement cette distance.
+        // C'est la MÊME ligne que celle du spy, et c'est ce partage qui rend la
+        // trajectoire exactement continue : q atteint 1 à la frame précise où le spy
+        // bascule sur la section suivante, ni avant ni après. Recopier la valeur ici
+        // au lieu d'appeler ligneDeLecture() rouvrirait un saut à chaque bascule.
+        const bloc = blocActif.getBoundingClientRect();
+        const q = Math.min(1, Math.max(0, (ligneDeLecture() - bloc.top) / bloc.height));
+
+        // Point de lecture reporté dans le sommaire : il descend le long du groupe
+        // actif au rythme où la page descend la section. À la bascule, q retombe de
+        // 1 à 0 et le point vaut le bas du groupe sortant, soit très exactement le
+        // haut du groupe entrant — la trajectoire reste continue, sans raccord.
+        // offsetTop est relatif à .services-sidebar : position: sticky en fait une
+        // boîte positionnée, donc l'offsetParent, et la valeur se compare directement
+        // à scrollTop sans lecture de rect supplémentaire.
+        const point = groupeActif.offsetTop + q * groupeActif.offsetHeight;
+
+        // Centré dans la fenêtre : le groupe actif garde du contexte au-dessus et en
+        // dessous, et les deux butées — haut de page, fin de course — deviennent des
+        // plateaux où le sommaire attend, jamais des à-coups.
+        const cible = Math.min(course, Math.max(0, point - sidebar.clientHeight / 2));
+
+        // Comparaison au scrollTop LIVE, et non à une dernière valeur mémorisée comme
+        // le fait syncPillGlass : après un défilement manuel du sommaire, un cache
+        // ferait croire la cible déjà atteinte et le sommaire resterait désynchronisé
+        // jusqu'au prochain changement de section.
+        if (Math.abs(cible - sidebar.scrollTop) >= 0.5) sidebar.scrollTop = cible;
+    };
+
+    // Coalescence : le calcul lit des géométries puis écrit un scrollTop. Un scroll
+    // rapide émet plus d'événements que de frames — sans rAF, plusieurs cycles
+    // lecture/écriture se succèderaient dans la même frame pour un seul rendu.
+    const demanderSyncSommaire = () => {
+        if (rafSommaire === null) rafSommaire = requestAnimationFrame(syncSidebarScroll);
+    };
+
     const updateStickyMetrics = () => {
         updateStickyTop();
         syncPillGlass();
+        // Appel direct et non différé : updateStickyTop vient de réécrire le seuil
+        // dont dépend le calcul, autant le consommer tout de suite.
+        syncSidebarScroll();
     };
 
     updateStickyMetrics();
     window.addEventListener("resize", updateStickyMetrics, { passive: true });
     window.addEventListener("load", updateStickyMetrics, { once: true });
+    // Retour via précédent/suivant : DOMContentLoaded ne rejoue pas et aucun
+    // événement scroll n'est garanti, alors que la page est restaurée à sa position.
+    onPageRestore.push(updateStickyMetrics);
 
     // Gel du scroll-spy pendant un scroll piloté (clic sur pill).
     // navScrollActive = true → syncSidebar est gelé.
@@ -656,19 +803,18 @@ if (servicesLayout) {
     let navScrollActive   = false;
     let navScrollDebounce = null;
 
-    // Scroll-spy : la section active est la dernière dont le haut du bloc
-    // a franchi le seuil --sticky-top (header + sidebar mobile + buffer).
-    // Itérer dans l'ordre du DOM garantit que la plus basse l'emporte.
-    // Par défaut, le premier bloc est actif (haut de page).
+    // Scroll-spy : la section active est la dernière dont le haut du bloc a franchi
+    // la ligne de lecture — donc celle qui occupe le plus de l'écran, et non celle
+    // qui effleure le header. Itérer dans l'ordre du DOM garantit que la plus basse
+    // l'emporte. Par défaut, le premier bloc est actif (haut de page), ce qui couvre
+    // le cas où aucune section n'a encore atteint la ligne.
     const syncSidebar = () => {
         if (navScrollActive) return;
-        const threshold = parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
-        ) || 112;
+        const ligne = ligneDeLecture();
         let activeId = serviceBlocks[0].id;
 
         serviceBlocks.forEach(block => {
-            if (block.getBoundingClientRect().top <= threshold + 4) {
+            if (block.getBoundingClientRect().top <= ligne) {
                 activeId = block.id;
             }
         });
@@ -682,6 +828,12 @@ if (servicesLayout) {
         // la barre pendant toute la durée de l'animation.
         syncPillGlass();
 
+        // Hors du gel pour la même raison. Le clic sur un .nav-link a déjà posé
+        // .is-active sur sa cible avant de lancer le scroll : laisser tourner la
+        // synchronisation fait glisser le sommaire vers ce groupe PENDANT
+        // l'animation, au lieu de l'y faire sauter une fois celle-ci terminée.
+        demanderSyncSommaire();
+
         if (navScrollActive) {
             // Détecte la fin du scroll smooth : 150 ms sans événement scroll
             clearTimeout(navScrollDebounce);
@@ -694,9 +846,43 @@ if (servicesLayout) {
         }
     }, { passive: true });
     syncSidebar(); // état initial sans attendre un scroll
+    // Après syncSidebar, et non seulement dans updateStickyMetrics plus haut : le
+    // garde-fou a besoin de .is-active, que seul syncSidebar vient de poser. Sans ce
+    // second appel, un chargement en cours de page (rechargement, lien profond) part
+    // du seul mapping proportionnel jusqu'au premier défilement.
+    syncSidebarScroll();
+
+    // Exécute fn quand le défilement de la page est retombé. Le minuteur initial est
+    // plus long que les suivants : si la cible était déjà en place, le clic ne produit
+    // AUCUN événement scroll, et sans lui fn ne partirait jamais.
+    let annulerAttente = null;
+
+    const apresScroll = (fn) => {
+        annulerAttente?.(); // un clic plus récent annule l'attente précédente, sinon
+                            // l'ancienne cible recalerait la page par-dessus la nouvelle
+        let minuteur = setTimeout(terminer, 250);
+        const onScroll = () => {
+            clearTimeout(minuteur);
+            minuteur = setTimeout(terminer, 120);
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        annulerAttente = () => {
+            clearTimeout(minuteur);
+            window.removeEventListener("scroll", onScroll);
+            annulerAttente = null;
+        };
+        function terminer() { annulerAttente?.(); fn(); }
+    };
 
     // Tous les liens principaux : activation immédiate de la pill cliquée,
-    // puis scroll manuel vers la section avec le bon décalage.
+    // puis scroll manuel vers la section.
+    //
+    // La cible est la zone collante NUE, sans le buffer de --sticky-top : une section
+    // demandée explicitement doit venir à ras du header. Avec --sticky-top elle se
+    // posait 32px plus bas, laissant une bande vide entre le header et son filet.
+    // C'est aussi ce que donnent déjà les autres chemins d'ancrage (liens du pied de
+    // page, sous-liens de première rangée), qui passent par le scroll-margin-top des
+    // sections — les trois concordent donc désormais.
     sidebarNavLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -709,18 +895,48 @@ if (servicesLayout) {
 
             const targetEl = document.getElementById(targetId);
             if (!targetEl) return;
-            const stickyTop = parseFloat(
-                getComputedStyle(document.documentElement).getPropertyValue("--sticky-top")
-            ) || 112;
-            const top = targetEl.getBoundingClientRect().top + window.scrollY - stickyTop;
+            const top = targetEl.getBoundingClientRect().top + window.scrollY
+                        - hauteurZoneCollante();
             window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+
+            // Même recalage que pour les sous-liens, et pour la même raison : les images
+            // en `loading="lazy"` sans dimensions se posent pendant le trajet et
+            // déplacent la cible, alors que le navigateur vise la position calculée au
+            // clic. On mesure contre la zone collante — la même référence que le scroll
+            // ci-dessus, et non le scroll-margin-top de la section, qui ignore la barre
+            // de pilules en mobile. Au-delà de 60px, c'est l'utilisateur qui a repris la
+            // main pendant le trajet : on ne lui arrache pas le défilement.
+            apresScroll(() => {
+                const ecart = targetEl.getBoundingClientRect().top - hauteurZoneCollante();
+                if (Math.abs(ecart) > 1 && Math.abs(ecart) <= 60) {
+                    window.scrollBy({ top: ecart, behavior: "auto" });
+                }
+            });
         });
     });
 
-    // Sous-liens : scroll vers la section parente pour montrer le numéro
-    // et le titre (01/02/03), puis flash sur la carte cible.
+    // Sous-liens du sommaire et liens d'ancre du pied de page : on défile vers la cible,
+    // puis on la fait flasher.
+    //
+    // Viser systématiquement la section parente — ce que faisait ce handler — ne
+    // marchait visiblement que pour les deux premières fiches de chaque secteur : la
+    // grille ayant deux colonnes, se poser en haut d'un secteur ne montre que
+    // l'en-tête et la première rangée. Les cinq autres fiches recevaient bien leur
+    // flash, mais hors écran.
+    //
+    // La cible du défilement est donc choisie par fiche (voir `elScroll` plus bas) :
+    // la section pour la première rangée, qui tient à l'écran avec l'en-tête, et la
+    // fiche elle-même au-delà. Le flash, lui, porte toujours sur la fiche cliquée.
+    //
+    // Aucun décalage à calculer ici : `scrollIntoView` applique le `scroll-margin-top`
+    // de la cible. La cible se pose donc sous le header — et sous la barre de pilules
+    // en mobile, où --sticky-top inclut sa hauteur.
+    //
     // L'animation est pilotée par la classe .is-highlighted (et non :target)
     // pour pouvoir être relancée même si on clique plusieurs fois le même lien.
+    //
+    // Tout ce qui suit l'arrivée est différé à la fin du défilement (apresScroll, défini
+    // plus haut avec les liens de section), pour deux raisons mesurées sur cette page.
     document.querySelectorAll(".services-sidebar .sub-nav a, .site-footer a[href^='#']").forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -728,18 +944,72 @@ if (servicesLayout) {
             const targetEl = document.getElementById(targetId);
             if (!targetEl) return;
 
-            const parentSection = targetEl.closest(".service-block");
-            if (parentSection) {
-                parentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
+            // Cible du DÉFILEMENT, distincte de la cible du flash : on vise la fiche,
+            // sauf si elle occupe la première rangée de sa grille. Là on vise la section,
+            // pour ouvrir sur son en-tête — icône et titre du secteur apparents — car
+            // cette rangée-là reste de toute façon à l'écran juste en dessous. Au-delà,
+            // viser la section ne montrerait pas la fiche demandée : c'est le défaut
+            // corrigé juste avant, à ne pas réintroduire pour tout le monde.
+            //
+            // La rangée est déduite des offsetTop plutôt que d'un compte figé à deux :
+            // la grille passe à une colonne sous 840px, et le jour où elle en aurait
+            // trois, la règle suivrait sans être réécrite.
+            const grille        = targetEl.closest(".service-sub-grid");
+            const premiereFiche = grille?.querySelector(".service-sub-item");
+            const enPremiereRangee = premiereFiche
+                && Math.abs(targetEl.offsetTop - premiereFiche.offsetTop) < 1;
+            const elScroll = (enPremiereRangee && targetEl.closest(".service-block")) || targetEl;
 
-            // Force le redémarrage de l'animation même si la carte était déjà active
-            targetEl.classList.remove("is-highlighted");
-            void targetEl.offsetWidth; // force reflow
-            targetEl.classList.add("is-highlighted");
-            targetEl.addEventListener("animationend", () => {
+            elScroll.scrollIntoView({ behavior: "smooth", block: "start" });
+
+            apresScroll(() => {
+                // 1. Recalage. Les images de fiches sont en `loading="lazy"` SANS
+                //    attributs width/height : elles se posent pendant le trajet et
+                //    déplacent la cible dans le document, alors que le navigateur vise
+                //    la position calculée au clic. Mesuré : la fiche arrivait 30px trop
+                //    haut, partiellement sous le header. On ne corrige que les petits
+                //    écarts — un grand écart signifie que l'utilisateur a repris la main
+                //    pendant le trajet, et lui reprendre le défilement serait pire que
+                //    le décalage. `behavior: "auto"` est explicite et nécessaire : sans
+                //    lui, scrollIntoView hérite du `scroll-behavior: smooth` de <html>
+                //    (style.css) et le recalage se rejouerait en fondu.
+                //
+                //    La référence est le `scroll-margin-top` PROPRE à la cible, pas
+                //    --sticky-top : c'est lui que scrollIntoView applique, et les deux
+                //    diffèrent selon la cible. Une fiche reçoit bien les 112px de
+                //    services.css, mais une section se voit imposer les 80px du
+                //    `section[id]` de style.css, plus spécifique. Mesurer contre
+                //    --sticky-top ferait croire à un écart permanent de 32px sur les
+                //    sections, et déclencherait à chaque clic un recalage sans effet.
+                //
+                //    Le recalage porte sur elScroll et non sur targetEl : mesurer la
+                //    fiche alors qu'on a défilé vers sa section rouvrirait exactement ce
+                //    même piège, un écart permanent corrigé en vain à chaque clic.
+                const marge = parseFloat(getComputedStyle(elScroll).scrollMarginTop) || 0;
+                const ecart = elScroll.getBoundingClientRect().top - marge;
+                if (Math.abs(ecart) > 1 && Math.abs(ecart) <= 60) {
+                    elScroll.scrollIntoView({ behavior: "auto", block: "start" });
+                }
+
+                // 2. Flash, réservé aux fiches : les liens du pied de page visent des
+                //    .service-block, pour lesquels aucune règle .is-highlighted n'existe.
+                //    Sans ce garde, la classe serait posée sans qu'aucune animation ne
+                //    démarre — donc sans `animationend` pour la retirer : elle resterait
+                //    à demeure et un écouteur {once:true} s'accumulerait à chaque clic.
+                if (!targetEl.classList.contains("service-sub-item")) return;
+
+                // Déclenché à l'arrivée, et non au clic : le trajet fluide dure de 0,5 à
+                // 1,7 s selon la distance, si bien qu'une fiche lointaine voyait son halo
+                // déjà aux deux tiers éteint en apparaissant, là où une fiche proche
+                // l'avait presque entier. Le retour est maintenant le même pour les 36.
+                // Force le redémarrage de l'animation même si la carte était déjà active.
                 targetEl.classList.remove("is-highlighted");
-            }, { once: true });
+                void targetEl.offsetWidth; // force reflow
+                targetEl.classList.add("is-highlighted");
+                targetEl.addEventListener("animationend", () => {
+                    targetEl.classList.remove("is-highlighted");
+                }, { once: true });
+            });
         });
     });
 }

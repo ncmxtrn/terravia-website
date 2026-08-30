@@ -38,11 +38,26 @@
    2. SIDEBAR STICKY
    ============================================================ */
 
+/* Le sommaire déborde largement sa fenêtre (~1700px de liens pour 650-800px
+   visibles) : il défile donc en interne, et script.js reporte sur son scrollTop
+   la progression de la page — voir « Sommaire synchronisé » en SECTION 4.5. */
 .services-sidebar {
     position: sticky;
     top: calc(var(--header-height) + var(--space-xl));
     max-height: calc(100vh - var(--header-height) - var(--space-3xl));
     overflow-y: auto;
+    /* La page pilote le sommaire, jamais l'inverse : sans `contain`, l'inertie du
+       trackpad se propagerait au scroller de la page en fin de course du sommaire
+       (scroll chaining) et le contenu se mettrait à bouger sous lui.
+       La déclaration cascade dans le média ≤840px, qui ne la réinitialise pas —
+       elle y empêche le swipe horizontal des pilules de déclencher la navigation
+       arrière du navigateur. */
+    overscroll-behavior: contain;
+    /* Affirmé plutôt que laissé au défaut : `html` porte scroll-behavior: smooth
+       (style.css). La propriété ne s'hérite pas, mais si elle s'appliquait ici un
+       jour, CHAQUE écriture de scrollTop s'animerait et le sommaire traînerait de
+       plusieurs centaines de ms derrière la page — panne coûteuse à diagnostiquer. */
+    scroll-behavior: auto;
     scrollbar-width: none;
 }
 
@@ -140,9 +155,9 @@
     transition: color var(--duration-fast), transform var(--duration-fast);
 }
 
+/* Le décalage au survol est dans le média tactile de la § 4b, avec les deux autres. */
 .sub-nav li a:hover {
     color: var(--fg1);
-    transform: translateX(3px);
 }
 
 .nav-group:has(.nav-link.is-active) .sub-nav li a {
@@ -154,15 +169,13 @@
    3. BLOCS DE SERVICE
    ============================================================ */
 
+/* Aucune exception sur le premier bloc : « Arpentage » porte le même filet et le
+   même dégagement haut que les cinq secteurs suivants. Le filet du premier sépare
+   la grille des blocs de l'intro de page, les autres séparent deux secteurs. */
 .service-block {
     border-top: 1px solid var(--border-subtle);
     padding: var(--space-4xl) 0;
     scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-xl)));
-}
-
-.service-block:first-child {
-    border-top: none;
-    padding-top: 0;
 }
 
 /* align-items: start suffit — pas de padding-top sur l'icône */
@@ -232,18 +245,29 @@
        Sans `opacity` dans la liste, la révélation au scroll faisait sauter l'opacité de
        0 à 1 d'un coup au lieu de la faire apparaître en fondu.
        Corollaire : la révélation utilise les timings ci-dessous, pas ceux déclarés sur
-       .animate-on-scroll dans style.css, qui ne s'appliquent jamais à ces fiches. */
+       .animate-on-scroll dans style.css, qui ne s'appliquent jamais à ces fiches.
+
+       `opacity` est calée sur la durée du `transform`, et non l'inverse : la fiche
+       s'immobilisait à moitié transparente puis finissait de paraître sur place. On ne
+       peut pas allonger le `transform` pour rattraper l'opacité — il sert AUSSI le lift
+       au survol, qui doit rester bref. C'est le même conflit que celui décrit en § 5 à
+       propos du stagger, et il se dénouerait de la même façon : un wrapper de révélation
+       distinct de la fiche. La page garde donc deux vitesses de révélation, 0,6 s pour
+       les grands titres et 0,3 s ici — assumé, une petite carte n'a pas à prendre le
+       temps d'un titre. */
     transition:
         border-color var(--duration-base),
         box-shadow var(--duration-base),
-        opacity var(--duration-slow) ease-out,
+        opacity var(--duration-base) var(--ease-scroll),
         transform var(--duration-base) var(--ease-card);
 }
 
+/* Le `transform` du lift est dans le média tactile plus bas, pas ici : au doigt il
+   resterait collé jusqu'au toucher suivant. Bordure et ombre restent inconditionnelles,
+   elles ne « collent » pas de la même façon et font un retour au toucher acceptable. */
 .service-sub-item:hover {
     border-color: var(--border-hover);
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
 }
 
 .service-sub-item h3 {
@@ -279,14 +303,36 @@
     object-fit: cover;
     display: block;
     flex-shrink: 0;
-    transition: transform 0.7s var(--ease-card);
+    /* Même durée que le lift de la carte qui la contient. Elle était à 0,7 s : les deux
+       moitiés d'un même survol divergeaient d'un facteur 2,3, la carte se soulevant en
+       0,3 s pendant que son image continuait de zoomer. En balayant la grille à la
+       souris, on laissait derrière soi une traînée d'images encore en mouvement. */
+    transition: transform var(--duration-base) var(--ease-card);
 }
 
 /* Zoom discret au survol — la bannière est rognée par overflow: hidden de la
    carte. Amplitude volontairement plus faible que .project-bg (1.08) : ici
-   l'image est un bandeau, pas le sujet de la carte. */
-.service-sub-item.has-img:hover .service-card-img {
-    transform: scale(1.04);
+   l'image est un bandeau, pas le sujet de la carte.
+   Le transform est dans le média tactile ci-dessous (voir .service-sub-item:hover). */
+
+/* Déplacements réservés aux pointeurs précis — même garde que style.css, contact.css
+   et apropos.css, dont services.css était la seule feuille à se passer. Sur écran
+   tactile, un simple toucher déclenchait le lift de la carte et le zoom de son image,
+   qui restaient ensuite COLLÉS jusqu'au toucher suivant : le :hover y est simulé et
+   n'est jamais relâché. Seuls les `transform` sont ici ; couleurs et ombres restent
+   inconditionnelles, elles font un retour au toucher acceptable. */
+@media (hover: hover) and (pointer: fine) {
+    .service-sub-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .service-sub-item.has-img:hover .service-card-img {
+        transform: scale(1.04);
+    }
+
+    .sub-nav li a:hover {
+        transform: translateX(3px);
+    }
 }
 
 .service-sub-item.has-img .service-sub-body {
@@ -304,7 +350,7 @@
 }
 
 .service-sub-item.is-highlighted {
-    animation: anchor-flash 2.4s var(--ease-scroll) forwards;
+    animation: anchor-flash var(--duration-flash) var(--ease-scroll) forwards;
 }
 
 
@@ -428,10 +474,6 @@
 
     .sub-nav {
         display: none;
-    }
-
-    .services-content {
-        padding-top: var(--space-2xl);
     }
 
     .service-block {

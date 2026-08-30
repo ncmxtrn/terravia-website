@@ -94,11 +94,14 @@
            déclaration normale, elle écrase le `opacity: 1` ci-dessous — toute la page
            disparaît puis réapparaît en fondu, deux secondes après le chargement.
 
-           Le header, lui, est masqué par défaut (translateY(-100%)) : c'est JS qui
-           pose .is-floating ou .is-scrolled selon la page et le défilement. Sans JS il
-           resterait hors écran, laissant la page sans barre de navigation. On le
-           laisse dans son état de base — fond blanc opaque, lisible à toute hauteur
-           de défilement, ce que l'état flottant transparent ne garantirait pas. */
+           Le header, lui, porte `is-floating` en dur dans le markup (voir plus bas) :
+           sans JS il ne quittera jamais cet état, donc fond transparent et logo blanc
+           sur tout le contenu clair de la page. On le repeint ici comme son état de
+           base — fond blanc opaque, lisible à toute hauteur de défilement.
+           Ce bloc suit les <link rel="stylesheet"> : à spécificité égale avec
+           style.css, c'est lui qui l'emporte.
+           La règle sur l'état caché dérivé reste, pour le cas où `is-floating` serait
+           un jour retirée du markup. */
         html.is-loading body { opacity: 1; visibility: visible; animation: none; }
         html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
         .site-header:not(.is-floating):not(.show-cta) {
@@ -106,6 +109,14 @@
             background-color: var(--white);
             border-bottom-color: var(--border-subtle);
         }
+        .site-header.is-floating {
+            background-color: var(--white);
+            backdrop-filter: none;
+            border-bottom-color: var(--border-subtle);
+        }
+        .site-header.is-floating .logo-icon { filter: var(--filter-logo-forest); }
+        .site-header.is-floating .main-nav a { color: var(--color-forest); }
+        .site-header.is-floating .burger-icon span { background-color: var(--color-forest); }
     </style></noscript>
 </head>
 
@@ -123,7 +134,19 @@
             via la classe `.is-scrolled` lorsque le défilement dépasse le seuil défini dans script.js.
             Sur mobile, le menu principal est replié et commandé par le bouton `.menu-toggle`.
         -->
-        <header class="site-header">
+        <!--
+            `is-floating` est écrite EN DUR, comme « is-scrolled show-cta » l'est sur les
+            quatre autres pages : sans elle, le header matche l'état caché dérivé de
+            style.css (:not(.is-floating):not(.show-cta) → translateY(-100%)) au premier
+            rendu, et GLISSE depuis le hors-écran quand script.js pose la classe au
+            DOMContentLoaded — par-dessus le fondu d'entrée de la page.
+            C'est bien l'état correct au chargement : index.html s'ouvre en haut de son
+            hero, header transparent posé sur la photo. Si la position de défilement est
+            restaurée plus bas, updateFloatingState() la corrige dans le même tick, avant
+            la première frame peinte (le corps est encore masqué par `is-loading`).
+            Le repli sans JS est dans le <noscript> du <head>.
+        -->
+        <header class="site-header is-floating">
             <div class="container header-content">
                 <!-- Lien de retour en haut de page ; href="#" évite une navigation vers une ancre explicite -->
                 <!-- `logo--adaptive` inscrit ce logo au dispositif de bascule mobile
@@ -186,12 +209,20 @@
                 </div>
                 <div class="hero-overlay"></div>
 
+                <!--
+                    Les trois blocs portent `.animate-on-scroll` comme le reste du site :
+                    l'IntersectionObserver de script.js émet toujours une première entrée,
+                    ils sont donc révélés dès le chargement, sans attendre un défilement.
+                    Leur course est raccourcie et leur cascade calée dans style.css § 4 —
+                    un bloc déjà à l'écran au chargement ne se révèle pas comme un bloc
+                    qu'on va chercher en défilant.
+                -->
                 <div class="container hero-content">
-                    <h1>L'intelligence géospatiale <span class="text-highlight">à votre portée.</span></h1>
-                    <p class="lead-text">
+                    <h1 class="animate-on-scroll">L'intelligence géospatiale <span class="text-highlight">à votre portée.</span></h1>
+                    <p class="lead-text animate-on-scroll">
                         De l'acquisition à l'ingénierie de la donnée, nous créons les fondations numériques de vos projets.
                     </p>
-                    <div class="hero-buttons">
+                    <div class="hero-buttons animate-on-scroll">
                         <a href="contact.html" class="btn btn-primary transition-link" id="hero-start-btn">Contactez-nous</a>
                         <a href="#services" class="btn btn-outline-white">Découvrir nos services</a>
                     </div>

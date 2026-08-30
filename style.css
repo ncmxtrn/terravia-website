@@ -874,6 +874,29 @@ a {
     gap: var(--space-md);
 }
 
+/* --- Entrée du hero ---
+   Le hero était le seul bloc de la page à arriver sans mise en scène, pendant que
+   tout le reste du site se révèle avec une course et une cascade.
+
+   Course COURTE (--reveal-shift-sm) et non les 30px du défilement : ces trois blocs
+   sont à l'écran AU CHARGEMENT, donc leur révélation se superpose au fondu d'entrée
+   de <body>. Les deux opacités se multiplient, et plus la course est longue, plus la
+   zone terne dure. Même raisonnement qu'apropos.css § 2.
+
+   `:not(.visible)` et non le sélecteur nu : `.animate-on-scroll.visible` vaut (0,2,0)
+   comme lui, et l'ordre de déclaration dans le fichier ne doit pas décider de l'état
+   d'arrivée. */
+.hero-content .animate-on-scroll:not(.visible) {
+    transform: translateY(var(--reveal-shift-sm));
+}
+
+/* Les délais sont portés par l'état de repos et JAMAIS par `:not(.visible)` : une
+   transition lit ses paramètres dans l'état d'ARRIVÉE, et .visible n'est jamais
+   retirée (voir la note du stagger des cartes, § 5, et services.css § stagger).
+   Pas de 0s explicite sur le titre — il part sans délai, c'est lui qu'on vient lire. */
+.hero-content .lead-text.animate-on-scroll    { transition-delay: 0.08s; }
+.hero-content .hero-buttons.animate-on-scroll { transition-delay: 0.16s; }
+
 /* Indicateur de défilement — double flèche centrée en bas du hero.
    C'est un lien vers #services, pas un ornement : d'où la cible tactile
    --tap-target-min (WCAG 2.5.5) et le focus visible au clavier.
@@ -997,6 +1020,14 @@ a {
 @media (prefers-reduced-motion: reduce) {
     .animate-on-scroll,
     .animate-on-scroll.visible {
+        transform: none;
+    }
+
+    /* La course du hero (§ 4) est posée en (0,3,0) : la règle ci-dessus, en (0,2,0),
+       ne la surclasse pas, quel que soit son rang dans le fichier. On répète donc la
+       forme exacte du sélecteur pour l'emporter par l'ordre, à spécificité égale —
+       même piège que celui documenté dans apropos.css § 8. */
+    .hero-content .animate-on-scroll:not(.visible) {
         transform: none;
     }
 }

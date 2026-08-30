@@ -209,12 +209,20 @@
                 </div>
                 <div class="hero-overlay"></div>
 
+                <!--
+                    Les trois blocs portent `.animate-on-scroll` comme le reste du site :
+                    l'IntersectionObserver de script.js émet toujours une première entrée,
+                    ils sont donc révélés dès le chargement, sans attendre un défilement.
+                    Leur course est raccourcie et leur cascade calée dans style.css § 4 —
+                    un bloc déjà à l'écran au chargement ne se révèle pas comme un bloc
+                    qu'on va chercher en défilant.
+                -->
                 <div class="container hero-content">
-                    <h1>L'intelligence géospatiale <span class="text-highlight">à votre portée.</span></h1>
-                    <p class="lead-text">
+                    <h1 class="animate-on-scroll">L'intelligence géospatiale <span class="text-highlight">à votre portée.</span></h1>
+                    <p class="lead-text animate-on-scroll">
                         De l'acquisition à l'ingénierie de la donnée, nous créons les fondations numériques de vos projets.
                     </p>
-                    <div class="hero-buttons">
+                    <div class="hero-buttons animate-on-scroll">
                         <a href="contact.html" class="btn btn-primary transition-link" id="hero-start-btn">Contactez-nous</a>
                         <a href="#services" class="btn btn-outline-white">Découvrir nos services</a>
                     </div>

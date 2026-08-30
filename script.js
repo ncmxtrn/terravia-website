@@ -836,19 +836,22 @@ if (servicesLayout) {
         });
     });
 
-    // Sous-liens du sommaire et liens d'ancre du pied de page : on scrolle vers la
-    // cible ELLE-MÊME, puis on la fait flasher.
+    // Sous-liens du sommaire et liens d'ancre du pied de page : on défile vers la cible,
+    // puis on la fait flasher.
     //
-    // Viser la section parente plutôt que la fiche — ce que faisait ce handler — ne
+    // Viser systématiquement la section parente — ce que faisait ce handler — ne
     // marchait visiblement que pour les deux premières fiches de chaque secteur : la
     // grille ayant deux colonnes, se poser en haut d'un secteur ne montre que
     // l'en-tête et la première rangée. Les cinq autres fiches recevaient bien leur
     // flash, mais hors écran.
     //
-    // Aucun décalage à calculer ici : .service-sub-item et .service-block portent
-    // tous deux `scroll-margin-top: var(--sticky-top, …)` (services.css), que
-    // scrollIntoView honore. La cible se pose donc sous le header — et sous la barre
-    // de pilules en mobile, où --sticky-top inclut sa hauteur.
+    // La cible du défilement est donc choisie par fiche (voir `elScroll` plus bas) :
+    // la section pour la première rangée, qui tient à l'écran avec l'en-tête, et la
+    // fiche elle-même au-delà. Le flash, lui, porte toujours sur la fiche cliquée.
+    //
+    // Aucun décalage à calculer ici : `scrollIntoView` applique le `scroll-margin-top`
+    // de la cible. La cible se pose donc sous le header — et sous la barre de pilules
+    // en mobile, où --sticky-top inclut sa hauteur.
     //
     // L'animation est pilotée par la classe .is-highlighted (et non :target)
     // pour pouvoir être relancée même si on clique plusieurs fois le même lien.
@@ -884,7 +887,23 @@ if (servicesLayout) {
             const targetEl = document.getElementById(targetId);
             if (!targetEl) return;
 
-            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+            // Cible du DÉFILEMENT, distincte de la cible du flash : on vise la fiche,
+            // sauf si elle occupe la première rangée de sa grille. Là on vise la section,
+            // pour ouvrir sur son en-tête — icône et titre du secteur apparents — car
+            // cette rangée-là reste de toute façon à l'écran juste en dessous. Au-delà,
+            // viser la section ne montrerait pas la fiche demandée : c'est le défaut
+            // corrigé juste avant, à ne pas réintroduire pour tout le monde.
+            //
+            // La rangée est déduite des offsetTop plutôt que d'un compte figé à deux :
+            // la grille passe à une colonne sous 840px, et le jour où elle en aurait
+            // trois, la règle suivrait sans être réécrite.
+            const grille        = targetEl.closest(".service-sub-grid");
+            const premiereFiche = grille?.querySelector(".service-sub-item");
+            const enPremiereRangee = premiereFiche
+                && Math.abs(targetEl.offsetTop - premiereFiche.offsetTop) < 1;
+            const elScroll = (enPremiereRangee && targetEl.closest(".service-block")) || targetEl;
+
+            elScroll.scrollIntoView({ behavior: "smooth", block: "start" });
 
             apresScroll(() => {
                 // 1. Recalage. Les images de fiches sont en `loading="lazy"` SANS
@@ -905,10 +924,14 @@ if (servicesLayout) {
                 //    `section[id]` de style.css, plus spécifique. Mesurer contre
                 //    --sticky-top ferait croire à un écart permanent de 32px sur les
                 //    sections, et déclencherait à chaque clic un recalage sans effet.
-                const marge = parseFloat(getComputedStyle(targetEl).scrollMarginTop) || 0;
-                const ecart = targetEl.getBoundingClientRect().top - marge;
+                //
+                //    Le recalage porte sur elScroll et non sur targetEl : mesurer la
+                //    fiche alors qu'on a défilé vers sa section rouvrirait exactement ce
+                //    même piège, un écart permanent corrigé en vain à chaque clic.
+                const marge = parseFloat(getComputedStyle(elScroll).scrollMarginTop) || 0;
+                const ecart = elScroll.getBoundingClientRect().top - marge;
                 if (Math.abs(ecart) > 1 && Math.abs(ecart) <= 60) {
-                    targetEl.scrollIntoView({ behavior: "auto", block: "start" });
+                    elScroll.scrollIntoView({ behavior: "auto", block: "start" });
                 }
 
                 // 2. Flash, réservé aux fiches : les liens du pied de page visent des

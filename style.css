@@ -1046,8 +1046,15 @@ a {
            un texte qui ne fait qu'éclaircir paraît hésiter au lieu d'apparaître.
            Règle remontée d'apropos.css § 8, qui la portait seule alors que les cinq
            pages avaient le même défaut.
-           La forme raccourcie remet aussi `transition-delay` à 0 — voulu : sans course
-           à échelonner, une cascade ne fait plus qu'ajouter de l'attente. */
+
+           La forme raccourcie remet `transition-delay` à 0, mais seulement pour les
+           délais déclarés AVANT ce bloc : les cascades du hero (§ 4, en 0,3,0) et des
+           cartes (§ 5, plus bas dans le fichier) le surclassent et survivent. C'est
+           mesuré, et c'est acceptable — un échelonnement de 80 ms qui ne déplace rien
+           et ne fait qu'ordonner des fondus n'est pas le mouvement que ce mode écarte.
+           Ne pas partir à la chasse à la spécificité pour les annuler.
+           À noter que le rendu diffère d'apropos.css, dont les rangs sont déclarés
+           avant son propre bloc et retombent donc à 0. */
         transition: opacity var(--duration-base) ease-out;
     }
 

@@ -880,6 +880,7 @@ a {
     }
 }
 
+
 /* =========================================
    5. SECTION SERVICES
    ========================================= */
@@ -898,10 +899,16 @@ a {
     align-items: center;
 }
 
+/* Une seule durée pour les deux propriétés, et c'est le point important : avec
+   `opacity 0.6s` / `transform 0.8s`, l'élément atteignait son opacité pleine 200 ms
+   avant la fin de sa course — il dérivait encore alors qu'il avait l'air arrivé.
+   La courbe passe par son token : le littéral qui était écrit ici en dur,
+   cubic-bezier(0.215, 0.61, 0.355, 1), EST --ease-scroll, recopié à la main. */
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(var(--reveal-shift));
-    transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transition: opacity var(--duration-slow) var(--ease-scroll),
+                transform var(--duration-slow) var(--ease-scroll);
 }
 
 /* Le hint promeut la couche compositeur pendant toute la fenêtre qui précède la
@@ -927,6 +934,25 @@ a {
 
 .section-header h2.animate-on-scroll { transition-delay: 0.1s; }
 .section-header .subtitle.animate-on-scroll { transition-delay: 0.2s; }
+
+/* Révélations au défilement : on coupe la COURSE, pas le fondu.
+   Réduire les animations ne veut pas dire n'avoir plus aucun retour visuel —
+   l'apparition progressive aide à comprendre que du contenu arrive, c'est le
+   déplacement vertical qui gêne. Le lift de 2px au survol et le halo d'ancre
+   (anchor-flash, une lueur sans déplacement) restent pour la même raison.
+   Déclaré ici et non dans services.css : .animate-on-scroll sert les cinq pages,
+   et services.html à lui seul en compte 44.
+
+   La POSITION de ce bloc n'est pas indifférente : il doit suivre les règles
+   .animate-on-scroll ci-dessus. Il porte la même spécificité qu'elles (0,1,0), donc
+   c'est l'ordre de déclaration qui tranche — placé avant, il était purement et
+   simplement écrasé, et les 30px de course s'appliquaient quand même. */
+@media (prefers-reduced-motion: reduce) {
+    .animate-on-scroll,
+    .animate-on-scroll.visible {
+        transform: none;
+    }
+}
 
 .section-header h2 {
     font-size: var(--text-hero);

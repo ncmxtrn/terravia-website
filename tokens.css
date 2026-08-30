@@ -361,6 +361,12 @@
      durée d'une révélation (0,8s) elle file trop vite pour qu'on suive les cercles
      l'un après l'autre, ce qui est tout son propos. */
   --duration-sonar:  1.8s;
+  /* --duration-flash : halo d'arrivée sur une fiche ancrée (services.css § 4).
+     Hors de l'échelle également : ce n'est pas une transition d'interface mais une
+     lueur qui décroît. Elle doit rester franche à l'ARRIVÉE, or le trajet fluide vers
+     une fiche lointaine dure jusqu'à 1,7 s — d'où une durée qui paraît démesurée pour
+     un retour d'interaction et ne l'est pas. */
+  --duration-flash:  2.4s;
 
   --press-scale:     0.97;
 

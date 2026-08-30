@@ -366,7 +366,9 @@ a {
    où le menu ne passe jamais par display:none. */
 .main-nav {
     display: none;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Même durée et même courbe que #header-quote-btn : la nav recentre l'espace que
+       le bouton libère, les deux moitiés du geste doivent arriver ensemble. */
+    transition: transform var(--duration-medium) var(--ease-header);
     transform: translateX(0);
 }
 
@@ -488,10 +490,16 @@ a {
     transition: margin 0.5s;
 }
 
+/* Durée et courbe alignées sur celles de .site-header lui-même (--duration-medium /
+   --ease-header) : l'apparition du bouton, le recentrage de la nav et le changement
+   d'état du header sont UN SEUL geste, déclenché par la même bascule de .show-cta.
+   Trois timings distincts les faisaient arriver l'un après l'autre. */
 #header-quote-btn {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0.4s;
+    transition: opacity var(--duration-medium) var(--ease-header),
+                transform var(--duration-medium) var(--ease-header),
+                visibility var(--duration-medium);
     visibility: visible;
 }
 
@@ -556,7 +564,14 @@ a {
                 /* On gère la visibilité et la présence dans le layout */
                 display: grid; /* Ou 'flex' */
                 visibility: visible;
-                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                /* `padding` est dans la liste et ce n'est pas cosmétique : l'état replié
+                   ci-dessous le met à 0 et l'état déployé le rétablit. Absent de la liste,
+                   il claquait — le libellé se comprimait d'un coup avant que la boîte ne
+                   commence à se rétracter, et réapparaissait en force à l'ouverture. */
+                transition: opacity var(--duration-medium) var(--ease-header),
+                            transform var(--duration-medium) var(--ease-header),
+                            max-width var(--duration-medium) var(--ease-header),
+                            padding var(--duration-medium) var(--ease-header);
                 overflow: hidden;
             }
 
@@ -1600,7 +1615,8 @@ a {
         #header-quote-btn {
             width: auto;
             white-space: nowrap;
-            transition: opacity 0.4s ease-out, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity var(--duration-medium) var(--ease-header),
+                        transform var(--duration-medium) var(--ease-header);
         }
 
     /* On cache le burger et on montre le vrai menu */

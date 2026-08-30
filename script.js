@@ -263,11 +263,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             /**
              * Met à jour la classe "is-floating" selon la position du scroll.
-             * "is-floating" est actif uniquement quand scrollY === 0 (tout en haut de page).
              * Listener passif pour ne pas bloquer le thread de rendu.
+             *
+             * Un SEUIL, et non `<= 0` : perdre "is-floating" fait basculer le header
+             * dans l'état caché dérivé de style.css tant que "show-cta" n'est pas encore
+             * posée — il quitte donc l'écran sur 80px. Sans marge, le résidu cinétique
+             * d'un trackpad ou une molette effleurée suffisait à lancer ce trajet, rejoué
+             * en sens inverse dès le retour à 0 : un aller-retour complet pour un pixel.
+             * Même parti pris que le seuil du masquage mobile plus haut — on ne réagit
+             * qu'à un geste franc. 24px : au-dessus du tremblement, bien en dessous d'un
+             * cran de molette.
              */
+            const SEUIL_FLOTTANT = 24; // px
+
             const updateFloatingState = () => {
-                siteHeader.classList.toggle("is-floating", window.scrollY <= 0);
+                siteHeader.classList.toggle("is-floating", window.scrollY <= SEUIL_FLOTTANT);
             };
             window.addEventListener("scroll", updateFloatingState, { passive: true });
 

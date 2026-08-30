@@ -871,19 +871,21 @@ html.is-loading .territoire-regions li {
 @media (prefers-reduced-motion: reduce) {
     /* Le mouvement PRINCIPAL de la page est la révélation au défilement de style.css :
        une course de 30px sur une vingtaine d'éléments, soit exactement le déplacement
-       que le principe en tête de section dit d'écarter. Ce bloc neutralisait tout le
-       reste et la laissait passer.
-       Le fondu reste, et sur une durée courte : à 0,6s sans course, un texte qui ne
-       fait qu'éclaircir paraît hésiter au lieu d'apparaître.
+       que le principe en tête de section dit d'écarter.
 
-       Deux sélecteurs pour une seule règle : le second n'est pas redondant. La § 2
-       raccourcit la course de l'intro via `.apropos-intro .animate-on-scroll:not(.visible)`,
-       de spécificité (0,3,0) — une règle en (0,2,0) ne la surclasse pas, quel que soit
-       son rang dans le fichier. On répète donc la forme exacte pour l'emporter par
-       l'ordre, à spécificité égale.
+       Le cas général — course coupée, fondu ramené à une durée courte — est désormais
+       traité dans style.css (§ 5, bloc prefers-reduced-motion), d'où le TODO qui vivait
+       ici est parti : les cinq pages avaient le défaut, celle-ci était seule corrigée.
 
-       TODO — à remonter dans style.css : les cinq pages ont le même défaut, seule
-       celle-ci est corrigée. */
+       Les deux sélecteurs restent nécessaires, pour deux raisons distinctes :
+         · `.apropos-intro …:not(.visible)` (§ 2) vaut (0,3,0) — la règle de style.css,
+           en (0,2,0), ne la surclasse pas, quel que soit son rang. On répète donc la
+           forme exacte pour l'emporter à spécificité égale.
+         · `.apropos-main .animate-on-scroll` vaut (0,2,0) comme les rangs de cascade
+           de ce fichier (`transition-delay: var(--step-delay)`), mais style.css est
+           chargée AVANT : sans cette reprise locale, la forme raccourcie de la
+           `transition` ne remettrait plus les délais à zéro et la page garderait ses
+           cascades en mouvement réduit, contrairement aux quatre autres. */
     .apropos-main .animate-on-scroll,
     .apropos-intro .animate-on-scroll:not(.visible) {
         transform: none;

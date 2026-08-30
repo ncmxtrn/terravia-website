@@ -344,8 +344,14 @@ a {
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.logo:hover .logo-icon {
-    transform: scale(1.05);
+/* Déplacement réservé aux pointeurs précis — même garde que contact.css, services.css
+   et apropos.css, dont style.css était la dernière feuille à se passer. Sur écran
+   tactile, un simple toucher agrandissait le logo, qui restait ensuite COLLÉ jusqu'au
+   toucher suivant : le :hover y est simulé et n'est jamais relâché. */
+@media (hover: hover) and (pointer: fine) {
+    .logo:hover .logo-icon {
+        transform: scale(1.05);
+    }
 }
 
 /* Le SVG du logo (assets/logo-noir.svg) porte le lockup complet : marque encadrée
@@ -415,6 +421,14 @@ a {
     from { opacity: 1; transform: translateY(0); }
     to { opacity: 0; transform: translateY(-10px); }
 }
+
+/* Contreparties en mouvement réduit des deux animations ci-dessus : même fondu,
+   sans la course de 10px (voir le bloc prefers-reduced-motion de la section 5).
+   Déclarées ICI, au niveau global, et surtout pas en réutilisant `fadeIn` : celui-ci
+   vit à l'intérieur du média `min-width: 841px` et n'existe donc pas sous ce seuil,
+   là même où le menu mobile s'ouvre. */
+@keyframes menu-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menu-fade-out { from { opacity: 1; } to { opacity: 0; } }
 
 /* État de fermeture : duplique le layout de .is-open pour maintenir le display:flex
    le temps que l'animation slideUp se termine (300 ms). pointer-events: none
@@ -734,9 +748,11 @@ a {
         opacity: 1;
     }
 
-    /* À cette largeur on est sur tactile : le scale(1.05) du :hover serait rogné
-       par l'overflow: hidden ci-dessus, et resterait collé après le tap faute
-       d'événement de sortie. */
+    /* Le scale(1.05) du :hover serait rogné par l'overflow: hidden ci-dessus.
+       Le cas tactile est désormais couvert en amont par la garde
+       `(hover: hover) and (pointer: fine)` posée sur la règle elle-même ; celle-ci
+       reste utile pour une fenêtre de bureau réduite sous ce seuil, où le survol
+       est bien réel. */
     .logo--adaptive:hover .logo-icon {
         transform: none;
     }
@@ -1021,7 +1037,30 @@ a {
     .animate-on-scroll,
     .animate-on-scroll.visible {
         transform: none;
+        /* Le fondu raccourci vient avec la course coupée : à 0,6s sans déplacement,
+           un texte qui ne fait qu'éclaircir paraît hésiter au lieu d'apparaître.
+           Règle remontée d'apropos.css § 8, qui la portait seule alors que les cinq
+           pages avaient le même défaut.
+           La forme raccourcie remet aussi `transition-delay` à 0 — voulu : sans course
+           à échelonner, une cascade ne fait plus qu'ajouter de l'attente. */
+        transition: opacity var(--duration-base) ease-out;
     }
+
+    /* Le header garde ses changements de fond, de bordure et d'ombre — ce sont eux
+       qui font comprendre qu'on a quitté le hero — mais ne glisse plus : 80px de
+       course sur un élément fixe, c'est exactement le déplacement que ce mode existe
+       pour écarter. Il apparaît et disparaît net. */
+    .site-header {
+        transition: background-color var(--duration-medium) ease,
+                    backdrop-filter var(--duration-medium) ease,
+                    border-color var(--duration-medium) ease,
+                    box-shadow var(--duration-medium) ease;
+    }
+
+    /* Le menu mobile garde son fondu et perd sa course de 10px. La DURÉE ne change
+       pas (--duration-base) : le minuteur de fermeture de script.js reste calé. */
+    .main-nav.is-open    { animation-name: menu-fade-in; }
+    .main-nav.is-closing { animation-name: menu-fade-out; }
 
     /* La course du hero (§ 4) est posée en (0,3,0) : la règle ci-dessus, en (0,2,0),
        ne la surclasse pas, quel que soit son rang dans le fichier. On répète donc la
@@ -1099,8 +1138,11 @@ a {
                 border-color var(--duration-medium) ease;
 }
 
+/* Couleurs et ombres restent inconditionnelles : elles font un retour au toucher
+   acceptable, et une carte qui s'éclaire sous le doigt n'a rien de gênant. Seul le
+   déplacement passe dans le média tactile plus bas — c'est lui qui restait collé.
+   Même découpe que services.css § .service-sub-item. */
 .service-card:hover {
-    transform: translateY(-4px);
     box-shadow: var(--shadow-card-hover);
     border-color: var(--border-hover);
 }
@@ -1165,8 +1207,16 @@ a {
     color: var(--color-primary-dark);
 }
 
-.service-card:hover .card-link span {
-    transform: translateX(4px);
+/* Les deux `transform` de la carte, réunis ici : le lift et l'avancée de la flèche
+   sont un seul mouvement et n'ont de sens que sous un pointeur qui peut ressortir. */
+@media (hover: hover) and (pointer: fine) {
+    .service-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .service-card:hover .card-link span {
+        transform: translateX(4px);
+    }
 }
 
 /* Stagger du reveal : 100 ms entre cartes (convention CLAUDE.md).

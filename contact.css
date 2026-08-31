@@ -512,9 +512,25 @@
    8. SERVICES — DROPDOWN MULTI-SÉLECT + CHIPS
    =========================================
    Le dropdown est implémenté en JavaScript vanilla (script.js).
-   L'état "ouvert" est géré par la classe .is-open ajoutée par script.js
-   sur .services-dropdown. Le panel est affiché/masqué via display: none/block
-   plutôt que visibility/height pour éviter que le panel vide n'occupe de l'espace. */
+   L'état "ouvert" est la classe .is-open posée par script.js sur .services-dropdown.
+
+   Le panneau est DÉTACHÉ du champ : arrondi complet (--radius-lg, le rayon des
+   surfaces flottantes), ombre portée, et --space-xs d'air sous le trigger.
+   Il était auparavant soudé dessous — bordure haute supprimée, coins carrés à la
+   jonction — si bien que le champ et le panneau formaient un seul bloc qui
+   s'étirait vers le bas. Or un menu n'est pas le prolongement du champ : c'est
+   une surface qui passe AU-DESSUS de la page, et son ombre doit le dire.
+
+   Le panneau reste dans le document en permanence (opacity + visibility) au lieu
+   d'être posé/retiré par display: none. Deux gains :
+     - des transitions remplacent les @keyframes, donc une fermeture qui interrompt
+       une ouverture repart de la position courante au lieu de resauter au début ;
+     - le panneau a enfin une animation de FERMETURE. Avec display: none il
+       s'ouvrait en fondu mais disparaissait d'un coup, une asymétrie qu'on
+       remarque sans savoir la nommer.
+   visibility: hidden le retire malgré tout de l'ordre de tabulation et de l'arbre
+   d'accessibilité : les cases restent inatteignables au clavier tant qu'il est
+   fermé, exactement comme avec display: none. */
 
 /* position: relative ancre le panel (.services-panel) en position absolute
    relative au trigger, pas à la page. */
@@ -524,7 +540,12 @@
 
 /* Le trigger est un <button> stylé pour ressembler à un .form-input.
    appearance: none / -webkit-appearance: none est indispensable sur Safari
-   pour supprimer le style de bouton iOS natif (fond gris, coins arrondis system). */
+   pour supprimer le style de bouton iOS natif (fond gris, coins arrondis system).
+
+   La transition est redéclarée en entier : elle écrase celle de .form-input
+   (même propriété), qui perdrait sinon border-color et box-shadow.
+   L'enfoncement de 0,5 % au clic est volontairement infime — sur un champ large,
+   un scale(0.97) de bouton donnerait l'impression que toute la page recule. */
 .services-trigger {
     display: flex;
     align-items: center;
@@ -534,6 +555,13 @@
     appearance: none;
     -webkit-appearance: none;
     padding-right: var(--space-md);
+    transition: border-color var(--duration-base) ease,
+                box-shadow var(--duration-base) ease,
+                transform var(--duration-press) var(--ease-card);
+}
+
+.services-trigger:active {
+    transform: scale(0.995);
 }
 
 /* Couleur du texte du trigger selon l'état de sélection :
@@ -547,6 +575,7 @@
 
 .services-trigger.has-selection .services-trigger-text {
     color: var(--fg1);
+    font-weight: var(--weight-medium);
 }
 
 /* Correctif pour le trigger <button> dans le contexte des sélecteurs :has() de login.css.
@@ -562,87 +591,114 @@
 }
 
 /* Chevron rotatif — 180° quand le panel est ouvert.
-   flex-shrink: 0 empêche le chevron de se réduire si le texte du trigger est long. */
+   flex-shrink: 0 empêche le chevron de se réduire si le texte du trigger est long.
+   Calé sur --duration-fast et la même courbe que le panneau : le chevron et le
+   panneau sont deux lectures du même geste, ils doivent finir ensemble. */
 .services-chevron {
     color: var(--fg3);
     font-size: var(--icon-lg);
     flex-shrink: 0;
-    transition: transform var(--duration-base) var(--ease-card);
+    transition: transform var(--duration-fast) var(--ease-entrance);
 }
 
 .services-dropdown.is-open .services-chevron {
     transform: rotate(180deg);
 }
 
-/* Quand le panel est ouvert, le trigger supprime ses coins inférieurs arrondis
-   pour créer un effet de continuité visuelle avec le panel soudé en dessous.
-   border-bottom-color: --border-subtle (plus discret) évite un double bord
-   vert trop marqué à la jonction trigger/panel. */
+/* Le champ ouvert garde ses quatre coins arrondis : le panneau ne lui est plus
+   soudé, il n'y a donc plus de jonction à masquer. */
 .services-dropdown.is-open .services-trigger {
     border-color: var(--color-primary);
     box-shadow: var(--focus-ring);
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-color: var(--border-subtle);
 }
 
-/* Panel déroulant — positionné sous le trigger via top: 100%.
+/* Panel déroulant — flottant sous le trigger, à --space-xs de lui.
    z-index: 200 : valeur choisie pour passer au-dessus du contenu de page
    (cartes, inputs) sans interférer avec le header (z-index généralement ≥ 1000).
-   La jonction avec le trigger est gérée par border-top: none + suppression
-   des coins supérieurs (border-bottom-*-radius uniquement). */
+   Le padding intérieur donne aux options la place de porter leur propre arrondi
+   au survol, au lieu d'un aplat qui filerait d'un bord à l'autre.
+
+   Bordure --border-default et non --color-primary : le vert appartient au champ
+   focalisé ; un menu vert cerné entrerait en concurrence avec lui.
+
+   transform-origin: top center — le panneau se déploie depuis le champ qui l'a
+   ouvert. Depuis le centre ou le bas, il semblerait venir d'ailleurs.
+   L'entrée dure --duration-fast, la sortie --duration-press (plus courte) :
+   le système répond plus vite qu'il ne se déploie.
+   Le délai sur `visibility` retarde le passage à hidden jusqu'à la fin du fondu,
+   sans quoi le panneau disparaîtrait avant d'avoir fini de s'effacer. */
 .services-panel {
-    display: none;
     position: absolute;
-    top: 100%;
+    top: calc(100% + var(--space-xs));
     left: 0;
     right: 0;
     z-index: 200;
+    padding: var(--space-xs);
     background-color: var(--surface-card);
-    border: 1px solid var(--color-primary);
-    border-top: none;
-    border-bottom-left-radius: var(--radius-md);
-    border-bottom-right-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card-hover);
-    overflow: hidden;
-}
 
-/* Animation d'ouverture du panel via scaleY(0.85 → 1).
-   transform-origin: top center : le panel se déplie vers le bas depuis
-   la jonction avec le trigger. Si transform-origin était bottom ou center,
-   l'animation partirait du mauvais point et désalignerait visuellement le panel.
-   NOTE: le reflow forcé (button.offsetWidth) dans script.js est nécessaire
-   pour que l'animation CSS se déclenche à chaque ouverture ; sans lui,
-   le navigateur saute l'état initial de @keyframes sur les réouvertures rapides. */
-.services-dropdown.is-open .services-panel {
-    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.97) translateY(-0.25rem);
     transform-origin: top center;
-    animation: panel-in var(--duration-base) var(--ease-entrance) both;
+    transition: opacity var(--duration-press) var(--ease-entrance),
+                transform var(--duration-press) var(--ease-entrance),
+                visibility 0s linear var(--duration-press);
 }
 
-@keyframes panel-in {
-    from { opacity: 0; transform: scaleY(0.85); }
-    to   { opacity: 1; transform: scaleY(1); }
+.services-dropdown.is-open .services-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity var(--duration-fast) var(--ease-entrance),
+                transform var(--duration-fast) var(--ease-entrance),
+                visibility 0s;
 }
 
-/* Chaque option du dropdown : flex avec gap --space-md (icône + label + check).
-   border-bottom sépare visuellement les options ; supprimé sur :last-child. */
+/* Chaque option : case à cocher + libellé.
+   Plus de border-bottom entre les options — les séparateurs découpaient le menu
+   en tableau ; l'espacement et le survol suffisent à distinguer les lignes.
+   Chaque option porte son propre arrondi, aligné sur celui du panneau. */
 .service-option {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
     cursor: pointer;
-    border-bottom: 1px solid var(--border-subtle);
-    transition: background-color var(--duration-fast) ease;
+
+    opacity: 0;
+    transform: translateY(-0.25rem);
+    transition: opacity var(--duration-press) var(--ease-entrance),
+                transform var(--duration-press) var(--ease-entrance),
+                background-color var(--duration-fast) ease;
 }
 
-.service-option:last-child {
-    border-bottom: none;
+/* Cascade à l'ouverture : 20 ms entre deux lignes, 120 ms de traîne pour les
+   sept options. Volontairement court — au-delà, la liste se lit comme une
+   animation à regarder plutôt que comme un menu à utiliser. */
+.services-dropdown.is-open .service-option {
+    opacity: 1;
+    transform: none;
+    transition-duration: var(--duration-fast);
 }
 
-.service-option:hover {
-    background-color: var(--forest-05);
+.services-dropdown.is-open .service-option:nth-child(1) { transition-delay: 0ms; }
+.services-dropdown.is-open .service-option:nth-child(2) { transition-delay: 20ms; }
+.services-dropdown.is-open .service-option:nth-child(3) { transition-delay: 40ms; }
+.services-dropdown.is-open .service-option:nth-child(4) { transition-delay: 60ms; }
+.services-dropdown.is-open .service-option:nth-child(5) { transition-delay: 80ms; }
+.services-dropdown.is-open .service-option:nth-child(6) { transition-delay: 100ms; }
+.services-dropdown.is-open .service-option:nth-child(7) { transition-delay: 120ms; }
+
+/* Le survol est réservé aux pointeurs fins : sur écran tactile, un tap laisse
+   l'état :hover collé à la dernière option touchée, qui paraît alors choisie. */
+@media (hover: hover) and (pointer: fine) {
+    .service-option:hover {
+        background-color: var(--forest-05);
+    }
 }
 
 /* Le checkbox natif est masqué visuellement (opacity: 0, width/height: 0)
@@ -657,31 +713,80 @@
     pointer-events: none;
 }
 
-/* Couleur du label selon l'état de la case :
-   Sélecteur :has() — cf. note de compatibilité dans login.css.
-   .service-option:has(.checkbox-input:checked) : l'option entière change
-   d'apparence quand sa case est cochée, pas seulement le label. */
+/* Case à cocher dessinée, à gauche du libellé. Elle remplace la coche seule qui
+   apparaissait à droite : une case vide annonce qu'il y a quelque chose à cocher,
+   alors qu'une coche absente n'annonce rien du tout. Les sept états se lisent
+   ainsi d'un coup d'œil, en colonne, sans parcourir les libellés.
+
+   1.125rem (18px) : valeur brute assumée, calée sur --text-sm (0,9rem) pour que
+   la case ait la hauteur d'une majuscule du libellé qu'elle accompagne.
+   La bordure de 1,5px la distingue des contours de champ à 1px sans l'alourdir. */
+.service-box {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background-color: var(--white);
+    transition: background-color var(--duration-fast) ease,
+                border-color var(--duration-fast) ease;
+}
+
+/* Sélecteur :has() — cf. note de compatibilité dans login.css. */
+.service-option:has(.checkbox-input:checked) .service-box {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
 .service-option-label {
     flex: 1;
     font-size: var(--text-sm);
-    color: var(--fg3);
+    color: var(--fg2);
+    transition: color var(--duration-fast) ease;
 }
 
+/* La sélection ne se marque que sur la case et le libellé — pas de fond coloré
+   sur la ligne : le fond gris est réservé au survol, qui dit « ceci est visé »,
+   à ne pas confondre avec « ceci est choisi ». */
 .service-option:has(.checkbox-input:checked) .service-option-label {
     color: var(--fg1);
+    font-weight: var(--weight-medium);
 }
 
-/* Icône de coche — invisible par défaut (opacity: 0), visible quand cochée.
-   La transition sur opacity seule est plus performante qu'un display toggle. */
+/* Coche blanche à l'intérieur de la case. Le léger dépassement de --ease-elastic
+   sur le scale donne l'à-coup d'un vrai clic ; l'opacité, elle, reste en ease
+   pour ne pas clignoter. */
 .service-check {
+    font-size: 0.875rem;
+    color: var(--white);
     opacity: 0;
-    color: var(--color-primary-dark);
-    font-size: var(--icon-lg);
-    transition: opacity var(--duration-fast) ease;
+    transform: scale(0.5);
+    transition: opacity var(--duration-press) ease,
+                transform var(--duration-press) var(--ease-elastic);
 }
 
-.services-panel .checkbox-input:checked ~ .service-check {
+.services-panel .checkbox-input:checked ~ .service-box .service-check {
     opacity: 1;
+    transform: scale(1);
+}
+
+/* Mouvement réduit : on garde les fondus et les changements de couleur, qui
+   portent l'information d'état, et on retire les déplacements et la cascade. */
+@media (prefers-reduced-motion: reduce) {
+    .services-panel,
+    .services-dropdown.is-open .services-panel,
+    .service-option,
+    .services-dropdown.is-open .service-option,
+    .service-check,
+    .services-panel .checkbox-input:checked ~ .service-box .service-check {
+        transform: none;
+    }
+
+    .services-dropdown.is-open .service-option {
+        transition-delay: 0ms;
+    }
 }
 
 /* Zone de chips de services sélectionnés.

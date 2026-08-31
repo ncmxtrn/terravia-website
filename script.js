@@ -1104,11 +1104,13 @@ if (contactForm) {
 
     // Table de correspondance valeur de case → libellé affiché dans le trigger et les chips
     const SERVICE_LABELS = {
-        "lidar-aerien":   "LiDAR aérien",
-        "photogrammetrie":"Photogrammétrie",
-        "inspection-3d":  "Inspection 3D",
-        "volumetrie-mnt": "Volumétrie & MNT",
-        "autre":          "Autre",
+        "arpentage":     "Arpentage",
+        "minier":        "Secteur Minier",
+        "civil":         "Génie Civil",
+        "architecture":  "Architecture",
+        "environnement": "Environnement",
+        "territoire":    "Municipalités",
+        "autre":         "Autre",
     };
 
     /**

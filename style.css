@@ -982,6 +982,16 @@ a {
                     transform var(--duration-press) var(--ease-card);
     }
 
+    /* Quand le header flotte sur le hero, il peint ses liens en blanc
+       (`.site-header.is-floating .main-nav a`) — c'est juste pour la barre du
+       desktop, posée sur la photo. Mais ces liens SONT ceux de la feuille, et la
+       feuille, elle, est un verre clair : sur index.html, menu ouvert en haut du
+       hero, on obtenait du blanc sur du blanc. On les ramène au forest, à
+       spécificité égale (0,3,1) et plus loin dans le fichier. */
+    .site-header.is-floating .main-nav a {
+        color: var(--color-forest);
+    }
+
     /* Le soulignement animé de la barre desktop n'a pas lieu d'être ici : il
        vise le survol d'un lien dans une rangée, pas une ligne de liste tactile
        qui a déjà son propre retour d'enfoncement juste en dessous. */

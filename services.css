@@ -582,15 +582,35 @@
         clip-path: inset(var(--pill-bar-clip, 0px) 0 0 0);
     }
 
-    /* Le cas « menu burger déployé » ne se règle plus ici. Il fallait autrefois
-       faire repasser le header devant la barre, parce que le panneau du menu se
-       dépliait exactement sur elle. Le menu est maintenant une feuille qui monte
-       du bas de l'écran : elle ne recouvre plus rien en haut.
-       Ce qui reste à couvrir, c'est la barre elle-même, qu'il faut assombrir
-       comme le reste de la page — c'est le voile (z-index 102) qui s'en charge,
-       en passant devant les 101 ci-dessus, pendant que le header monte à 104.
-       Les deux valeurs vivent dans style.css, section « FEUILLE DU MENU MOBILE »,
-       avec le voile qu'elles encadrent. */
+    /* --- Menu burger déployé : la surface unique se défait le temps de l'ouverture ---
+
+       Il fallait autrefois faire repasser le header devant la barre, parce que le
+       panneau du menu se dépliait exactement sur elle. Le menu est maintenant une
+       feuille qui monte du bas de l'écran et ne recouvre plus rien en haut. Reste
+       un empilement à trois étages, et c'est lui qui pose problème :
+         · le voile du menu est à 102 — il assombrit tout ce qui est en dessous ;
+         · la barre est à 101, donc SOUS le voile : ses pilules s'assombrissent
+           avec le reste de la page, ce qui est le comportement voulu ;
+         · le header, lui, monte à 104 pour rester net et cliquable — et son
+           débordement de verre, qui appartient au header, monte avec lui.
+
+       Ce débordement repeignait donc en clair, PAR-DESSUS le voile, toute la
+       bande où se trouvent les pilules : on ne voyait plus une barre assombrie
+       mais une bande vide et brillante, les pilules ayant disparu sous le voile.
+
+       On annule donc le débordement le temps de l'ouverture — la bande redescend
+       sous le voile avec le reste de la page — et on rend à la barre un fond
+       opaque, celui-là même qu'elle porte sans JS : privée du verre du header,
+       elle laisserait sinon les pilules flotter au-dessus du contenu à découvert.
+       `menu-open` n'étant retirée qu'une fois la feuille sortie de l'écran, le vol
+       retour est couvert lui aussi. */
+    body.has-pill-nav.menu-open .site-header::before {
+        inset: 0;
+    }
+
+    body.has-pill-nav.menu-open .services-sidebar {
+        background-color: var(--white);
+    }
 
 }
 

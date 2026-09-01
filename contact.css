@@ -22,6 +22,7 @@
  *  11. Bannière de succès
  *  12. Ligne de rassurance
  *  13. Responsive grands écrans
+ *  14. Responsive petits écrans
  */
 
 /* =========================================
@@ -96,8 +97,11 @@
 }
 
 /* Élément de rassurance inline dans le lead (ex. "Réponse sous 24h").
-   white-space: nowrap empêche le texte de se couper en milieu de phrase
-   sur les écrans étroits — acceptable car ce fragment est court. */
+   white-space: nowrap empêche le texte de se couper en milieu de phrase.
+   ⚠ Ce fragment n'est court qu'en apparence : il mesure 336px et ne se réduit
+   pas, soit plus que la largeur utile d'un écran de 320px. Il tient ici parce
+   que le § 14 le sort du paragraphe sous 480px — sans ce palier, il rend toute
+   la page défilable horizontalement. Ne pas remonter ce nowrap sans lui. */
 .contact-intro-reassurance {
     display: inline-flex;
     align-items: center;
@@ -952,5 +956,78 @@
 @media (min-width: 950px) {
     .form-card {
         padding: var(--space-xl) var(--space-2xl);
+    }
+}
+
+/* =========================================
+   14. RESPONSIVE — AJUSTEMENTS PETITS ÉCRANS
+   =========================================
+   Cette feuille n'avait longtemps que des paliers `min-width` : sous 950px, la
+   page recevait donc les valeurs desktop telles quelles, jusqu'à 320px. Mesuré
+   à cette largeur : 8px de défilement horizontal, le numéro de téléphone coupé
+   en deux et l'adresse sur quatre lignes. Le palier 480px est celui de
+   style.css et services.css — ne pas en introduire un de plus ici.
+
+   Les tailles de titre sont écrites en dur, comme le `.hero-content h1` de
+   style.css § 1 : ce sont deux paliers de lecture propres à une page, pas des
+   rôles du design system. La règle d'or reste que toute valeur RÉUTILISÉE vit
+   dans tokens.css. */
+@media (max-width: 480px) {
+    /* --text-hero est un clamp() dont le minimum (2.5rem) est atteint dès 800px
+       de viewport : le H1 restait à 40px sur un écran de 320px, soit deux lignes
+       pleine largeur avant même la première information de la page. 1,9rem est
+       la valeur déjà retenue pour le hero d'index.html au même palier. */
+    .contact-intro h1 {
+        font-size: 1.9rem;
+    }
+
+    /* --text-h2-sm est une valeur fixe (2rem) : elle ne se réduit jamais et
+       passait « Décrivez votre besoin » sur deux lignes dans une carte de 280px. */
+    .form-card-header h2 {
+        font-size: 1.5rem;
+    }
+
+    /* La ligne de rassurance quitte le flux du paragraphe pour occuper la sienne.
+       C'est elle qui causait le défilement horizontal : `white-space: nowrap`
+       (§ 2) la rend incompressible à 336px, pour 280px disponibles à 320px de
+       viewport. La replier dans le paragraphe aurait coupé la phrase en plein
+       milieu — ce que le nowrap cherchait précisément à éviter.
+       Sur sa propre ligne, --text-sm la ramène à ~270px et elle tient d'un seul
+       tenant ; `white-space: normal` reste le filet si la police de repli du
+       système est plus large que Montserrat. */
+    .contact-intro-reassurance {
+        display: flex;
+        justify-content: center;
+        margin-top: var(--space-xs);
+        font-size: var(--text-sm);
+        white-space: normal;
+    }
+
+    /* Le padding de carte suit la même logique que .login-card (login.css), qui
+       descend lui aussi d'un cran sur mobile : à 320px, --space-xl ne laissait
+       que 216px utiles aux champs. */
+    .form-card {
+        padding: var(--space-lg);
+    }
+
+    /* Cartes de coordonnées — la grille `auto 1fr auto` réservait 208px fixes
+       (icône 40 + deux cibles tactiles de 44 + padding 48 + gaps 32), soit 72px
+       de texte à 320px : numéro et courriel coupés en deux.
+       C'est l'icône qui cède, pas les boutons : ceux-ci portent les 44px du
+       seuil WCAG 2.5.5 que --tap-target-min garantit sur tout le site, alors que
+       l'icône répète une information déjà donnée par le label du canal
+       (« TÉLÉPHONE », « COURRIEL », « BUREAU »).
+       Redéclarer grid-template-columns est obligatoire et non cosmétique :
+       `display: none` retire l'icône du flux de la grille, les deux blocs
+       restants glisseraient sinon dans les colonnes `auto` et `1fr`, et ce sont
+       les boutons d'action qui absorberaient toute la largeur libérée. */
+    .channel-icon {
+        display: none;
+    }
+
+    .channel-card {
+        grid-template-columns: 1fr auto;
+        padding: var(--space-md);
+        gap: var(--space-sm);
     }
 }

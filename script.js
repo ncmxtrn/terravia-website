@@ -86,47 +86,355 @@ document.addEventListener("DOMContentLoaded", () => {
         .forEach(el => scrollObserver.observe(el));
 
 
-    // --- Menu burger (mobile) ---
-    // Gère l'ouverture / fermeture du menu navigation sur petits écrans.
+    // Breakpoint mobile, aligné sur celui de style.css. Déclaré ici plutôt que
+    // dans chacun des deux blocs qui s'en servent (la feuille juste en dessous,
+    // le masquage du header plus bas) : une seule valeur à changer.
+    const MOBILE_MAX = 840;
+
+
+    // --- Menu burger (mobile) : la feuille ---
+    //
+    // Le menu n'est plus un panneau qui se déplie sous le header : c'est une
+    // feuille qui monte du bas de l'écran, qu'on peut attraper n'importe où et
+    // renvoyer d'un lancer. Trois mécanismes se partagent le travail :
+    //
+    //   1. LE GESTE suit le doigt au pixel près, en respectant l'endroit où il a
+    //      saisi la feuille. Il garde un court historique de positions, parce que
+    //      la vitesse au relâchement se mesure sur les ~90 dernières ms et non
+    //      sur les deux derniers points, qui sont souvent quasi identiques.
+    //   2. LA PROJECTION décide, au relâchement, si la feuille s'en va ou
+    //      revient — d'après le point où le geste ALLAIT, pas celui où le doigt
+    //      s'est levé. Un petit coup sec suffit donc à congédier le menu, sans
+    //      avoir à le traîner jusqu'en bas.
+    //   3. LE RESSORT prend le relais en héritant de la vitesse du doigt, ce qui
+    //      supprime la couture entre le geste et l'animation. C'est aussi ce qui
+    //      le rend interruptible : on peut rattraper la feuille en plein vol, il
+    //      repart de sa position réelle à l'écran.
+    //
+    // POURQUOI PAS UNE TRANSITION CSS : elle ignore la vitesse d'entrée. Une
+    // feuille lancée d'un coup sec et une feuille poussée doucement arriveraient
+    // à la même allure, et la main sentirait le décrochage à l'instant du
+    // relâchement. Le CSS ne pose donc ici que l'apparence — voir la section
+    // « FEUILLE DU MENU MOBILE » de style.css.
+    //
+    // Le voile et la visibilité de la feuille découlent tous les deux de sa
+    // POSITION, écrite au même endroit (poserFeuille). Rien ne peut se
+    // désynchroniser : ni pendant le geste, ni pendant le ressort, ni si l'un
+    // interrompt l'autre.
     const boutonMenu = document.querySelector(".menu-toggle");
     const menuNavigation = document.querySelector(".main-nav");
+    const voileMenu = document.querySelector(".nav-scrim");
 
-    if (boutonMenu && menuNavigation) {
+    if (boutonMenu && menuNavigation && voileMenu) {
+
+        const mouvementReduit = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+        // Réglages du ressort, à la manière d'Apple : « rebond » et « réponse »
+        // plutôt que masse / raideur / amortissement. Deux valeurs qu'on peut se
+        // représenter au lieu de trois qu'on règle à tâtons.
+        const REBOND   = 0.18; // 0 = pas de dépassement ; 0,18 = arrivée à peine rebondie
+        const REPONSE  = 0.42; // secondes pour rejoindre la cible (pas une durée fixe)
+
+        // 0,998 : taux de décélération d'un défilement iOS. La projection qui en
+        // découle vaut environ la moitié de la vitesse (en px/s) — voir projeter().
+        const TAUX_DECELERATION = 0.998;
+
+        // Au-delà de 42 % de la hauteur de la feuille, on la laisse partir. Sous
+        // la moitié, parce que le geste de congé est descendant : hésiter revient
+        // presque toujours à vouloir refermer.
+        const PART_CONGE = 0.42;
+
+        const SEUIL_GESTE     = 8;  // px de course avant de décider que c'est un glissement
+        const FENETRE_VITESSE = 90; // ms d'historique sur lesquels la vitesse est mesurée
+
+        let yCourant = null;     // position de la feuille en px, 0 = ouverte
+        let arreterRessort = null;
+        let menuOuvert = false;
+
+        const hauteurFeuille = () => menuNavigation.offsetHeight;
 
         /**
-         * Ferme le menu mobile avec animation de fermeture.
-         * Ajoute "is-closing" pour jouer l'animation CSS slideUp,
-         * puis retire "is-open" et "is-closing" après sa durée (300 ms).
-         * NOTE: siteHeader est déclaré plus bas dans ce même callback —
-         * il est accessible ici car cette fonction n'est appelée qu'après
-         * la fin du handler "click", moment où siteHeader est déjà initialisé.
+         * Pose la feuille à `y` (0 = ouverte, hauteur = hors écran) et en déduit
+         * tout le reste : l'opacité du voile, et la visibilité des deux — qui
+         * retire la feuille du parcours de tabulation dès qu'elle est sortie.
          */
-        const fermerMenu = () => {
-            menuNavigation.classList.add("is-closing");
+        const poserFeuille = (y) => {
+            const h = hauteurFeuille();
+            if (!h) return; // desktop : la feuille est en display:none, rien à poser
+            const dehors = y >= h - 0.5;
+            menuNavigation.style.transform = `translate3d(0, ${y}px, 0)`;
+            menuNavigation.style.visibility = dehors ? "hidden" : "visible";
+            voileMenu.style.opacity = String(Math.max(0, Math.min(1, 1 - y / h)));
+            voileMenu.style.visibility = dehors ? "hidden" : "visible";
+        };
+
+        /**
+         * Ressort amorti, intégré image par image.
+         * `vitesse` est la vitesse initiale en px/s : c'est par elle que la
+         * vitesse du doigt passe dans l'animation.
+         * Retourne une fonction d'annulation — indispensable pour reprendre la
+         * feuille en plein vol.
+         */
+        const lancerRessort = ({ depart, cible, vitesse, rebond, onFrame, onFin }) => {
+            const w = (2 * Math.PI) / REPONSE;
+            const k = w * w;
+            const c = 2 * (1 - rebond) * w;
+
+            let x = depart - cible;
+            let v = vitesse;
+            let dernierT = null;
+            let frame = 0;
+
+            const pas = (maintenant) => {
+                if (dernierT === null) dernierT = maintenant;
+                // Plafond à 64 ms : au retour d'un onglet resté en arrière-plan,
+                // un dt d'une seconde ferait exploser l'intégration.
+                const dt = Math.min((maintenant - dernierT) / 1000, 0.064);
+                dernierT = maintenant;
+
+                // Sous-pas fixes : l'intégration reste stable même quand une image
+                // saute, ce qui arrive dès que le fil principal est chargé.
+                const n = Math.max(1, Math.ceil(dt / (1 / 240)));
+                const h = dt / n;
+                for (let i = 0; i < n; i++) {
+                    v += (-k * x - c * v) * h;
+                    x += v * h;
+                }
+
+                onFrame(cible + x);
+
+                // Sous un tiers de pixel et 6 px/s, plus personne ne voit rien
+                // bouger : on se pose exactement sur la cible et on rend la main.
+                if (Math.abs(x) < 0.35 && Math.abs(v) < 6) {
+                    onFrame(cible);
+                    onFin && onFin();
+                    return;
+                }
+                frame = requestAnimationFrame(pas);
+            };
+
+            frame = requestAnimationFrame(pas);
+            return () => cancelAnimationFrame(frame);
+        };
+
+        /** Envoie la feuille vers `y`, en reprenant la vitesse fournie. */
+        const allerVers = (y, vitesse = 0, onArrivee = null) => {
+            arreterRessort && arreterRessort();
+            arreterRessort = null;
+
+            // Mouvement réduit : la feuille se pose d'un coup. Le GESTE, lui,
+            // reste actif dans tous les cas — ce n'est pas une animation, c'est
+            // le doigt de l'utilisateur.
+            if (mouvementReduit.matches) {
+                yCourant = y;
+                poserFeuille(y);
+                onArrivee && onArrivee();
+                return;
+            }
+
+            arreterRessort = lancerRessort({
+                depart: yCourant ?? hauteurFeuille(),
+                cible: y,
+                vitesse,
+                // Rebond à l'arrivée seulement : une feuille qui s'en va et
+                // repointe le nez avant de disparaître donne l'impression que le
+                // congé n'a pas été pris au sérieux.
+                rebond: y === 0 ? REBOND : 0,
+                onFrame: (val) => { yCourant = val; poserFeuille(val); },
+                onFin: () => { arreterRessort = null; onArrivee && onArrivee(); }
+            });
+        };
+
+        /**
+         * Où s'arrête un lancer. Décroissance exponentielle — la formule d'Apple,
+         * pas le v²/2a des manuels : c'est celle qui reproduit la décélération
+         * d'un défilement iOS, à laquelle la main est habituée.
+         */
+        const projeter = (vitesse) =>
+            (vitesse / 1000) * TAUX_DECELERATION / (1 - TAUX_DECELERATION);
+
+        /** Résistance au-delà du bord haut : plus on tire, moins ça suit. */
+        const elastique = (depassement, dimension, k = 0.55) =>
+            (depassement * dimension * k) / (dimension + k * Math.abs(depassement));
+
+        // `menu-open` est portée par le header (élévation z-index, et garde du
+        // masquage au scroll) ET par le body (verrou du défilement, section
+        // « FEUILLE DU MENU MOBILE » de style.css).
+        // NOTE: siteHeader est déclaré plus bas dans ce même callback ; ces
+        // fonctions ne sont appelées qu'après une interaction, moment où il est
+        // initialisé depuis longtemps.
+        const marquerOuvert = (actif) => {
+            siteHeader?.classList.toggle("menu-open", actif);
+            document.body.classList.toggle("menu-open", actif);
+        };
+
+        const ouvrirMenu = () => {
+            if (menuOuvert) return;
+            menuOuvert = true;
+            marquerOuvert(true);
+            boutonMenu.classList.add("is-active");
+            boutonMenu.setAttribute("aria-expanded", "true");
+            boutonMenu.setAttribute("aria-label", "Fermer le menu");
+            voileMenu.removeAttribute("aria-hidden");
+            allerVers(0);
+        };
+
+        /**
+         * `menu-open` n'est retirée qu'une fois la feuille SORTIE de l'écran, pas
+         * au clic : elle porte l'élévation du header au-dessus du voile, et le
+         * verrou du défilement. La retirer tout de suite ferait replonger le
+         * header sous le voile et rendrait la page défilante pendant tout le vol
+         * retour.
+         */
+        const fermerMenu = ({ rendreFocus = true, instantane = false } = {}) => {
+            if (!menuOuvert) return;
+            menuOuvert = false;
             boutonMenu.classList.remove("is-active");
             boutonMenu.setAttribute("aria-expanded", "false");
-            setTimeout(() => {
-                menuNavigation.classList.remove("is-open", "is-closing");
-                siteHeader?.classList.remove("menu-open");
-            }, 300); // doit correspondre à la durée de l'animation slideUp dans style.css
+            boutonMenu.setAttribute("aria-label", "Ouvrir le menu");
+            voileMenu.setAttribute("aria-hidden", "true");
+
+            if (instantane) {
+                arreterRessort && arreterRessort();
+                arreterRessort = null;
+                marquerOuvert(false);
+            } else {
+                allerVers(hauteurFeuille(), 0, () => marquerOuvert(false));
+            }
+            if (rendreFocus) boutonMenu.focus({ preventScroll: true });
         };
 
         boutonMenu.addEventListener("click", () => {
-            if (menuNavigation.classList.contains("is-open")) {
-                fermerMenu();
-            } else {
-                menuNavigation.classList.add("is-open");
-                boutonMenu.classList.add("is-active");
-                boutonMenu.setAttribute("aria-expanded", "true");
-                siteHeader?.classList.add("menu-open");
-            }
+            menuOuvert ? fermerMenu() : ouvrirMenu();
         });
 
-        // Ferme le menu si on clique sur un lien (navigation mobile)
+        voileMenu.addEventListener("click", () => fermerMenu());
+
+        // Le lien navigue, la feuille n'a pas à rester : on la renvoie sans lui
+        // rendre le focus, qui part avec la page suivante.
         menuNavigation.querySelectorAll("a").forEach(lien => {
-            lien.addEventListener("click", () => {
-                if (menuNavigation.classList.contains("is-open")) fermerMenu();
-            });
+            lien.addEventListener("click", () => fermerMenu({ rendreFocus: false }));
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && menuOuvert) fermerMenu();
+        });
+
+        // --- Le geste ---
+        // Un appui maintenu sur un lien déclenche le glisser-déposer natif du
+        // navigateur, qui répond par un `pointercancel` : le geste mourait au
+        // deuxième pixel, la feuille restait collée. On le désamorce sur toute la
+        // feuille — on n'y traîne rien nulle part.
+        menuNavigation.addEventListener("dragstart", (e) => e.preventDefault());
+
+        let pointeur = null;
+        let glisse = false;
+        let departDoigtY = 0;
+        let departFeuilleY = 0;
+        let echantillons = [];
+
+        menuNavigation.addEventListener("pointerdown", (e) => {
+            if (pointeur !== null) return; // un seul doigt : le second ferait sauter la feuille
+            pointeur = e.pointerId;
+            glisse = false;                // rien n'est décidé tant qu'on n'a pas bougé
+            departDoigtY = e.clientY;
+            departFeuilleY = yCourant ?? 0;
+            echantillons = [{ y: e.clientY, t: performance.now() }];
+        });
+
+        menuNavigation.addEventListener("pointermove", (e) => {
+            if (e.pointerId !== pointeur) return;
+            const dy = e.clientY - departDoigtY;
+
+            // Hystérésis. Sous 8px on ne bouge pas et surtout on ne capture PAS
+            // le pointeur : la capture retarge le `click` vers la feuille, ce qui
+            // tuerait les taps sur les liens.
+            if (!glisse) {
+                if (Math.abs(dy) < SEUIL_GESTE) return;
+                glisse = true;
+                menuNavigation.setPointerCapture(pointeur); // le suivi survit à la sortie de la feuille
+                arreterRessort && arreterRessort();         // on reprend l'animation en cours au vol
+                arreterRessort = null;
+                departFeuilleY = yCourant ?? 0;             // on repart de la position RÉELLE à l'écran,
+                departDoigtY = e.clientY;                   // sans compter les 8px du seuil
+            }
+
+            const h = hauteurFeuille();
+            let y = departFeuilleY + (e.clientY - departDoigtY);
+            if (y < 0) y = -elastique(-y, h); // vers le haut : résistance, pas de mur
+            yCourant = y;
+            poserFeuille(y);
+
+            echantillons.push({ y: e.clientY, t: performance.now() });
+            if (echantillons.length > 6) echantillons.shift();
+        });
+
+        const relacherFeuille = (e) => {
+            if (e.pointerId !== pointeur) return;
+            pointeur = null;
+            if (!glisse) return; // simple tap : on laisse le clic suivre son cours
+            glisse = false;
+
+            const h = hauteurFeuille();
+            const maintenant = performance.now();
+            const repere = echantillons.find(s => maintenant - s.t <= FENETRE_VITESSE)
+                        || echantillons[0];
+            const dt = Math.max(maintenant - repere.t, 1);
+            const vitesse = ((e.clientY - repere.y) / dt) * 1000; // px/s
+
+            if ((yCourant ?? 0) + projeter(vitesse) > h * PART_CONGE) {
+                fermerMenu({ rendreFocus: false });
+                allerVers(h, vitesse, () => marquerOuvert(false));
+            } else {
+                allerVers(0, vitesse);
+            }
+        };
+        menuNavigation.addEventListener("pointerup", relacherFeuille);
+        menuNavigation.addEventListener("pointercancel", relacherFeuille);
+
+        /**
+         * Position de repos, mesurée tout de suite : lire offsetHeight force le
+         * calcul de mise en page, il n'y a pas à attendre une image.
+         * Au-dessus du breakpoint, on efface les styles inline et on rend la main
+         * au CSS — sans quoi la barre de navigation desktop hériterait du
+         * `transform` et du `visibility: hidden` de la feuille.
+         */
+        const reposerFeuille = () => {
+            if (window.innerWidth > MOBILE_MAX) {
+                menuNavigation.style.transform = "";
+                menuNavigation.style.visibility = "";
+                voileMenu.style.opacity = "";
+                voileMenu.style.visibility = "";
+                yCourant = null;
+                return;
+            }
+            if (menuOuvert) return; // ne jamais rabattre une feuille ouverte
+            yCourant = hauteurFeuille();
+            poserFeuille(yCourant);
+        };
+
+        reposerFeuille();
+
+        window.addEventListener("resize", () => {
+            // Passage en desktop menu ouvert : la nav redevient une barre
+            // horizontale, il n'y a plus rien à faire sortir par le bas.
+            if (window.innerWidth > MOBILE_MAX) {
+                fermerMenu({ rendreFocus: false, instantane: true });
+            }
+            reposerFeuille();
+        }, { passive: true });
+
+        // La hauteur de la feuille ne dépend d'aucune image ni d'aucune police
+        // (lignes et poignée ont des hauteurs fixes), mais une mesure prise au
+        // DOMContentLoaded reste une mesure prise tôt. On la reprend une fois tout
+        // posé — si elle n'a pas bougé, la repose ne change rien.
+        window.addEventListener("load", reposerFeuille);
+
+        // Retour via le bouton « précédent » : les styles inline reviennent tels
+        // quels avec la page. On repart d'un état fermé et net.
+        onPageRestore.push(() => {
+            fermerMenu({ rendreFocus: false, instantane: true });
+            reposerFeuille();
         });
     }
 
@@ -173,8 +481,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // (:not(.is-floating):not(.show-cta)) tient déjà le header hors écran,
         // retirer "is-hidden" ne le fait pas redescendre. Le comportement y reste
         // donc identique à ce qu'il était.
-        const MOBILE_MAX = 840; // aligné sur le breakpoint mobile de style.css
-        const DELTA_MIN  = 6;   // px — hystérésis contre le tremblement du doigt
+        // MOBILE_MAX vient du haut de ce callback — même seuil que la feuille du
+        // menu, et que le média de style.css.
+        const DELTA_MIN = 6; // px — hystérésis contre le tremblement du doigt
 
         // Seuil de déclenchement = hauteur du header : tant qu'il ne recouvre
         // aucun contenu, l'escamoter ne libérerait rien et ne ferait que clignoter.

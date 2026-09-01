@@ -8,7 +8,8 @@
  * Structure :
  *   1. Reset & base
  *   2. Boutons
- *   3. Header (glassmorphisme, états flottant / scrollé / caché, menu burger)
+ *   3. Header (glassmorphisme, états flottant / scrollé / caché, bouton burger,
+ *      feuille du menu mobile)
  *   4. Section hero
  *   5. Section services (cartes, badges, animations au scroll)
  *   6. Section projets (grille de cartes image)
@@ -246,7 +247,12 @@ a {
     z-index: 100; /* au-dessus de tout le contenu de page ; sous z-index: 200 du dropdown services */
 
     background-color: var(--white);
-    backdrop-filter: blur(0px); /* valeur initiale explicite : permet de transitionner vers blur(20px) sans saut */
+    /* Valeur initiale explicite : permet de transitionner vers blur(20px) sans saut.
+       ⚠ Elle a un effet de bord : un `backdrop-filter` non-`none`, même neutre, fait
+       du header un bloc conteneur pour ses descendants en `position: fixed`. Sous
+       840px, cette déclaration est donc déportée sur `.site-header::before` — voir
+       « FEUILLE DU MENU MOBILE », qui en dépend. */
+    backdrop-filter: blur(0px);
     border-bottom: 1px solid var(--border-subtle);
     height: var(--header-height);
     display: flex;
@@ -298,25 +304,21 @@ a {
     background-color: var(--fg-on-dark);
 }
 
-/* Quand le menu burger s'ouvre en mode flottant, le header repasse en style
-   opaque (même apparence que l'état show-cta). */
-.site-header.is-floating.menu-open {
-    background-color: var(--white);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border-bottom-color: var(--border-subtle);
-}
+/* Le header ne change PLUS d'apparence quand le menu s'ouvre. Il basculait ici
+   en opaque blanc parce que le panneau du menu se dépliait juste en dessous : un
+   header transparent posé sur une surface claire n'avait plus de bord, et le
+   logo blanc disparaissait dedans. La feuille arrive maintenant par le BAS de
+   l'écran, à l'autre bout — le header reste donc posé sur le hero comme si de
+   rien n'était, et c'est le voile, derrière lui, qui assombrit la page.
 
-.site-header.is-floating.menu-open .logo-icon {
-    filter: var(--filter-logo-forest);
-}
-
-.site-header.is-floating.menu-open .main-nav a {
-    color: var(--color-forest);
-}
-
-.site-header.is-floating.menu-open .burger-icon span {
-    background-color: var(--color-forest);
+   Reste une seule chose à faire : l'élévation. Le voile doit couvrir toute la
+   page, y compris la barre de pilules de services.html qui passe habituellement
+   DEVANT le header (z-index 101). On fait donc monter le header au-dessus des
+   deux le temps de l'ouverture. `menu-open` n'est retirée qu'une fois la feuille
+   sortie de l'écran (voir script.js) : la retirer à l'instant du clic ferait
+   replonger le header sous le voile pendant tout le vol retour. */
+.site-header.menu-open {
+    z-index: 104; /* > voile (102) > barre de pilules (101) > header au repos (100) */
 }
 
 /* État caché dérivé : scrollé mais le CTA hero est encore visible.
@@ -391,9 +393,16 @@ a {
 /* =========================================
    NAVIGATION — MENU MOBILE / DESKTOP
    ========================================= */
-/* Caché par défaut sur mobile (display: none).
-   La transition sur transform n'est active que sur desktop (≥ 841px),
-   où le menu ne passe jamais par display:none. */
+/* Le MÊME <nav> tient deux rôles selon la largeur : barre horizontale en desktop
+   (≥ 841px), feuille montant du bas de l'écran en mobile (voir la section
+   « FEUILLE DU MENU MOBILE » plus bas). `display: none` est le défaut, levé de
+   part et d'autre par le média correspondant.
+
+   La transition sur transform ne sert QUE le desktop, où la nav se recentre dans
+   l'espace libéré par le bouton. En mobile elle est coupée : la position de la
+   feuille est écrite image par image par le ressort de script.js, et une
+   transition CSS par-dessus lisserait — donc retarderait — un suivi qui doit
+   coller au doigt. */
 .main-nav {
     display: none;
     /* Même durée et même courbe que #header-quote-btn : la nav recentre l'espace que
@@ -402,68 +411,18 @@ a {
     transform: translateX(0);
 }
 
-/* Menu ouvert : position absolute sous le header, pleine largeur.
-   animation: slideDown — utilisé à la place de transition car on passe de display:none → flex. */
-.main-nav.is-open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%; /* Juste en dessous du header */
-    left: 0;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(15px);
-    padding: var(--space-lg) 0;
-    border-bottom: 1px solid var(--border-default);
-    animation: slideDown var(--duration-base) ease-out forwards;
+/* Chevron de fin de ligne, présent dans le markup des quatre navs mais réservé
+   à la feuille mobile : en desktop, les liens sont côte à côte dans une barre,
+   un chevron par lien y ferait du bruit sans rien indiquer. */
+.nav-chevron {
+    display: none;
 }
 
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideUp {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(-10px); }
-}
-
-/* Contreparties en mouvement réduit des deux animations ci-dessus : même fondu,
-   sans la course de 10px (voir le bloc prefers-reduced-motion de la section 5).
-   Déclarées ICI, au niveau global, et pas dans un média : le menu mobile n'existe
-   que sous 841px, une keyframe posée dans le média desktop ne serait pas définie
-   là où elle sert. */
-@keyframes menu-fade-in  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes menu-fade-out { from { opacity: 1; } to { opacity: 0; } }
-
-/* État de fermeture : duplique le layout de .is-open pour maintenir le display:flex
-   le temps que l'animation slideUp se termine (300 ms). pointer-events: none
-   empêche les clics pendant l'animation. Géré par script.js (fermerMenu). */
-.main-nav.is-closing {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(15px);
-    padding: var(--space-lg) 0;
-    border-bottom: 1px solid var(--border-default);
-    animation: slideUp var(--duration-base) ease-in forwards;
-    pointer-events: none;
-}
-
-.main-nav.is-open a {
-    padding: 1rem 2rem;
-    border-bottom: 1px solid var(--forest-05);
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-}
-
-.main-nav.is-open a:last-child {
-    border-bottom: none;
+/* Voile du menu mobile. Présent dans le markup des quatre pages qui ont une
+   nav, mais sans existence hors du média mobile : en desktop il n'y a pas de
+   menu à voiler. Tout son style est dans « FEUILLE DU MENU MOBILE ». */
+.nav-scrim {
+    display: none;
 }
 
 .main-nav a {
@@ -674,10 +633,12 @@ a {
         transform: translateY(-100%);
     }
 
-    /* Filet de sécurité : le scroll du body n'est pas verrouillé quand le menu
-       burger est ouvert : un événement de défilement peut donc survenir menu
-       déployé, et le header ne doit alors jamais partir avec lui. La garde
-       principale est côté JS ; celle-ci ne coûte rien et couvre les courses. */
+    /* Filet de sécurité : le header ne part jamais avec le scroll tant que le
+       menu est ouvert. Le défilement du body est désormais verrouillé pendant
+       l'ouverture (voir `body.menu-open` dans « FEUILLE DU MENU MOBILE »), donc
+       la course est courte — mais elle existe encore, entre le clic et la pose
+       de la classe, et au retour de bfcache. La garde principale est côté JS ;
+       celle-ci ne coûte rien et couvre les cas limites. */
     .site-header.menu-open.is-hidden {
         transform: none;
     }
@@ -788,6 +749,16 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Le bouton répond AU TOUCHER, pas au relâchement : c'est la première chose
+       que le doigt attend, et le burger était le seul élément pressable du site
+       à ne rien renvoyer. --press-scale-icon plutôt que --press-scale : 0,97 sur
+       48px de carré vide ne se voit pas. */
+    transition: transform var(--duration-press) var(--ease-card);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.menu-toggle:active {
+    transform: scale(var(--press-scale-icon));
 }
 
 /* On dessine les barres du burger nous-mêmes avec des <span> */
@@ -809,10 +780,11 @@ a {
     /* Propriétés explicites, --ease-card, et 0,2s : le morphing burger → croix est un
        toggle, pas une mise en scène. Il portait `all 0.4s` sur une courbe à surtension
        négative — le trait repartait en arrière avant de tourner, deux fois trop
-       lentement pour un retour d'interaction. */
+       lentement pour un retour d'interaction.
+       `width` a quitté la liste au profit de `transform` seul — voir le trait du
+       milieu ci-dessous. */
     transition: transform var(--duration-fast) var(--ease-card),
-                opacity var(--duration-fast) ease,
-                width var(--duration-fast) var(--ease-card);
+                opacity var(--duration-fast) ease;
     transform-origin: center;
 }
 
@@ -820,18 +792,250 @@ a {
    8.5px = moitié de la hauteur du .burger-icon (20px) moins la hauteur d'une barre (3px) :
    calcul qui aligne exactement les deux barres diagonales au centre du bouton. */
 .menu-toggle.is-active .burger-icon span:nth-of-type(1) {
-    width: 100%;
     transform: translateY(8.5px) rotate(45deg);
 }
 
+/* `scaleX(0)` et non `width: 0` : la largeur déclenche un recalcul de mise en
+   page à chaque frame, l'échelle reste sur le GPU. Et le rendu diffère — le
+   trait se rétracte depuis son centre au lieu de se raccourcir par la droite,
+   ce qui se lit comme un effacement plutôt que comme un glissement. */
 .menu-toggle.is-active .burger-icon span:nth-of-type(2) {
-    width: 0;
+    transform: scaleX(0);
     opacity: 0;
 }
 
 .menu-toggle.is-active .burger-icon span:nth-of-type(3) {
-    width: 100%;
     transform: translateY(-8.5px) rotate(-45deg);
+}
+
+/* =========================================
+   FEUILLE DU MENU MOBILE (≤ 840px)
+   -----------------------------------------
+   Le menu ne se déplie plus sous le header : il monte du bas de l'écran, là où
+   se trouve le pouce. Le bouton qui l'ouvre est en haut à droite, le contenu
+   arrive en bas — c'est volontaire : sur un téléphone tenu à une main, le coin
+   haut-droit est le pire endroit où poser trois cibles à toucher.
+
+   TROIS CHOSES SONT PILOTÉES PAR SCRIPT.JS, PAS PAR CE FICHIER :
+   la position de la feuille (`transform`), sa visibilité, et l'opacité du voile.
+   Elles sont écrites en style inline, image par image, parce qu'elles doivent
+   suivre le doigt au pixel près pendant le geste puis être reprises par un
+   ressort qui hérite de la vitesse du lancer. Une transition CSS ne sait pas
+   faire ça : elle ignore la vitesse d'entrée, et relancer une transition en
+   cours de route repart de la valeur courante sans mémoire du mouvement.
+   Conséquence pratique : NE PAS déclarer de `transition` sur ces trois
+   propriétés ici, elle entrerait en concurrence avec le ressort.
+
+   Les valeurs ci-dessous ne posent donc que l'APPARENCE, plus l'état de repos
+   (`translateY(100%)` + `visibility: hidden`), qui est aussi le repli sans JS :
+   sans script, la feuille reste hors écran et le burger est inerte — exactement
+   ce qui se passait avant, où `.main-nav` était en `display: none`.
+
+   POURQUOI PAS `display: none` AU REPOS : le ressort a besoin de la hauteur
+   réelle de la feuille pour savoir de combien la sortir, et un élément en
+   `display: none` mesure 0. Elle reste donc dans le flux, simplement translatée
+   hors de l'écran. `visibility: hidden` la retire malgré tout du parcours de
+   tabulation — sans quoi un utilisateur au clavier entrerait dans un menu
+   invisible.
+   ========================================= */
+@media (max-width: 840px) {
+    /* --- Le verre du header déménage sur un pseudo-élément ---
+       PRÉREQUIS DE LA FEUILLE, pas une décision esthétique.
+
+       `backdrop-filter` transforme un élément en BLOC CONTENEUR pour ses
+       descendants en `position: fixed` — y compris quand il vaut `blur(0px)`, la
+       valeur neutre que `.site-header` porte en permanence pour pouvoir
+       transitionner vers le flou sans saut. Or la feuille vit DANS le header :
+       c'est le même <nav> que la barre du desktop. Son `bottom: 0` se calait donc
+       sur le bas du HEADER et non sur celui de l'ÉCRAN, et le menu s'ouvrait en
+       haut de la page, à moitié hors cadre. Le symptôme ne se voyait pas partout :
+       en haut d'index.html le header est `is-floating`, donc sans flou, donc sans
+       bloc conteneur — la feuille s'y posait correctement, et se cassait dès le
+       premier défilement.
+
+       On déplace donc fond et flou sur ::before, qui peint exactement la même
+       chose sans contraindre personne. Le trait et l'ombre restent sur le header :
+       eux ne créent aucun bloc conteneur.
+       Même remède que celui déjà employé par services.css pour sa barre de pilules
+       (« SURFACE DE VERRE UNIQUE ») — sur services.html, ses règles, plus
+       spécifiques et chargées après, continuent de l'emporter et rien n'y change.
+
+       z-index: -1 : le pseudo passe derrière le contenu du header (logo, nav, CTA)
+       mais devant le fond du header — lequel doit donc être rendu transparent,
+       sans quoi le flou n'aurait plus qu'un aplat blanc à flouter. */
+    .site-header,
+    .site-header.is-scrolled,
+    .site-header.is-floating {
+        background-color: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .site-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-color: var(--white);
+        backdrop-filter: blur(0px); /* neutre explicite : permet d'aller vers blur(20px) sans saut */
+        transition: background-color var(--duration-medium) ease,
+                    backdrop-filter var(--duration-medium) ease;
+    }
+
+    .site-header.is-scrolled::before {
+        background-color: var(--surface-glass);
+        backdrop-filter: var(--blur-glass) var(--saturate-glass);
+        -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
+    }
+
+    /* Header posé sur le hero, et header caché : rien à peindre du tout. */
+    .site-header.is-floating::before,
+    .site-header:not(.is-floating):not(.show-cta)::before {
+        background-color: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    /* --- Le voile ---
+       z-index 102 : au-dessus de la barre de pilules de services.html (101),
+       sous le header qui monte à 104 le temps de l'ouverture. Il assombrit donc
+       toute la page SAUF le header — ce qui est juste, le burger y reste actif.
+       `touch-action: none` : un glissement sur le voile ne doit pas faire défiler
+       la page derrière, iOS ignorant volontiers l'`overflow: hidden` du body. */
+    .nav-scrim {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 102;
+        background-color: var(--scrim-nav);
+        opacity: 0;
+        visibility: hidden;
+        border: none;
+        padding: 0;
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* --- La feuille --- */
+    .main-nav {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 103; /* au-dessus du voile (102), sous le header ouvert (104) */
+
+        /* env(safe-area-inset-bottom) : la barre d'accueil des iPhone récents
+           mange le bas de l'écran ; le 0px est un repli, pas une valeur de
+           design. */
+        padding: 0 var(--space-sm) calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+
+        background-color: var(--surface-sheet);
+        backdrop-filter: var(--blur-sheet) var(--saturate-glass);
+        -webkit-backdrop-filter: var(--blur-sheet) var(--saturate-glass);
+        border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+        box-shadow: var(--shadow-sheet);
+
+        transform: translateY(100%);
+        visibility: hidden;
+        transition: none; /* voir l'en-tête de section : la position vient du ressort */
+        touch-action: none; /* le geste vertical appartient à la feuille */
+        will-change: transform;
+
+        /* Une sélection de texte qui démarre sous le doigt fait annuler le
+           pointeur par le navigateur (pointercancel), et le geste meurt au
+           deuxième pixel. Rien n'est à sélectionner dans un menu de trois liens.
+           Le second cas, le glissement natif d'un lien, est désamorcé côté JS —
+           `-webkit-user-drag` ne couvrirait que Chrome et Safari. */
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* La poignée. Dessinée en ::before plutôt qu'ajoutée au markup des quatre
+       pages : elle n'existe que dans ce média et ne porte aucun sens — c'est une
+       affordance, pas un contenu. Le geste, lui, est accepté sur toute la
+       surface de la feuille, pas seulement ici. */
+    .main-nav::before {
+        content: '';
+        width: var(--sheet-grabber-w);
+        height: var(--sheet-grabber-h);
+        margin: var(--space-sm) auto var(--space-xs);
+        border-radius: var(--radius-pill);
+        background-color: var(--forest-30);
+        flex-shrink: 0;
+    }
+
+    /* --- Les lignes ---
+       Pleine largeur, hautes, sans icône à gauche : le mot est la seule cible,
+       autant qu'elle soit large. Le `margin` horizontal de la barre desktop est
+       remis à zéro, il n'a plus de sens en colonne. */
+    .main-nav a {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        height: var(--sheet-row-h);
+        padding: 0 var(--space-md);
+        border-radius: var(--radius-lg);
+        font-size: var(--text-body);
+        transition: background-color var(--duration-fast) ease,
+                    transform var(--duration-press) var(--ease-card);
+    }
+
+    /* Quand le header flotte sur le hero, il peint ses liens en blanc
+       (`.site-header.is-floating .main-nav a`) — c'est juste pour la barre du
+       desktop, posée sur la photo. Mais ces liens SONT ceux de la feuille, et la
+       feuille, elle, est un verre clair : sur index.html, menu ouvert en haut du
+       hero, on obtenait du blanc sur du blanc. On les ramène au forest, à
+       spécificité égale (0,3,1) et plus loin dans le fichier. */
+    .site-header.is-floating .main-nav a {
+        color: var(--color-forest);
+    }
+
+    /* Le soulignement animé de la barre desktop n'a pas lieu d'être ici : il
+       vise le survol d'un lien dans une rangée, pas une ligne de liste tactile
+       qui a déjà son propre retour d'enfoncement juste en dessous. */
+    .main-nav a::after {
+        display: none;
+    }
+
+    .main-nav a:active {
+        background-color: var(--forest-05);
+        transform: scale(var(--press-scale));
+    }
+
+    /* Les deux marqueurs de fin de ligne — le chevron des liens internes et la
+       flèche sortante d'« Espace client » — sont poussés au bord droit et
+       ramenés à la même teinte. Ils indiquent tous les deux « ça mène ailleurs » ;
+       les distinguer par la couleur ferait croire à deux natures de lien
+       différentes alors que seule la destination change. */
+    .nav-chevron,
+    .main-nav .client-icon {
+        display: inline-flex;
+        margin-left: auto;
+        font-size: var(--icon-md);
+        color: var(--forest-30);
+    }
+
+    /* Verrou du défilement pendant l'ouverture. Il manquait : la page glissait
+       derrière la feuille, et le filet posé sur `.site-header.menu-open.is-hidden`
+       (section « HEADER MOBILE ») existait précisément pour rattraper les dégâts.
+       `overflow` sur <body> suffit à bloquer la fenêtre tant que <html> reste en
+       `visible`, cas de ce site. */
+    body.menu-open {
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
+    /* Corollaire du verrou : là où la barre de défilement occupe de la place
+       (Windows, et une fenêtre de bureau réduite sous ce seuil), la faire
+       disparaître élargit la page d'un coup et tout le contenu saute latéralement
+       à l'ouverture du menu. La gouttière est donc réservée en permanence sous
+       840px — sans effet là où les barres flottent au-dessus du contenu, ce qui
+       est le cas de tous les téléphones. */
+    html {
+        scrollbar-gutter: stable;
+    }
 }
 
 /* =========================================
@@ -1069,10 +1273,16 @@ a {
                     box-shadow var(--duration-medium) ease;
     }
 
-    /* Le menu mobile garde son fondu et perd sa course de 10px. La DURÉE ne change
-       pas (--duration-base) : le minuteur de fermeture de script.js reste calé. */
-    .main-nav.is-open    { animation-name: menu-fade-in; }
-    .main-nav.is-closing { animation-name: menu-fade-out; }
+    /* Le menu mobile n'a rien à couper ici : sa position est écrite par
+       script.js, qui lit lui-même ce réglage et pose alors la feuille d'un coup
+       au lieu de la lancer au ressort. Le GESTE, lui, reste dans tous les cas —
+       ce n'est pas une animation, c'est le doigt de l'utilisateur, et le priver
+       de sa réponse rendrait la feuille inerte sous ses propres mouvements.
+       Ne restent donc que les enfoncements, qui sont des changements d'échelle. */
+    .menu-toggle:active,
+    .main-nav a:active {
+        transform: none;
+    }
 
     /* La course du hero (§ 4) est posée en (0,3,0) : la règle ci-dessus, en (0,2,0),
        ne la surclasse pas, quel que soit son rang dans le fichier. On répète donc la

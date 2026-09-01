@@ -400,9 +400,8 @@
     .services-sidebar {
         position: sticky;
         top: var(--header-height);
-        /* Repli sans JS, même raison que le fond : juste sous le header (100),
-           qui porte le panneau du menu burger. Avec JS, .has-pill-nav inverse
-           cet ordre — voir « SURFACE UNIQUE ». */
+        /* Repli sans JS, même raison que le fond : juste sous le header (100).
+           Avec JS, .has-pill-nav inverse cet ordre — voir « SURFACE UNIQUE ». */
         z-index: 99;
         max-height: none;
         overflow-x: auto;
@@ -583,12 +582,34 @@
         clip-path: inset(var(--pill-bar-clip, 0px) 0 0 0);
     }
 
-    /* Seule exception : menu burger déployé. Son panneau se déplie exactement sur
-       la barre et doit la recouvrir, donc le header repasse devant. script.js ne
-       retire `menu-open` qu'à la fin de l'animation de fermeture : le vol retour
-       est couvert lui aussi. */
-    .has-pill-nav .site-header.menu-open {
-        z-index: 102;
+    /* --- Menu burger déployé : la surface unique se défait le temps de l'ouverture ---
+
+       Il fallait autrefois faire repasser le header devant la barre, parce que le
+       panneau du menu se dépliait exactement sur elle. Le menu est maintenant une
+       feuille qui monte du bas de l'écran et ne recouvre plus rien en haut. Reste
+       un empilement à trois étages, et c'est lui qui pose problème :
+         · le voile du menu est à 102 — il assombrit tout ce qui est en dessous ;
+         · la barre est à 101, donc SOUS le voile : ses pilules s'assombrissent
+           avec le reste de la page, ce qui est le comportement voulu ;
+         · le header, lui, monte à 104 pour rester net et cliquable — et son
+           débordement de verre, qui appartient au header, monte avec lui.
+
+       Ce débordement repeignait donc en clair, PAR-DESSUS le voile, toute la
+       bande où se trouvent les pilules : on ne voyait plus une barre assombrie
+       mais une bande vide et brillante, les pilules ayant disparu sous le voile.
+
+       On annule donc le débordement le temps de l'ouverture — la bande redescend
+       sous le voile avec le reste de la page — et on rend à la barre un fond
+       opaque, celui-là même qu'elle porte sans JS : privée du verre du header,
+       elle laisserait sinon les pilules flotter au-dessus du contenu à découvert.
+       `menu-open` n'étant retirée qu'une fois la feuille sortie de l'écran, le vol
+       retour est couvert lui aussi. */
+    body.has-pill-nav.menu-open .site-header::before {
+        inset: 0;
+    }
+
+    body.has-pill-nav.menu-open .services-sidebar {
+        background-color: var(--white);
     }
 
 }

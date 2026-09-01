@@ -134,9 +134,12 @@
 
                 <!-- Comme sur les autres pages, la navigation omet le lien vers la page
                      courante : « À propos » n'y figure donc pas. -->
+                <!-- Chevrons réservés à la feuille du menu mobile (≤ 840px) ; masqués
+                     dans la barre horizontale du desktop. Collés au libellé, sans
+                     retour à la ligne : voir la note dans index.html. -->
                 <nav class="main-nav">
-                    <a href="index.html" class="transition-link">Accueil</a>
-                    <a href="services.html" class="transition-link">Services</a>
+                    <a href="index.html" class="transition-link">Accueil<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="services.html" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
                     <a href="login.html" class="transition-link client-link">
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
@@ -155,6 +158,17 @@
                 </div>
             </div>
         </header>
+
+        <!--
+            Voile du menu mobile — assombrit la page pendant que la feuille du menu est
+            ouverte, et la referme au clic. Placé HORS du <header> : il doit couvrir
+            toute la fenêtre, header compris, et le header porte son propre empilement.
+            `tabindex="-1"` + `aria-hidden` : la fermeture au clavier passe par Échap,
+            ce bouton n'a rien à annoncer tant que le menu est fermé — script.js retire
+            `aria-hidden` à l'ouverture. Sans effet et invisible au-dessus de 840px
+            (voir « FEUILLE DU MENU MOBILE » dans style.css).
+        -->
+        <button class="nav-scrim" type="button" tabindex="-1" aria-hidden="true"></button>
 
         <main class="apropos-main">
 

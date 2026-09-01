@@ -11,6 +11,13 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <!-- Détection automatique des coordonnées coupée (téléphone, courriel et adresse des
+         cartes de canaux soulignés et rendus cliquables par Chrome) — les deux balises
+         sont expliquées dans index.html. Page la plus concernée : ses valeurs sont du
+         texte simple, l'action passe par les boutons « copier » et « ouvrir », dont les
+         vrais liens tel:/mailto:/Maps restent intacts. -->
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    <meta name="chrome" content="nointentdetection" />
     <title>Contact — Solutions Terravia</title>
     <meta name="description" content="Contactez Solutions Terravia à Montréal pour discuter de votre projet de levés techniques et de données géospatiales par drone." />
 

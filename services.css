@@ -400,9 +400,8 @@
     .services-sidebar {
         position: sticky;
         top: var(--header-height);
-        /* Repli sans JS, même raison que le fond : juste sous le header (100),
-           qui porte le panneau du menu burger. Avec JS, .has-pill-nav inverse
-           cet ordre — voir « SURFACE UNIQUE ». */
+        /* Repli sans JS, même raison que le fond : juste sous le header (100).
+           Avec JS, .has-pill-nav inverse cet ordre — voir « SURFACE UNIQUE ». */
         z-index: 99;
         max-height: none;
         overflow-x: auto;
@@ -583,13 +582,15 @@
         clip-path: inset(var(--pill-bar-clip, 0px) 0 0 0);
     }
 
-    /* Seule exception : menu burger déployé. Son panneau se déplie exactement sur
-       la barre et doit la recouvrir, donc le header repasse devant. script.js ne
-       retire `menu-open` qu'à la fin de l'animation de fermeture : le vol retour
-       est couvert lui aussi. */
-    .has-pill-nav .site-header.menu-open {
-        z-index: 102;
-    }
+    /* Le cas « menu burger déployé » ne se règle plus ici. Il fallait autrefois
+       faire repasser le header devant la barre, parce que le panneau du menu se
+       dépliait exactement sur elle. Le menu est maintenant une feuille qui monte
+       du bas de l'écran : elle ne recouvre plus rien en haut.
+       Ce qui reste à couvrir, c'est la barre elle-même, qu'il faut assombrir
+       comme le reste de la page — c'est le voile (z-index 102) qui s'en charge,
+       en passant devant les 101 ci-dessus, pendant que le header monte à 104.
+       Les deux valeurs vivent dans style.css, section « FEUILLE DU MENU MOBILE »,
+       avec le voile qu'elles encadrent. */
 
 }
 

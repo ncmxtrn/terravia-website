@@ -93,8 +93,10 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   lui est jointive : deux `backdrop-filter` voisins y feraient une marche de ton (chacun floute son
   **propre** arrière-plan en s'écrêtant à ses propres bords). Le verre est donc porté par **un seul**
   élément, `.has-pill-nav .site-header::before`, qui déborde vers le bas ; le header et la barre sont
-  tous deux transparents, et la barre passe **au-dessus** du header (`z-index: 101`, inversé le temps
-  d'un `menu-open`) pour que le flou ne s'applique pas aux pilules.
+  tous deux transparents, et la barre passe **au-dessus** du header (`z-index: 101`) pour que le flou
+  ne s'applique pas aux pilules. Pendant un `menu-open`, c'est le voile du menu (102) qui passe devant
+  elle et le header qui monte à 104 — les deux valeurs vivent dans `style.css`, section « Feuille du
+  menu mobile ».
   La jointure est **mesurée** en continu par `syncPillGlass` (`script.js`), jamais déduite d'un seuil :
   la barre ne quitte pas le header d'un coup, elle est chassée vers le haut par le bas de sa zone
   collante en fin de layout et glisse derrière lui sur ~62px de défilement. Deux variables
@@ -195,6 +197,29 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   se voit imposer les **80px** du `section[id]` de `style.css` — plus spécifique (0,1,1) que
   `.service-block` (0,1,0), donc le `scroll-margin-top` de `services.css` sur `.service-block` est
   **mort**. Comparer à `--sticky-top` ferait croire à un écart permanent de 32px sur les sections.
+- **Feuille du menu mobile (≤ 840px)** — le menu burger n'est pas un panneau accroché sous le header :
+  c'est une feuille qui monte du bas de l'écran, qu'on peut saisir n'importe où et renvoyer d'un
+  lancer. **Sa position, sa visibilité et l'opacité du voile sont écrites en style inline par
+  `script.js`, image par image** (fonction `poserFeuille`), jamais par une transition CSS : une
+  transition ignore la vitesse d'entrée, et la main sent le décrochage à l'instant du relâchement. Le
+  CSS ne pose que l'apparence et l'état de repos, qui est aussi le repli sans JS. **Ne pas déclarer de
+  `transition` sur `transform`/`visibility` de `.main-nav` sous 840px** — elle entrerait en
+  concurrence avec le ressort.
+  Trois pièces : un geste à hystérésis de 8px (sous ce seuil on ne capture pas le pointeur, sans quoi
+  le `click` serait retargé vers la feuille et les liens deviendraient inertes), une projection
+  d'inertie à la formule d'Apple (`v/1000 × 0,998/0,002`) qui décide du congé au-delà de 42 % de la
+  hauteur, et un ressort qui hérite de la vitesse du doigt. Un `dragstart` est neutralisé sur la
+  feuille : un appui maintenu sur un lien déclenche sinon le glisser-déposer natif, qui répond par un
+  `pointercancel` et tue le geste au deuxième pixel.
+  Le même `<nav class="main-nav">` sert les deux rôles — barre horizontale en desktop, feuille en
+  mobile. **C'est ce qui impose que le header ne soit pas un bloc conteneur** : un `backdrop-filter`,
+  même à `blur(0px)`, en fait un pour ses descendants en `position: fixed`, et la feuille se calait
+  alors sur le bas du header au lieu du bas de l'écran. Sous 840px, fond et flou du header sont donc
+  déportés sur `.site-header::before` — même remède que la barre de pilules ci-dessus. Ne pas
+  reprendre `backdrop-filter` sur `.site-header` dans ce média.
+  `menu-open` est portée par le header (élévation) **et** par le body (verrou du défilement), et
+  n'est retirée qu'une fois la feuille **sortie de l'écran**, pas au clic : sinon le header replonge
+  sous le voile et la page redevient défilante pendant le vol retour.
 - **Révélation au scroll** — `.animate-on-scroll` reçoit `.visible` via IntersectionObserver.
 - **Liens non implémentés** — `.link-arrow` et `.link-placeholder` interceptent le clic et affichent
   `alert("En cours de construction...")`. TODO ouvert : remplacer par une notification non bloquante.

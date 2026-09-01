@@ -373,6 +373,10 @@
   --duration-flash:  2.4s;
 
   --press-scale:     0.97;
+  /* Un bouton-icône n'a pas de libellé pour absorber l'enfoncement : 0,97 sur
+     48px de carré vide ne se voit pas. Réservé aux boutons dont tout le contenu
+     est un pictogramme — le burger, aujourd'hui le seul. */
+  --press-scale-icon: 0.92;
 
   --reveal-shift:    30px;
   --reveal-shift-sm: 16px;
@@ -397,6 +401,46 @@
   --blur-glass:     blur(20px);
   --saturate-glass: saturate(180%);
   --surface-glass:  rgba(255, 255, 255, 0.72);
+
+  /* ============================================================
+     FEUILLE DU MENU MOBILE (≤ 840px)
+     ------------------------------------------------------------
+     Le menu burger n'est pas un panneau accroché sous le header : c'est une
+     feuille qui monte du bas de l'écran, dans la zone du pouce, et qu'on peut
+     saisir pour la renvoyer. Ces valeurs n'ont pas d'équivalent ailleurs dans
+     le système — elles décrivent une surface flottante adossée à un bord
+     d'écran, pas une carte posée dans un flux.
+
+     --sheet-radius : 22px, plus rond que --radius-xl (16px). La feuille est
+       collée au bord bas : seuls ses deux angles hauts existent, et ce sont eux
+       qui disent qu'elle vient de l'extérieur de l'écran.
+     --sheet-row-h : 62px. Sans icône ni sous-titre, la ligne de texte est la
+       seule cible du doigt ; elle dépasse donc franchement le seuil WCAG 2.5.5
+       (44px) au lieu de s'y coller.
+     --sheet-grabber-* : la poignée. Seule affordance qui annonce que la feuille
+       se saisit — le geste, lui, est accepté sur toute sa surface.
+     --surface-sheet / --blur-sheet : verre plus opaque et plus flou que celui du
+       header (0,86 contre 0,72 ; 28px contre 20px). La feuille se pose sur un
+       contenu déjà voilé et doit rester lisible par-dessus, alors que le header
+       flotte sur une page nette.
+     --scrim-nav : voile qui assombrit la page pendant l'ouverture. Teinte tirée
+       vers le noir plutôt que vers le forest : le voile doit se lire comme de
+       l'ombre, pas comme un aplat de marque posé sur le contenu. Son opacité
+       suit la position du doigt, elle n'est jamais figée.
+     --shadow-sheet : l'arête claire du haut (la lumière qui accroche le bord du
+       matériau) et l'ombre portée vers le haut, dans la même déclaration —
+       elles décrivent une seule surface et se règlent ensemble.
+     ============================================================ */
+  --sheet-radius:    1.375rem;    /* 22px */
+  --sheet-row-h:     3.875rem;    /* 62px */
+  --sheet-grabber-w: 2.375rem;    /* 38px */
+  --sheet-grabber-h: 0.3125rem;   /*  5px */
+  --surface-sheet:   rgba(255, 255, 255, 0.86);
+  --blur-sheet:      blur(28px);
+  --scrim-nav:       rgba(11, 27, 23, 0.42);
+  --shadow-sheet:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 -20px 44px -26px rgba(26, 60, 52, 0.60);
 }
 
 /* ============================================================

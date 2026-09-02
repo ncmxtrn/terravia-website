@@ -106,11 +106,20 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   leur place laisse, pendant ce trajet, soit une bande de verre vide sous le header — très visible sur
   le footer sombre — soit des pilules qui débordent par-dessus lui.
   Le bas du header est le **seul** repère utilisé : il suit le header quand il s'escamote, donc les deux
-  mesures restent justes sans rien savoir de `header-hidden`, et restent même valides pendant la
-  transition sans être recalculées (header et barre parcourent les mêmes 80px avec la même durée et la
-  même courbe, leur écart ne bouge pas). Ne pas raccrocher ces mesures à `header-hidden` ni à la valeur
-  courante de `top` de la barre : un tel repère bascule à la pose de la classe alors que la barre met
-  toute la transition à descendre, et le verre lâche la barre pendant ces ~400 ms.
+  mesures restent justes sans rien savoir de `header-hidden`. Ne pas raccrocher ces mesures à
+  `header-hidden` ni à la valeur courante de `top` de la barre : un tel repère bascule à la pose de la
+  classe alors que la barre met toute la transition à descendre, et le verre lâche la barre pendant ces
+  ~400 ms.
+  **La mesure doit être rejouée à la fin de chaque transition** (deux écouteurs `transitionend` dans
+  `script.js` : `transform` sur le header, `top` sur la barre). Sur le papier les deux parcourent les
+  mêmes 80px avec la même durée et la même courbe, leur écart ne bouge pas — mais sur iPhone c'est faux :
+  le `transform` du header est composité et arrive vite, le `top` de la barre est animé sur le thread
+  principal, occupé par le défilement. Un clic sur une pilule qui escamote le header finissait donc sa
+  course avant les transitions, et la dernière mesure — prise sur cet état de passage, barre encore 80px
+  sous le header, donc lue comme « pas accostée » — figeait le débordement à 0 : plus de fond derrière
+  les pilules jusqu'au défilement suivant. On écoute les **deux** boîtes, c'est la dernière arrivée qui
+  fixe la géométrie. Ne pas se fier à l'inspecteur de bureau pour ce genre de symptôme : il simule un
+  écran, pas le moteur de rendu ni la lenteur du thread principal d'un téléphone.
   Sans JS (pas de `.has-pill-nav`), la barre garde un fond opaque ; les deux variables valent alors 0
   par leur repli `var(…, 0px)`, ce qui limite le verre au header — le bon rendu en haut de page.
 - **Sommaire synchronisé (services.html, desktop)** — la sidebar fait ~1700px de liens pour 650-800px

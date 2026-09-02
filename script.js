@@ -1106,6 +1106,40 @@ if (servicesLayout) {
     // événement scroll n'est garanti, alors que la page est restaurée à sa position.
     onPageRestore.push(updateStickyMetrics);
 
+    // --- Fin de l'escamotage : dernier rendez-vous pour remesurer la jointure ---
+    // syncPillGlass n'est appelée que par le défilement, alors que la géométrie
+    // continue de bouger 400 ms APRÈS le dernier événement scroll — le temps que le
+    // header (transform) et la barre (top) finissent leur transition.
+    //
+    // Un clic sur une pilule qui fait descendre la page escamote le header en cours de
+    // route, et le défilement se termine avant les deux transitions : la dernière
+    // mesure porte donc sur un état de passage. Sur iPhone, le transform du header est
+    // composité — il arrive vite — tandis que le `top` de la barre est animé sur le
+    // thread principal, occupé par le défilement : le header est déjà remonté alors que
+    // la barre est encore à 80px sous lui. Elle est alors lue comme « pas encore
+    // accostée », le débordement du verre tombe à 0, et plus aucun événement ne vient
+    // le corriger — les pilules restent à découvert jusqu'au prochain défilement
+    // vertical. Constaté sur l'appareil seulement : l'inspecteur de bureau simule un
+    // écran, pas le moteur de rendu ni la lenteur du thread principal d'un téléphone,
+    // et les deux transitions y restent synchronisées.
+    //
+    // On écoute donc les DEUX boîtes : la première arrivée ne suffit pas, c'est la
+    // dernière qui fixe la géométrie définitive, et on ne sait pas laquelle c'est —
+    // c'est précisément leur désynchronisation qui pose problème.
+    //
+    // Les deux filtres sont nécessaires. `propertyName` : le header transitionne six
+    // propriétés, une seule nous intéresse. `e.target` : transitionend REMONTE le DOM,
+    // et le bouton « Contactez-nous » du header anime lui aussi `transform` — sans ce
+    // filtre, chaque apparition du CTA déclencherait une mesure inutile.
+    const remesurerJointure = (e, boite, propriete) => {
+        if (e.target === boite && e.propertyName === propriete) syncPillGlass();
+    };
+
+    pageHeader?.addEventListener("transitionend",
+        (e) => remesurerJointure(e, pageHeader, "transform"));
+    sidebar?.addEventListener("transitionend",
+        (e) => remesurerJointure(e, sidebar, "top"));
+
     // Gel du scroll-spy pendant un scroll piloté (clic sur pill).
     // navScrollActive = true → syncSidebar est gelé.
     // Le debounce de 150 ms détecte la fin du scroll smooth et réactive le spy.

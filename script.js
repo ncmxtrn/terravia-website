@@ -969,15 +969,45 @@ if (servicesLayout) {
             // temps que les sous-pixels se recalent). Sinon elle descend encore
             // dans le flux et le verre ne doit pas déborder : il flouterait le
             // haut de l'intro, qui passe précisément dans cette bande.
-            if (barre.top <= basHdr + 1) overhang = Math.max(0, barre.bottom - basHdr);
+            let accostee = barre.top <= basHdr + 1;
+
+            // Second test, et seulement si le premier a échoué : le bas du header
+            // est un repère qui BOUGE. Pendant l'escamotage il file vers le haut de
+            // son côté, et sur iPhone il y arrive avant la barre — son `transform`
+            // est composité quand le `top` de la barre est animé sur le thread
+            // principal, occupé par le défilement. La barre se retrouve alors 80px
+            // sous un header déjà remonté, et le premier test la déclare « pas
+            // accostée » alors qu'elle l'est : le verre la lâchait pendant toute la
+            // transition, ~0,4 s à découvert.
+            //
+            // Le repère qui ne ment jamais est le `top` propre de la barre : une
+            // barre accostée est rendue EXACTEMENT à son offset collant, une barre
+            // encore dans le flux est plus bas. Le comparer à sa position revient
+            // donc à lui demander à elle-même où elle en est, sans passer par le
+            // header. Bien lire le `top` CALCULÉ, qui suit la transition image par
+            // image : déduire « top vaut 0 » de la classe `header-hidden` bascule au
+            // contraire dès la pose de la classe, alors que la barre met toute la
+            // transition à descendre — c'est le piège documenté dans CLAUDE.md.
+            //
+            // En second seulement, parce qu'il coûte une résolution de style : le
+            // premier suffit au repos, où les deux boîtes coïncident, c'est-à-dire
+            // pendant l'essentiel du défilement.
+            if (!accostee) {
+                const topColle = parseFloat(getComputedStyle(sidebar).top) || 0;
+                accostee = barre.top <= topColle + 1;
+            }
+
+            if (accostee) overhang = Math.max(0, barre.bottom - basHdr);
             clip = Math.max(0, basHdr - barre.top);
         }
 
-        // Le bas du header est le seul repère utilisé, et il suit le header quand
-        // il s'escamote : les deux mesures restent donc justes sans rien savoir de
-        // `header-hidden`. Elles restent même valides pendant la transition sans
-        // être recalculées — header et barre parcourent les mêmes 80px avec la
-        // même durée et la même courbe, leur écart ne bouge pas.
+        // Le débordement se mesure toujours contre le bas du header, y compris
+        // quand c'est le second test qui a tranché : le panneau de verre appartient
+        // au header et part de sa boîte, il doit donc déborder de ce qui l'en
+        // sépare. Pendant une désynchronisation, il couvre le temps de la
+        // transition la bande que le header vient de libérer — une zone dépolie qui
+        // se rétracte vers le haut, ce qui est le rendu voulu, là où l'ancienne
+        // lecture laissait les pilules à découvert.
         // Écriture seulement si la valeur change : accostée, elle est constante
         // sur tout le défilement, inutile d'invalider le style à chaque frame.
         if (overhang !== overhangPose) {

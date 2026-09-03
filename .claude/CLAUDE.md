@@ -242,23 +242,30 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   `menu-open` est portée par le header (élévation) **et** par le body (verrou du défilement), et
   n'est retirée qu'une fois la feuille **sortie de l'écran**, pas au clic : sinon le header replonge
   sous le voile et la page redevient défilante pendant le vol retour.
-  **Le verre du header reprend un fond opaque le temps de l'ouverture**
-  (`.site-header.menu-open:not(.is-floating)::before`) — ce n'est pas cosmétique. Le voile (102)
-  assombrit la page jusqu'au bas du header, mais le header monte à 104 pour rester net et cliquable,
-  et son fond est du verre à 72 % : la page qu'il laisse voir au travers passe **derrière** le voile
-  et lui échappe. Une lisière de contenu en couleur apparaît alors au ras de son bord bas — criante
-  dès qu'une photo passe derrière — et se lit comme un trait clair au-dessus des pilules, comme si le
-  grisé s'arrêtait avant le header. Même remède que pour la barre de pilules : une surface privée de
-  son arrière-plan reprend un fond plein. `:not(.is-floating)` exclut le haut du hero d'`index.html`,
-  où le header est volontairement transparent avec un logo blanc. Les trois classes du sélecteur sont
-  nécessaires : il faut (0,3,1) pour l'emporter sur `.has-pill-nav .site-header::before` de
-  `services.css` (0,2,1), chargé après `style.css`.
-  **`services.html` fait exception, et l'opacité y passe par la BOÎTE du header, pas par son
-  `::before`** — parce que ce pseudo-élément y déborde pour peindre la barre de pilules. Un blanc
-  plein posé dessus claque sur la bande des pilules à l'instant où `menu-open` tombe, puis revient au
-  verre en 400 ms. `services.css` rend donc au pseudo-élément son `--surface-glass` (0,3,2) et pose le
-  blanc sur `.site-header` : même rendu — un verre à 72 % sur un blanc plein donne du blanc plein —
-  sans la secousse. Ne pas remettre l'opacité sur le pseudo-élément de cette page.
+  **Le verre du header se densifie le temps de l'ouverture**
+  (`.site-header.menu-open:not(.is-floating)::before`) — ce n'est pas cosmétique, et la raison est
+  **arithmétique, pas un bug** : le voile est à 102, le header monte à 104, ils composent donc le gris
+  dans l'**ordre inverse** l'un de l'autre. Le header montre `0,72 blanc + 0,28 × (page grisée)` — le
+  gris n'agit que sur ce que le verre laisse passer, il est **dilué au quart** — quand la barre, sous
+  le voile, le prend en entier. Le header prend alors la teinte de la page **en clair**, et cette
+  teinte **bouge** avec ce qui défile derrière : mesuré dans Chromium sur ses dix derniers pixels,
+  teinte 219 et variation horizontale 5,1, contre 252 et 1,7 pour une surface opaque. Ça se lit comme
+  un trait clair au-dessus des pilules, comme si le grisé s'arrêtait avant le header.
+  **Il n'y a pas d'échappatoire : du verre au-dessus du voile laisse voir la page.** « Le header ne
+  change pas d'aspect » et « rien ne transparaît » sont incompatibles — il faut densifier. Faire
+  repasser le verre **sous** le voile en n'élevant que `.header-content` a été essayé : le header
+  disparaît, la photo s'affiche nette à sa place. Ne pas y revenir.
+  `:not(.is-floating)` exclut le haut du hero d'`index.html`, où le header est volontairement
+  transparent avec un logo blanc. Les trois classes du sélecteur sont nécessaires : il faut (0,3,1)
+  pour l'emporter sur `.has-pill-nav .site-header::before` de `services.css` (0,2,1), chargé après
+  `style.css`.
+  **`services.html` atteint la même densité autrement : en doublant la couche, pas en changeant la
+  couleur.** Son pseudo-élément déborde pour peindre la barre de pilules et c'est lui qui reprend la
+  bande quand `menu-open` tombe : un blanc plein y claque à cet instant avant de revenir au verre en
+  400 ms. Il garde donc ses 72 % (`--surface-glass` rendu en (0,3,2)), et c'est la **boîte** du header
+  qui reçoit une seconde couche du même token — `0,72 + 0,28 × 0,72 = 0,92`, mesuré à 242,7 de teinte
+  et 2,48 de variation, soit le trait supprimé. Aucune valeur brute, et la boîte transitionne déjà son
+  `background-color` sur 400 ms, donc la densification monte au lieu de claquer.
   À savoir aussi, si un jour un éclair blanc est signalé à l'ouverture : tout ce qui dépend de
   `menu-open` bascule **d'un coup** à la pose de la classe, alors que l'opacité du voile, elle, monte
   **progressivement** au rythme du ressort (~400 ms). Les deux ne sont pas synchronisés.

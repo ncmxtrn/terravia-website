@@ -633,27 +633,45 @@
         -webkit-backdrop-filter: var(--blur-glass) var(--saturate-glass);
     }
 
-    /* Le débordement s'annule, mais LE TON DU PANNEAU NE CHANGE PAS.
-       style.css opacifie le verre du header pendant l'ouverture — nécessaire, sans
-       quoi une lisière de page non grisée apparaît sous son bord bas. Seulement, ce
-       blanc plein est posé sur le pseudo-élément, et c'est ce pseudo-élément qui
-       reprend la bande de la barre à la fermeture : la bande claquait au blanc à
-       l'instant précis où `menu-open` tombait, puis revenait au verre en 400 ms.
-       On lui rend donc ici son `--surface-glass` — (0,3,2) contre les (0,3,1) de
-       style.css — et l'opacité du header repart sur sa BOÎTE, juste en dessous.
-       Elle ne déborde pas, elle : au moment de la reprise, le pseudo-élément peint
-       la bande exactement au ton que la barre y avait. */
+    /* --- Le header pendant l'ouverture : deux couches de verre, pas un aplat ---
+
+       Le débordement s'annule, mais LE TON DU PANNEAU, LUI, NE CHANGE PAS. C'est
+       le point à ne pas défaire : ce pseudo-élément est celui qui reprend la bande
+       de la barre à l'instant où `menu-open` tombe. Peint en blanc plein — ce que
+       fait style.css pour les autres pages — il y claque à cet instant précis avant
+       de revenir au verre en 400 ms, la secousse même qu'on cherche à retirer. On
+       lui rend donc son `--surface-glass` : (0,3,2) contre les (0,3,1) de style.css,
+       et cette feuille est chargée après.
+
+       Reste que le header ne peut pas rester à 72 % de blanc, et la raison est
+       arithmétique, mesurée dans Chromium plutôt que devinée. Le voile est à 102,
+       le header monte à 104 : ils composent le gris dans l'ordre INVERSE l'un de
+       l'autre. Le header montre `0,72 blanc + 0,28 × (page grisée)` — le gris n'agit
+       que sur ce que le verre laisse passer, il est dilué au quart ; la barre, sous
+       le voile, le prend en entier. Le header prend alors la teinte de la page en
+       clair, et cette teinte BOUGE avec ce qui défile derrière : variation
+       horizontale mesurée à 5,1 contre 1,7 pour une surface opaque. C'est le trait
+       clair qu'on lit au-dessus des pilules, comme si le grisé s'arrêtait avant le
+       header.
+       Il n'y a pas d'échappatoire : verre au-dessus du voile ⇒ la page transparaît.
+       Faire repasser le verre SOUS le voile en n'élevant que le contenu du header a
+       été essayé — le header disparaît, la photo s'affiche nette à sa place.
+
+       On densifie donc le verre le temps de l'ouverture, jusqu'à ce que plus rien ne
+       transparaisse, et on le fait EN DOUBLANT LA COUCHE plutôt qu'en changeant sa
+       couleur : le même `--surface-glass` posé sur la boîte, sous le pseudo-élément
+       qui porte déjà le sien. Les deux se composent — `0,72 + 0,28 × 0,72 = 0,92` —
+       et cette écriture a trois vertus : aucune valeur brute, le pseudo-élément
+       conserve ses 72 % pour la reprise de la bande, et la boîte transitionne déjà
+       son `background-color` sur 400 ms (style.css), donc la densification monte au
+       lieu de claquer. */
     body.has-pill-nav.menu-open .site-header::before {
         inset: 0;
         background-color: var(--surface-glass);
     }
 
-    /* L'opacité du header, déportée du pseudo-élément vers la boîte. Le résultat
-       visible est le même — un verre à 72 % posé sur un blanc plein donne du blanc
-       plein — et la transition de 400 ms est déjà déclarée sur `.site-header`
-       (style.css), donc l'ouverture et la fermeture gardent leur allure. */
     body.has-pill-nav.menu-open .site-header {
-        background-color: var(--white);
+        background-color: var(--surface-glass);
     }
 
 }

@@ -900,40 +900,24 @@ a {
        Le voile assombrit la page jusqu'au bas du header, barre de pilules
        comprise — c'est le rendu voulu, et il tient à l'empilement : voile à 102,
        barre à 101 en dessous.
-       Mais le header, lui, monte à 104 pour rester net et cliquable. Voile et
-       header composent donc le gris dans l'ORDRE INVERSE l'un de l'autre, et le
-       calcul suffit à tout expliquer :
-         · header, au-dessus du voile : 0,72 blanc + 0,28 × (page grisée) — le gris
-           n'agit que sur ce que le verre laisse passer, il est dilué au quart ;
-         · barre, sous le voile : le gris agit sur la totalité.
-       Le header prend alors la teinte de la page EN CLAIR, et cette teinte bouge
-       avec ce qui défile derrière lui — mesuré dans Chromium sur la bande de ses
-       dix derniers pixels : teinte moyenne 219 et variation horizontale 5,1, contre
-       252 et 1,7 pour une surface opaque. Ça se lit comme un trait clair juste
-       au-dessus des pilules, criant dès qu'une photo ou un titre passe derrière, et
-       donne l'impression que le gris s'arrête avant le header.
-       Il n'y a pas d'échappatoire à conditions inchangées : du verre au-dessus du
-       voile laisse voir la page. Faire repasser le verre SOUS le voile en n'élevant
-       que le contenu du header a été essayé — le header disparaît, la photo
-       s'affiche nette à sa place.
-       Le remède est donc de rendre la surface assez dense pour que plus rien ne
-       transparaisse. Ici, un fond plein. Rien ne change au comportement du header —
-       il reste clair, net et cliquable. Le flou reste déclaré : invisible derrière
-       un fond opaque, il sert encore pendant les 0,4 s où le fond transitionne.
+       Mais le header, lui, monte à 104 pour rester net et cliquable, et son fond
+       n'est pas opaque : c'est du verre à 72 %. La page qu'il laisse voir au
+       travers passe donc DERRIÈRE le voile et échappe à l'assombrissement. Un
+       bout de page apparaît en clair, à pleine couleur, au ras de son bord bas —
+       le plus souvent une lisière de photo, qui se lit comme un trait non grisé
+       juste au-dessus des pilules et donne l'impression que le gris s'arrête
+       avant le header.
+       Une surface privée de son arrière-plan reprend un fond plein : même remède
+       que celui déjà appliqué à la barre de pilules dans services.css. Rien ne
+       change au comportement du header — il reste clair, net et cliquable. Le
+       flou reste déclaré : invisible derrière un fond opaque, il sert encore
+       pendant les 0,4 s où le fond transitionne.
 
        `:not(.is-floating)` : en haut du hero d'index.html le header est
        volontairement transparent, logo en blanc — l'opacifier y ferait disparaître
        le logo. Trois classes (0,3,1) : c'est ce qu'il faut pour l'emporter sur
        `.has-pill-nav .site-header::before` de services.css (0,2,1), chargé après
-       cette feuille.
-
-       services.html atteint la même densité AUTREMENT, et pour une raison qui lui
-       est propre : son pseudo-élément DÉBORDE sous le header pour peindre la barre
-       de pilules, si bien qu'un blanc plein posé ici lui claque dessus au moment où
-       le menu se referme. Le pseudo-élément y garde donc ses 72 %, et c'est la BOÎTE
-       du header qui reçoit une seconde couche du même verre — les deux se composent
-       à 92 %, assez pour que plus rien ne transparaisse, sans toucher au ton qui
-       reprendra la bande. Voir « Menu burger déployé » dans services.css. */
+       cette feuille. */
     .site-header.menu-open:not(.is-floating)::before {
         background-color: var(--white);
     }

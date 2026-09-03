@@ -126,15 +126,6 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   écran, pas le moteur de rendu ni la lenteur du thread principal d'un téléphone.
   Sans JS (pas de `.has-pill-nav`), la barre garde un fond opaque ; les deux variables valent alors 0
   par leur repli `var(…, 0px)`, ce qui limite le verre au header — le bon rendu en haut de page.
-  **Menu burger ouvert, le verre change de porteur — il ne s'éteint pas.** Le débordement est annulé
-  (il repeindrait par-dessus le voile, cf. « Feuille du menu mobile »), et la barre reprend le verre
-  **à son compte** : mêmes tokens, même géométrie. Elle a porté un temps un fond blanc opaque, et
-  c'était visible — à l'instant du clic, avant même que le voile ne monte, elle claquait du dépoli à
-  l'aplat, ce qui se lit non comme un changement de fond mais comme une barre qui **perd** son fond
-  puis le retrouve. C'est la seule fenêtre où deux `backdrop-filter` voisins sont tolérables : le
-  header est opaque au-dessus, il n'y a plus de jointure à accorder. Un `backdrop-filter: blur(0px)`
-  neutre est déclaré en permanence sur la barre, uniquement pour que la couche de composition existe
-  déjà à cet instant — sans elle, un téléphone peut laisser les pilules à découvert une image ou deux.
 - **Sommaire synchronisé (services.html, desktop)** — la sidebar fait ~1700px de liens pour 650-800px
   de fenêtre visible : elle défile en interne (`overflow-y: auto`), et `syncSidebarScroll` reporte sur
   son `scrollTop` la progression de la page. Le report est fait **section par section**, jamais par une
@@ -242,30 +233,17 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   `menu-open` est portée par le header (élévation) **et** par le body (verrou du défilement), et
   n'est retirée qu'une fois la feuille **sortie de l'écran**, pas au clic : sinon le header replonge
   sous le voile et la page redevient défilante pendant le vol retour.
-  **Le verre du header se densifie le temps de l'ouverture**
-  (`.site-header.menu-open:not(.is-floating)::before`) — ce n'est pas cosmétique, et la raison est
-  **arithmétique, pas un bug** : le voile est à 102, le header monte à 104, ils composent donc le gris
-  dans l'**ordre inverse** l'un de l'autre. Le header montre `0,72 blanc + 0,28 × (page grisée)` — le
-  gris n'agit que sur ce que le verre laisse passer, il est **dilué au quart** — quand la barre, sous
-  le voile, le prend en entier. Le header prend alors la teinte de la page **en clair**, et cette
-  teinte **bouge** avec ce qui défile derrière : mesuré dans Chromium sur ses dix derniers pixels,
-  teinte 219 et variation horizontale 5,1, contre 252 et 1,7 pour une surface opaque. Ça se lit comme
-  un trait clair au-dessus des pilules, comme si le grisé s'arrêtait avant le header.
-  **Il n'y a pas d'échappatoire : du verre au-dessus du voile laisse voir la page.** « Le header ne
-  change pas d'aspect » et « rien ne transparaît » sont incompatibles — il faut densifier. Faire
-  repasser le verre **sous** le voile en n'élevant que `.header-content` a été essayé : le header
-  disparaît, la photo s'affiche nette à sa place. Ne pas y revenir.
-  `:not(.is-floating)` exclut le haut du hero d'`index.html`, où le header est volontairement
-  transparent avec un logo blanc. Les trois classes du sélecteur sont nécessaires : il faut (0,3,1)
-  pour l'emporter sur `.has-pill-nav .site-header::before` de `services.css` (0,2,1), chargé après
-  `style.css`.
-  **`services.html` atteint la même densité autrement : en doublant la couche, pas en changeant la
-  couleur.** Son pseudo-élément déborde pour peindre la barre de pilules et c'est lui qui reprend la
-  bande quand `menu-open` tombe : un blanc plein y claque à cet instant avant de revenir au verre en
-  400 ms. Il garde donc ses 72 % (`--surface-glass` rendu en (0,3,2)), et c'est la **boîte** du header
-  qui reçoit une seconde couche du même token — `0,72 + 0,28 × 0,72 = 0,92`, mesuré à 242,7 de teinte
-  et 2,48 de variation, soit le trait supprimé. Aucune valeur brute, et la boîte transitionne déjà son
-  `background-color` sur 400 ms, donc la densification monte au lieu de claquer.
+  **Le verre du header reprend un fond opaque le temps de l'ouverture**
+  (`.site-header.menu-open:not(.is-floating)::before`) — ce n'est pas cosmétique. Le voile (102)
+  assombrit la page jusqu'au bas du header, mais le header monte à 104 pour rester net et cliquable,
+  et son fond est du verre à 72 % : la page qu'il laisse voir au travers passe **derrière** le voile
+  et lui échappe. Une lisière de contenu en couleur apparaît alors au ras de son bord bas — criante
+  dès qu'une photo passe derrière — et se lit comme un trait clair au-dessus des pilules, comme si le
+  grisé s'arrêtait avant le header. Même remède que pour la barre de pilules : une surface privée de
+  son arrière-plan reprend un fond plein. `:not(.is-floating)` exclut le haut du hero d'`index.html`,
+  où le header est volontairement transparent avec un logo blanc. Les trois classes du sélecteur sont
+  nécessaires : il faut (0,3,1) pour l'emporter sur `.has-pill-nav .site-header::before` de
+  `services.css` (0,2,1), chargé après `style.css`.
   À savoir aussi, si un jour un éclair blanc est signalé à l'ouverture : tout ce qui dépend de
   `menu-open` bascule **d'un coup** à la pose de la classe, alors que l'opacité du voile, elle, monte
   **progressivement** au rythme du ressort (~400 ms). Les deux ne sont pas synchronisés.

@@ -233,6 +233,20 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   `menu-open` est portée par le header (élévation) **et** par le body (verrou du défilement), et
   n'est retirée qu'une fois la feuille **sortie de l'écran**, pas au clic : sinon le header replonge
   sous le voile et la page redevient défilante pendant le vol retour.
+  **Le verre du header reprend un fond opaque le temps de l'ouverture**
+  (`.site-header.menu-open:not(.is-floating)::before`) — ce n'est pas cosmétique. Le voile (102)
+  assombrit la page jusqu'au bas du header, mais le header monte à 104 pour rester net et cliquable,
+  et son fond est du verre à 72 % : la page qu'il laisse voir au travers passe **derrière** le voile
+  et lui échappe. Une lisière de contenu en couleur apparaît alors au ras de son bord bas — criante
+  dès qu'une photo passe derrière — et se lit comme un trait clair au-dessus des pilules, comme si le
+  grisé s'arrêtait avant le header. Même remède que pour la barre de pilules : une surface privée de
+  son arrière-plan reprend un fond plein. `:not(.is-floating)` exclut le haut du hero d'`index.html`,
+  où le header est volontairement transparent avec un logo blanc. Les trois classes du sélecteur sont
+  nécessaires : il faut (0,3,1) pour l'emporter sur `.has-pill-nav .site-header::before` de
+  `services.css` (0,2,1), chargé après `style.css`.
+  À savoir aussi, si un jour un éclair blanc est signalé à l'ouverture : tout ce qui dépend de
+  `menu-open` bascule **d'un coup** à la pose de la classe, alors que l'opacité du voile, elle, monte
+  **progressivement** au rythme du ressort (~400 ms). Les deux ne sont pas synchronisés.
 - **Révélation au scroll** — `.animate-on-scroll` reçoit `.visible` via IntersectionObserver.
 - **Liens non implémentés** — `.link-arrow` et `.link-placeholder` interceptent le clic et affichent
   `alert("En cours de construction...")`. TODO ouvert : remplacer par une notification non bloquante.

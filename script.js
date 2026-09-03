@@ -897,7 +897,25 @@ if (servicesLayout) {
     // Permet à services.css de cibler le header sur cette page uniquement
     document.body.classList.add("has-pill-nav");
 
+    // Dernière section activée, pour ne rejouer le recentrage QU'AU changement.
+    // syncSidebar appelle activateSidebarLink à chaque événement de défilement, et
+    // le `scrollTo` fluide ci-dessous ne supporte pas cette cadence : chaque appel
+    // REDÉMARRE l'animation au lieu de la laisser courir, donc la barre rejoue
+    // indéfiniment le départ en douceur sans jamais atteindre la partie rapide du
+    // mouvement. Elle rampait vers sa cible au lieu d'y glisser — pilule lente à
+    // venir et déplacement saccadé, sur mobile seulement, le recentrage n'ayant pas
+    // lieu au-dessus de 840px.
+    // La cible, elle, ne bougeait pas : `scrollLeft + linkRect.left` est invariant
+    // par défilement de la barre. Ce n'était donc pas un calcul qui dérive, mais
+    // bien une animation sans cesse relancée.
+    let idActifPose = null;
+
     const activateSidebarLink = (activeId) => {
+        // Sortie sèche : les classes sont déjà posées telles quelles depuis l'appel
+        // qui a établi cet id, il n'y a rien à réécrire.
+        if (activeId === idActifPose) return;
+        idActifPose = activeId;
+
         sidebarNavLinks.forEach(link => {
             const isActive = link.getAttribute("href") === `#${activeId}`;
             link.classList.toggle("is-active", isActive);
@@ -1124,6 +1142,11 @@ if (servicesLayout) {
     const updateStickyMetrics = () => {
         updateStickyTop();
         syncPillGlass();
+        // La largeur de la barre a pu changer (rotation de l'écran, bascule
+        // mobile/desktop, retour de bfcache) : le recentrage mémorisé ne vaut plus.
+        // On rouvre la mémoire pour que le prochain défilement le rejoue — sans le
+        // déclencher ici, où syncSidebar n'est pas encore défini.
+        idActifPose = null;
         // Appel direct et non différé : updateStickyTop vient de réécrire le seuil
         // dont dépend le calcul, autant le consommer tout de suite.
         syncSidebarScroll();

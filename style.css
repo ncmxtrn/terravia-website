@@ -917,7 +917,14 @@ a {
        volontairement transparent, logo en blanc — l'opacifier y ferait disparaître
        le logo. Trois classes (0,3,1) : c'est ce qu'il faut pour l'emporter sur
        `.has-pill-nav .site-header::before` de services.css (0,2,1), chargé après
-       cette feuille. */
+       cette feuille.
+
+       services.html est l'exception, et pour une raison qui lui est propre : son
+       pseudo-élément DÉBORDE sous le header pour peindre la barre de pilules, si
+       bien qu'un blanc plein posé ici lui claquerait dessus au moment où le menu se
+       referme. services.css y déporte donc l'opacité sur la BOÎTE du header, qui ne
+       déborde pas, et rend au pseudo-élément son verre — même rendu, sans la
+       secousse. Voir « Menu burger déployé » dans services.css. */
     .site-header.menu-open:not(.is-floating)::before {
         background-color: var(--white);
     }

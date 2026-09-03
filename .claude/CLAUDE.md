@@ -126,6 +126,15 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   écran, pas le moteur de rendu ni la lenteur du thread principal d'un téléphone.
   Sans JS (pas de `.has-pill-nav`), la barre garde un fond opaque ; les deux variables valent alors 0
   par leur repli `var(…, 0px)`, ce qui limite le verre au header — le bon rendu en haut de page.
+  **Menu burger ouvert, le verre change de porteur — il ne s'éteint pas.** Le débordement est annulé
+  (il repeindrait par-dessus le voile, cf. « Feuille du menu mobile »), et la barre reprend le verre
+  **à son compte** : mêmes tokens, même géométrie. Elle a porté un temps un fond blanc opaque, et
+  c'était visible — à l'instant du clic, avant même que le voile ne monte, elle claquait du dépoli à
+  l'aplat, ce qui se lit non comme un changement de fond mais comme une barre qui **perd** son fond
+  puis le retrouve. C'est la seule fenêtre où deux `backdrop-filter` voisins sont tolérables : le
+  header est opaque au-dessus, il n'y a plus de jointure à accorder. Un `backdrop-filter: blur(0px)`
+  neutre est déclaré en permanence sur la barre, uniquement pour que la couche de composition existe
+  déjà à cet instant — sans elle, un téléphone peut laisser les pilules à découvert une image ou deux.
 - **Sommaire synchronisé (services.html, desktop)** — la sidebar fait ~1700px de liens pour 650-800px
   de fenêtre visible : elle défile en interne (`overflow-y: auto`), et `syncSidebarScroll` reporte sur
   son `scrollTop` la progression de la page. Le report est fait **section par section**, jamais par une
@@ -244,6 +253,12 @@ Mécanismes transversaux à connaître avant de toucher au chargement ou au head
   où le header est volontairement transparent avec un logo blanc. Les trois classes du sélecteur sont
   nécessaires : il faut (0,3,1) pour l'emporter sur `.has-pill-nav .site-header::before` de
   `services.css` (0,2,1), chargé après `style.css`.
+  **`services.html` fait exception, et l'opacité y passe par la BOÎTE du header, pas par son
+  `::before`** — parce que ce pseudo-élément y déborde pour peindre la barre de pilules. Un blanc
+  plein posé dessus claque sur la bande des pilules à l'instant où `menu-open` tombe, puis revient au
+  verre en 400 ms. `services.css` rend donc au pseudo-élément son `--surface-glass` (0,3,2) et pose le
+  blanc sur `.site-header` : même rendu — un verre à 72 % sur un blanc plein donne du blanc plein —
+  sans la secousse. Ne pas remettre l'opacité sur le pseudo-élément de cette page.
   À savoir aussi, si un jour un éclair blanc est signalé à l'ouverture : tout ce qui dépend de
   `menu-open` bascule **d'un coup** à la pose de la classe, alors que l'opacité du voile, elle, monte
   **progressivement** au rythme du ressort (~400 ms). Les deux ne sont pas synchronisés.

@@ -897,7 +897,25 @@ if (servicesLayout) {
     // Permet à services.css de cibler le header sur cette page uniquement
     document.body.classList.add("has-pill-nav");
 
+    // Dernière section activée, pour ne rejouer le recentrage QU'AU changement.
+    // syncSidebar appelle activateSidebarLink à chaque événement de défilement, et
+    // le `scrollTo` fluide ci-dessous ne supporte pas cette cadence : chaque appel
+    // REDÉMARRE l'animation au lieu de la laisser courir, donc la barre rejoue
+    // indéfiniment le départ en douceur sans jamais atteindre la partie rapide du
+    // mouvement. Elle rampait vers sa cible au lieu d'y glisser — pilule lente à
+    // venir et déplacement saccadé, sur mobile seulement, le recentrage n'ayant pas
+    // lieu au-dessus de 840px.
+    // La cible, elle, ne bougeait pas : `scrollLeft + linkRect.left` est invariant
+    // par défilement de la barre. Ce n'était donc pas un calcul qui dérive, mais
+    // bien une animation sans cesse relancée.
+    let idActifPose = null;
+
     const activateSidebarLink = (activeId) => {
+        // Sortie sèche : les classes sont déjà posées telles quelles depuis l'appel
+        // qui a établi cet id, il n'y a rien à réécrire.
+        if (activeId === idActifPose) return;
+        idActifPose = activeId;
+
         sidebarNavLinks.forEach(link => {
             const isActive = link.getAttribute("href") === `#${activeId}`;
             link.classList.toggle("is-active", isActive);
@@ -969,15 +987,45 @@ if (servicesLayout) {
             // temps que les sous-pixels se recalent). Sinon elle descend encore
             // dans le flux et le verre ne doit pas déborder : il flouterait le
             // haut de l'intro, qui passe précisément dans cette bande.
-            if (barre.top <= basHdr + 1) overhang = Math.max(0, barre.bottom - basHdr);
+            let accostee = barre.top <= basHdr + 1;
+
+            // Second test, et seulement si le premier a échoué : le bas du header
+            // est un repère qui BOUGE. Pendant l'escamotage il file vers le haut de
+            // son côté, et sur iPhone il y arrive avant la barre — son `transform`
+            // est composité quand le `top` de la barre est animé sur le thread
+            // principal, occupé par le défilement. La barre se retrouve alors 80px
+            // sous un header déjà remonté, et le premier test la déclare « pas
+            // accostée » alors qu'elle l'est : le verre la lâchait pendant toute la
+            // transition, ~0,4 s à découvert.
+            //
+            // Le repère qui ne ment jamais est le `top` propre de la barre : une
+            // barre accostée est rendue EXACTEMENT à son offset collant, une barre
+            // encore dans le flux est plus bas. Le comparer à sa position revient
+            // donc à lui demander à elle-même où elle en est, sans passer par le
+            // header. Bien lire le `top` CALCULÉ, qui suit la transition image par
+            // image : déduire « top vaut 0 » de la classe `header-hidden` bascule au
+            // contraire dès la pose de la classe, alors que la barre met toute la
+            // transition à descendre — c'est le piège documenté dans CLAUDE.md.
+            //
+            // En second seulement, parce qu'il coûte une résolution de style : le
+            // premier suffit au repos, où les deux boîtes coïncident, c'est-à-dire
+            // pendant l'essentiel du défilement.
+            if (!accostee) {
+                const topColle = parseFloat(getComputedStyle(sidebar).top) || 0;
+                accostee = barre.top <= topColle + 1;
+            }
+
+            if (accostee) overhang = Math.max(0, barre.bottom - basHdr);
             clip = Math.max(0, basHdr - barre.top);
         }
 
-        // Le bas du header est le seul repère utilisé, et il suit le header quand
-        // il s'escamote : les deux mesures restent donc justes sans rien savoir de
-        // `header-hidden`. Elles restent même valides pendant la transition sans
-        // être recalculées — header et barre parcourent les mêmes 80px avec la
-        // même durée et la même courbe, leur écart ne bouge pas.
+        // Le débordement se mesure toujours contre le bas du header, y compris
+        // quand c'est le second test qui a tranché : le panneau de verre appartient
+        // au header et part de sa boîte, il doit donc déborder de ce qui l'en
+        // sépare. Pendant une désynchronisation, il couvre le temps de la
+        // transition la bande que le header vient de libérer — une zone dépolie qui
+        // se rétracte vers le haut, ce qui est le rendu voulu, là où l'ancienne
+        // lecture laissait les pilules à découvert.
         // Écriture seulement si la valeur change : accostée, elle est constante
         // sur tout le défilement, inutile d'invalider le style à chaque frame.
         if (overhang !== overhangPose) {
@@ -1094,6 +1142,11 @@ if (servicesLayout) {
     const updateStickyMetrics = () => {
         updateStickyTop();
         syncPillGlass();
+        // La largeur de la barre a pu changer (rotation de l'écran, bascule
+        // mobile/desktop, retour de bfcache) : le recentrage mémorisé ne vaut plus.
+        // On rouvre la mémoire pour que le prochain défilement le rejoue — sans le
+        // déclencher ici, où syncSidebar n'est pas encore défini.
+        idActifPose = null;
         // Appel direct et non différé : updateStickyTop vient de réécrire le seuil
         // dont dépend le calcul, autant le consommer tout de suite.
         syncSidebarScroll();
@@ -1105,6 +1158,40 @@ if (servicesLayout) {
     // Retour via précédent/suivant : DOMContentLoaded ne rejoue pas et aucun
     // événement scroll n'est garanti, alors que la page est restaurée à sa position.
     onPageRestore.push(updateStickyMetrics);
+
+    // --- Fin de l'escamotage : dernier rendez-vous pour remesurer la jointure ---
+    // syncPillGlass n'est appelée que par le défilement, alors que la géométrie
+    // continue de bouger 400 ms APRÈS le dernier événement scroll — le temps que le
+    // header (transform) et la barre (top) finissent leur transition.
+    //
+    // Un clic sur une pilule qui fait descendre la page escamote le header en cours de
+    // route, et le défilement se termine avant les deux transitions : la dernière
+    // mesure porte donc sur un état de passage. Sur iPhone, le transform du header est
+    // composité — il arrive vite — tandis que le `top` de la barre est animé sur le
+    // thread principal, occupé par le défilement : le header est déjà remonté alors que
+    // la barre est encore à 80px sous lui. Elle est alors lue comme « pas encore
+    // accostée », le débordement du verre tombe à 0, et plus aucun événement ne vient
+    // le corriger — les pilules restent à découvert jusqu'au prochain défilement
+    // vertical. Constaté sur l'appareil seulement : l'inspecteur de bureau simule un
+    // écran, pas le moteur de rendu ni la lenteur du thread principal d'un téléphone,
+    // et les deux transitions y restent synchronisées.
+    //
+    // On écoute donc les DEUX boîtes : la première arrivée ne suffit pas, c'est la
+    // dernière qui fixe la géométrie définitive, et on ne sait pas laquelle c'est —
+    // c'est précisément leur désynchronisation qui pose problème.
+    //
+    // Les deux filtres sont nécessaires. `propertyName` : le header transitionne six
+    // propriétés, une seule nous intéresse. `e.target` : transitionend REMONTE le DOM,
+    // et le bouton « Contactez-nous » du header anime lui aussi `transform` — sans ce
+    // filtre, chaque apparition du CTA déclencherait une mesure inutile.
+    const remesurerJointure = (e, boite, propriete) => {
+        if (e.target === boite && e.propertyName === propriete) syncPillGlass();
+    };
+
+    pageHeader?.addEventListener("transitionend",
+        (e) => remesurerJointure(e, pageHeader, "transform"));
+    sidebar?.addEventListener("transitionend",
+        (e) => remesurerJointure(e, sidebar, "top"));
 
     // Gel du scroll-spy pendant un scroll piloté (clic sur pill).
     // navScrollActive = true → syncSidebar est gelé.

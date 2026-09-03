@@ -896,6 +896,39 @@ a {
         -webkit-backdrop-filter: none;
     }
 
+    /* Menu ouvert : le verre du header redevient un fond PLEIN.
+       Le voile assombrit la page jusqu'au bas du header, barre de pilules
+       comprise — c'est le rendu voulu, et il tient à l'empilement : voile à 102,
+       barre à 101 en dessous.
+       Mais le header, lui, monte à 104 pour rester net et cliquable, et son fond
+       n'est pas opaque : c'est du verre à 72 %. La page qu'il laisse voir au
+       travers passe donc DERRIÈRE le voile et échappe à l'assombrissement. Un
+       bout de page apparaît en clair, à pleine couleur, au ras de son bord bas —
+       le plus souvent une lisière de photo, qui se lit comme un trait non grisé
+       juste au-dessus des pilules et donne l'impression que le gris s'arrête
+       avant le header.
+       Une surface privée de son arrière-plan reprend un fond plein : même remède
+       que celui déjà appliqué à la barre de pilules dans services.css. Rien ne
+       change au comportement du header — il reste clair, net et cliquable. Le
+       flou reste déclaré : invisible derrière un fond opaque, il sert encore
+       pendant les 0,4 s où le fond transitionne.
+
+       `:not(.is-floating)` : en haut du hero d'index.html le header est
+       volontairement transparent, logo en blanc — l'opacifier y ferait disparaître
+       le logo. Trois classes (0,3,1) : c'est ce qu'il faut pour l'emporter sur
+       `.has-pill-nav .site-header::before` de services.css (0,2,1), chargé après
+       cette feuille.
+
+       services.html est l'exception, et pour une raison qui lui est propre : son
+       pseudo-élément DÉBORDE sous le header pour peindre la barre de pilules, si
+       bien qu'un blanc plein posé ici lui claquerait dessus au moment où le menu se
+       referme. services.css y déporte donc l'opacité sur la BOÎTE du header, qui ne
+       déborde pas, et rend au pseudo-élément son verre — même rendu, sans la
+       secousse. Voir « Menu burger déployé » dans services.css. */
+    .site-header.menu-open:not(.is-floating)::before {
+        background-color: var(--white);
+    }
+
     /* --- Le voile ---
        z-index 102 : au-dessus de la barre de pilules de services.html (101),
        sous le header qui monte à 104 le temps de l'ouverture. Il assombrit donc

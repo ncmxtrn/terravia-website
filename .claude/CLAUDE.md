@@ -119,6 +119,30 @@ commit** — une couleur, un texte ou une valeur de token ne le nécessitent pas
   pour que la cascade locale les surcharge sans `!important`.
 - Les noms de fichiers d'`assets/` sont volontairement sans accent (les accents cassaient les URL).
 
+## Photos des fiches de `services.html`
+
+Rangées dans `assets/services/<secteur>/<sujet>.<ext>` — minuscules, sans accent, tirets, sans
+répéter le nom du secteur que le dossier porte déjà. Le `alt` décrit **ce que l'image montre**, pas
+le titre de la fiche : les deux se recoupent, mais un lecteur d'écran doit apprendre quelque chose de
+l'image plutôt que de relire le `h3` juste dessous.
+
+**Taille minimale : 1600 × 340 px.** Le bandeau (`.service-card-img`) fait 160 px de haut et prend
+toute la largeur de la fiche. La fiche est à son plus large **non pas sur grand écran mais à 840 px
+de fenêtre**, juste avant que la grille ne repasse à deux colonnes : 840 − 48 de marges = **792 px**.
+Au-delà de 840 px la barre latérale de 240 px et la seconde colonne reprennent la place, et la fiche
+retombe à 452 px sur un écran de 1280 px. C'est donc 792 × 160, doublé pour les écrans à haute
+densité, d'où 1600 × 340. En dessous, l'image est agrandie et devient visiblement floue.
+
+Deux photos sont actuellement sous ce seuil et paraîtront floues :
+`secteur-minier/calculs-dynamitage.jpg` (299 × 225) et `secteur-minier/exportation-dao.jpg`
+(315 × 160).
+
+**Cadrage** : `object-fit: cover` sur un bandeau de ratio ~5:1 ne garde d'une photo 16:9 que le tiers
+central en hauteur — le haut et le bas sont coupés. Le sujet doit être centré verticalement.
+
+**Poids** : aucune compression n'a encore été faite, le dossier pèse ~33 Mo pour des images affichées
+en 160 px de haut. Chantier ouvert, à traiter dans un commit dédié.
+
 ## Conventions
 
 - Commits en français, format `type(portée): description` — ex. `fix(connexion): …`,

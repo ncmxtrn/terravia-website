@@ -1396,7 +1396,8 @@ a {
 /* Couleurs et ombres restent inconditionnelles : elles font un retour au toucher
    acceptable, et une carte qui s'éclaire sous le doigt n'a rien de gênant. Seul le
    déplacement passe dans le média tactile plus bas — c'est lui qui restait collé.
-   Même découpe que services.css § .service-sub-item. */
+   Ces cartes-ci gardent leur survol parce qu'elles sont cliquables (`.card-link`) ;
+   celles de services.html n'en ont plus, faute de mener où que ce soit. */
 .service-card:hover {
     box-shadow: var(--shadow-card-hover);
     border-color: var(--border-hover);

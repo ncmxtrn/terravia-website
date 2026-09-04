@@ -155,7 +155,8 @@
     transition: color var(--duration-fast), transform var(--duration-fast);
 }
 
-/* Le décalage au survol est dans le média tactile de la § 4b, avec les deux autres. */
+/* Le décalage au survol est dans le média tactile de la § 4b, dont il est désormais la
+   seule règle : les deux qui l'accompagnaient portaient le survol des fiches, retiré. */
 .sub-nav li a:hover {
     color: var(--fg1);
 }
@@ -239,36 +240,36 @@
     border-radius: var(--radius-xl);
     padding: var(--space-xl);
     scroll-margin-top: var(--sticky-top, calc(var(--header-height) + var(--space-xl)));
-    /* `opacity` fait partie de la liste alors que rien ici ne la fait varier au survol :
-       ces fiches portent aussi .animate-on-scroll, et cette déclaration-ci ÉCRASE la
-       sienne (même spécificité 0,1,0, mais services.css est chargé après style.css).
-       Sans `opacity` dans la liste, la révélation au scroll faisait sauter l'opacité de
-       0 à 1 d'un coup au lieu de la faire apparaître en fondu.
-       Corollaire : la révélation utilise les timings ci-dessous, pas ceux déclarés sur
-       .animate-on-scroll dans style.css, qui ne s'appliquent jamais à ces fiches.
+    /* Cette liste ne sert plus QUE la révélation au scroll, depuis le retrait du survol
+       (voir le bloc juste sous cette règle). `border-color` et `box-shadow` en sont
+       sortis avec lui : plus rien ne les fait varier. Le flash d'ancre, lui, passe par
+       une `animation` (§ .is-highlighted) et n'a jamais eu besoin de transition.
 
-       `opacity` est calée sur la durée du `transform`, et non l'inverse : la fiche
-       s'immobilisait à moitié transparente puis finissait de paraître sur place. On ne
-       peut pas allonger le `transform` pour rattraper l'opacité — il sert AUSSI le lift
-       au survol, qui doit rester bref. C'est le même conflit que celui décrit en § 5 à
-       propos du stagger, et il se dénouerait de la même façon : un wrapper de révélation
-       distinct de la fiche. La page garde donc deux vitesses de révélation, 0,6 s pour
-       les grands titres et 0,3 s ici — assumé, une petite carte n'a pas à prendre le
-       temps d'un titre. */
+       `opacity` doit y rester : ces fiches portent aussi .animate-on-scroll, et cette
+       déclaration-ci ÉCRASE la sienne (même spécificité 0,1,0, mais services.css est
+       chargé après style.css). Sans elle, la révélation faisait sauter l'opacité de 0 à
+       1 d'un coup au lieu de la faire paraître en fondu. Corollaire : la révélation
+       utilise les timings ci-dessous, pas ceux de .animate-on-scroll dans style.css,
+       qui ne s'appliquent jamais à ces fiches.
+
+       Les deux durées sont égales pour que la fiche ne s'immobilise pas à moitié
+       transparente avant de finir de paraître sur place. Elles étaient auparavant
+       bloquées à 0,3 s parce que `transform` servait AUSSI le lift au survol, qui devait
+       rester bref ; cette contrainte est levée. Les allonger vers les 0,6 s des grands
+       titres est désormais possible — ce serait un choix de rythme, pas une correction,
+       et personne ne l'a demandé. */
     transition:
-        border-color var(--duration-base),
-        box-shadow var(--duration-base),
         opacity var(--duration-base) var(--ease-scroll),
         transform var(--duration-base) var(--ease-card);
 }
 
-/* Le `transform` du lift est dans le média tactile plus bas, pas ici : au doigt il
-   resterait collé jusqu'au toucher suivant. Bordure et ombre restent inconditionnelles,
-   elles ne « collent » pas de la même façon et font un retour au toucher acceptable. */
-.service-sub-item:hover {
-    border-color: var(--border-hover);
-    box-shadow: var(--shadow-card-hover);
-}
+/* PAS de survol sur ces fiches — retiré délibérément, ne pas le réintroduire.
+   Elles portaient bordure verte, ombre, soulèvement de 2px et zoom de la bannière,
+   soit l'exacte panoplie d'une carte cliquable. Or aucune n'est un lien : rien à
+   l'intérieur ne mène nulle part, on ne peut pas les atteindre au clavier, et le
+   pointeur reste une flèche. Le survol promettait donc une action qui n'existe pas.
+   Les cartes de l'accueil (style.css § .service-card) gardent le leur, elles
+   contiennent un vrai `.card-link`. */
 
 .service-sub-item h3 {
     font-size: var(--text-body);
@@ -297,39 +298,23 @@
     overflow: hidden;
 }
 
+/* La bannière n'a plus ni zoom ni transition : elle suivait le survol de la carte, parti
+   avec lui. `overflow: hidden` reste posé sur .service-sub-item.has-img — il n'était pas
+   là que pour rogner le zoom, il détoure aussi la bannière contre le rayon de la carte. */
 .service-card-img {
     width: 100%;
     height: 160px;
     object-fit: cover;
     display: block;
     flex-shrink: 0;
-    /* Même durée que le lift de la carte qui la contient. Elle était à 0,7 s : les deux
-       moitiés d'un même survol divergeaient d'un facteur 2,3, la carte se soulevant en
-       0,3 s pendant que son image continuait de zoomer. En balayant la grille à la
-       souris, on laissait derrière soi une traînée d'images encore en mouvement. */
-    transition: transform var(--duration-base) var(--ease-card);
 }
 
-/* Zoom discret au survol — la bannière est rognée par overflow: hidden de la
-   carte. Amplitude volontairement plus faible que .project-bg (1.08) : ici
-   l'image est un bandeau, pas le sujet de la carte.
-   Le transform est dans le média tactile ci-dessous (voir .service-sub-item:hover). */
-
-/* Déplacements réservés aux pointeurs précis — même garde que style.css, contact.css
-   et apropos.css, dont services.css était la seule feuille à se passer. Sur écran
-   tactile, un simple toucher déclenchait le lift de la carte et le zoom de son image,
-   qui restaient ensuite COLLÉS jusqu'au toucher suivant : le :hover y est simulé et
-   n'est jamais relâché. Seuls les `transform` sont ici ; couleurs et ombres restent
-   inconditionnelles, elles font un retour au toucher acceptable. */
+/* Déplacements réservés aux pointeurs précis — même garde que style.css, contact.css et
+   apropos.css. Sur écran tactile le :hover est simulé et jamais relâché : un simple
+   toucher laissait le déplacement COLLÉ jusqu'au toucher suivant.
+   Il ne reste ici que le lien du sommaire. Les deux règles qui l'accompagnaient (lift de
+   la fiche, zoom de sa bannière) ont été retirées avec le reste du survol des fiches. */
 @media (hover: hover) and (pointer: fine) {
-    .service-sub-item:hover {
-        transform: translateY(-2px);
-    }
-
-    .service-sub-item.has-img:hover .service-card-img {
-        transform: scale(1.04);
-    }
-
     .sub-nav li a:hover {
         transform: translateX(3px);
     }
@@ -367,16 +352,18 @@
    apparaissaient toutes en même temps. Le code était mort, son commentaire affirmait
    l'inverse, et script.js s'appuyait dessus dans le sien.
 
-   Poser le délai sur `.visible` ne marche pas non plus : la fiche transitionne
-   `transform` pour la révélation ET pour le lift au survol (.service-sub-item:hover,
-   translateY(-2px)). Un délai posé sur .visible persiste après la révélation et
-   retarderait chaque survol d'autant.
+   Poser le délai sur `.visible` était jusqu'ici bloqué pour une seconde raison : la
+   fiche transitionnait `transform` pour la révélation ET pour le lift au survol, et un
+   délai posé sur .visible persiste après la révélation — il aurait retardé chaque
+   survol d'autant. Le survol des fiches a été retiré (voir § 4, .service-sub-item) :
+   `transform` ne sert plus qu'à la révélation, et cet obstacle-là est levé. Un stagger
+   par `transition-delay` sur `.visible` est donc devenu praticable, sans le wrapper
+   (.service-sub-item-reveal) qu'il fallait auparavant. Reste que c'est un choix de
+   rythme à faire délibérément, pas à remettre en douce — et surtout PAS sous la forme
+   `:not(.visible)` décrite plus haut, qui elle ne s'applique toujours pas.
 
-   Un vrai stagger demande donc de séparer les deux : révélation sur un wrapper
-   (.service-sub-item-reveal), survol sur la fiche. C'est un changement de structure
-   HTML, à faire délibérément — pas à remettre sous forme de délais qui ne s'appliquent
-   pas. Voir la note inverse dans style.css § .animate-on-scroll:not(.visible), où le
-   même sélecteur est correct parce que `will-change` n'est pas une propriété animable. */
+   Voir la note inverse dans style.css § .animate-on-scroll:not(.visible), où le même
+   sélecteur est correct parce que `will-change` n'est pas une propriété animable. */
 
 
 /* ============================================================

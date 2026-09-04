@@ -560,6 +560,31 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.remove("header-hidden");
         });
 
+        // --- Flèche du hero (et bouton "Découvrir nos services") vers #services ---
+        // Ce sont des liens d'ancre ordinaires : le CSS global (section[id]
+        // { scroll-margin-top: var(--header-height) }, plus haut dans ce fichier)
+        // réserve la hauteur du header pour que la cible n'arrive pas dessous —
+        // correct tant que le header reste visible. Sous 840px, un trajet de cette
+        // ampleur (hero → #services) franchit presque toujours le seuil de
+        // masquage ci-dessus AVANT l'arrivée : le header disparaît en route, et
+        // l'espace qu'on lui avait réservé reste un vide au-dessus de la section
+        // au lieu d'être comblé. On ne cherche PAS à garder le header visible ici
+        // (comportement volontairement écarté : voir la section correspondante de
+        // la skill mecanismes-front) — on vise directement le haut NU de la
+        // section, sans rien lui réserver. Le header se cache alors normalement
+        // pendant le trajet, comme sur n'importe quel autre défilement descendant,
+        // et la section arrive à ras de l'écran une fois qu'il est parti.
+        document.querySelectorAll('.scroll-down-indicator, a.btn[href="#services"]').forEach((lien) => {
+            lien.addEventListener("click", (e) => {
+                if (window.innerWidth > MOBILE_MAX) return; // desktop : ancre native, déjà correcte
+                const cible = document.querySelector(lien.getAttribute("href"));
+                if (!cible) return;
+                e.preventDefault();
+                const top = cible.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top, behavior: "smooth" });
+            });
+        });
+
         if (heroSection) {
             // Observer sur la section hero entière pour activer le glassmorphisme
             const headerObserver = new IntersectionObserver((entries) => {

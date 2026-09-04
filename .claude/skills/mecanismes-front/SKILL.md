@@ -85,6 +85,20 @@ collante y passe à `top: 0` pour suivre le header (le CSS ne peut pas cibler un
 `.site-header`). `--sticky-top` n'est volontairement **pas** recalculé selon cet état : la ligne de
 lecture du scroll-spy en dérive, et les `scroll-margin-top` doivent rester stables.
 
+**Flèche du hero (et bouton « Découvrir nos services ») vers `#services`, sous 840px** : ce sont des
+liens d'ancre ordinaires, donc soumis au `scroll-margin-top: var(--header-height)` global de
+`section[id]` (`style.css`) — qui réserve la hauteur du header pour que la cible n'arrive pas
+dessous, correct tant qu'il reste visible. Un trajet de cette ampleur (hero → `#services`) franchit
+presque toujours le seuil de masquage ci-dessus **avant l'arrivée** : sans traitement particulier, le
+header disparaît en route et l'espace qu'on lui avait réservé reste un vide au-dessus de la section
+au lieu d'être comblé. Le choix retenu n'est **pas** d'empêcher ce masquage (un header qui
+réapparaîtrait pour la traversée puis se recacherait a été essayé et écarté) : ces deux liens sont
+interceptés en JS et visent directement le haut **nu** de la section (`getBoundingClientRect()`, sans
+le `scroll-margin-top`), en mobile seulement — le desktop garde l'ancre native, déjà correcte puisque
+le header n'y disparaît jamais. Le header se cache alors normalement pendant le trajet, comme
+n'importe quel autre défilement descendant, et la section arrive à ras de l'écran une fois qu'il est
+parti.
+
 ## Surface de verre unique (services.html, mobile)
 
 Accostée sous le header, la barre de pilules lui est jointive : deux `backdrop-filter` voisins y

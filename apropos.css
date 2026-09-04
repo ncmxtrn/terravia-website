@@ -805,7 +805,7 @@ html.is-loading .territoire-regions li {
     .manifeste-grid .manifeste-item:nth-child(2) { --step-delay: 0.08s; }
 
     /* Deux colonnes seulement à ce palier : à quatre, les cartes tomberaient sous
-       les ~150px de large et « Rigueur méthodologique » s'y couperait en trois. */
+       les ~150px de large et leur texte s'y couperait en lignes d'un ou deux mots. */
     .valeurs-grid {
         grid-template-columns: repeat(2, 1fr);
     }

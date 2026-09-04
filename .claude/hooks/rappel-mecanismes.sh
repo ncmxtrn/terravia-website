@@ -1,7 +1,7 @@
 #!/bin/bash
 # Rappel de maintenance — prévient quand un fichier à mécanismes vient d'être modifié, pour que la
 # skill `mecanismes-front` ne se périme pas en silence. Déclenché par le hook PostToolUse déclaré
-# dans `.claude/settings.json`.
+# dans `.claude/settings.local.json`.
 #
 # Pourquoi un hook plutôt qu'une consigne : une consigne dans CLAUDE.md ou dans la skill est du
 # conseil, elle ne se déclenche que si Claude la lit. Le hook, lui, est exécuté par Claude Code à

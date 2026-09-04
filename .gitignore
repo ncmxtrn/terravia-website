@@ -5,11 +5,11 @@
 # vers .agents/, lui-même ignoré), puis réautoriser la seule skill du projet.
 .claude/*
 !.claude/CLAUDE.md
-!.claude/settings.json
 !.claude/hooks/
 !.claude/rules/
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/mecanismes-front/
+!.claude/settings.local.json
 skills-lock.json
 .agents

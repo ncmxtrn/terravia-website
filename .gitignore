@@ -11,5 +11,4 @@
 .claude/skills/*
 !.claude/skills/mecanismes-front/
 !.claude/settings.local.json
-skills-lock.json
 .agents

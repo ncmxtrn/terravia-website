@@ -1,7 +1,9 @@
 /*
  * style.css — Styles globaux du site Solutions Terravia.
  *
- * Partagé par toutes les pages (index.html, contact.html, login.html).
+ * Partagé par les cinq pages. Ne doit contenir QUE ce qu'au moins deux d'entre
+ * elles utilisent : ce qui ne sert qu'à une page vit dans sa feuille dédiée
+ * (index.css, services.css, apropos.css, contact.css, login.css).
  * Consomme exclusivement les tokens définis dans tokens.css — aucune valeur
  * brute (hex, rem, px) ne doit être ajoutée sans passer d'abord par tokens.css.
  *
@@ -10,11 +12,9 @@
  *   2. Boutons
  *   3. Header (glassmorphisme, états flottant / scrollé / caché, bouton burger,
  *      feuille du menu mobile)
- *   4. Section hero
- *   5. Section services (cartes, badges, animations au scroll)
- *   6. Section projets (grille de cartes image)
- *   7. Pied de page
- *   8. Responsive (tablette ≥ 841px, desktop ≥ 950px)
+ *   4. En-têtes de section, révélation au défilement, liens à flèche
+ *   5. Pied de page
+ *   6. Responsive (tablette ≥ 841px, desktop ≥ 950px)
  */
 
 /* =========================================
@@ -107,20 +107,8 @@ html.is-loading .animate-on-scroll {
 /* Ajustements typographiques pour les petits écrans (< 480px) :
    les valeurs clamp() de tokens.css ne descendent pas assez bas sur mobile étroit. */
 @media (max-width: 480px) {
-    .hero-content h1 {
-        font-size: 1.9rem;
-    }
-
     .section-header {
         margin-bottom: 2.5rem;
-    }
-
-    .split-layout {
-        gap: 2rem;
-    }
-
-    .project-card {
-        aspect-ratio: 16/9;
     }
 }
 
@@ -1072,148 +1060,12 @@ a {
 }
 
 /* =========================================
-   4. SECTION HERO
+   4. EN-TÊTES DE SECTION, RÉVÉLATION AU DÉFILEMENT, LIENS À FLÈCHE
+   -----------------------------------------
+   Ce qui reste ici du bloc « services » d'origine : les seules règles que
+   plusieurs pages partagent. La grille de cartes de l'accueil, elle, est
+   partie dans index.css § 3.
    ========================================= */
-.hero-section {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 6rem 0;
-    color: var(--color-white);
-    /* isolation: isolate crée un nouveau contexte d'empilement (stacking context).
-       Cela confine les z-index négatifs de .hero-background et .hero-overlay
-       à l'intérieur de cette section, sans affecter le z-index du header. */
-    isolation: isolate;
-}
-
-/* Fond photo séparé du contenu pour permettre l'insertion de l'overlay entre les deux.
-   z-index: -2 : sous l'overlay (-1) et sous le contenu (auto). */
-.hero-background {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    z-index: -2;
-}
-
-/* Overlay dégradé gauche-droite : plus opaque à gauche (où se trouve le texte)
-   pour maximiser la lisibilité, plus transparent à droite pour laisser voir la photo.
-   z-index: -1 : entre le fond (-2) et le contenu (auto). */
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, var(--forest-90), var(--forest-70));
-    z-index: -1;
-}
-
-.hero-content h1 {
-    font-size: 2.5rem;
-    font-weight: var(--weight-black);
-    line-height: var(--leading-tight);
-    margin-bottom: var(--space-lg);
-    max-width: 600px;
-    color: var(--fg-on-dark);
-}
-
-
-.lead-text {
-    font-size: var(--text-lead);
-    color: var(--color-gray-light);
-    margin-bottom: var(--space-xl);
-    max-width: 550px;
-}
-
-.hero-buttons {
-    display: flex;
-    flex-direction: column; /* Empilés sur mobile */
-    gap: var(--space-md);
-}
-
-/* --- Entrée du hero ---
-   Le hero était le seul bloc de la page à arriver sans mise en scène, pendant que
-   tout le reste du site se révèle avec une course et une cascade.
-
-   Course COURTE (--reveal-shift-sm) et non les 30px du défilement : ces trois blocs
-   sont à l'écran AU CHARGEMENT, donc leur révélation se superpose au fondu d'entrée
-   de <body>. Les deux opacités se multiplient, et plus la course est longue, plus la
-   zone terne dure. Même raisonnement qu'apropos.css § 2.
-
-   `:not(.visible)` et non le sélecteur nu : `.animate-on-scroll.visible` vaut (0,2,0)
-   comme lui, et l'ordre de déclaration dans le fichier ne doit pas décider de l'état
-   d'arrivée. */
-.hero-content .animate-on-scroll:not(.visible) {
-    transform: translateY(var(--reveal-shift-sm));
-}
-
-/* Les délais sont portés par l'état de repos et JAMAIS par `:not(.visible)` : une
-   transition lit ses paramètres dans l'état d'ARRIVÉE, et .visible n'est jamais
-   retirée (voir la note du stagger des cartes, § 5, et services.css § stagger).
-   Pas de 0s explicite sur le titre — il part sans délai, c'est lui qu'on vient lire. */
-.hero-content .lead-text.animate-on-scroll    { transition-delay: 0.08s; }
-.hero-content .hero-buttons.animate-on-scroll { transition-delay: 0.16s; }
-
-/* Indicateur de défilement — double flèche centrée en bas du hero.
-   C'est un lien vers #services, pas un ornement : d'où la cible tactile
-   --tap-target-min (WCAG 2.5.5) et le focus visible au clavier.
-   L'animation vit sur le <span> interne et non sur le lien : le lien porte déjà
-   translateX(-50%) pour son centrage, et une animation de transform sur le même
-   élément écraserait ce centrage pendant toute la boucle. */
-.scroll-down-indicator {
-    position: absolute;
-    bottom: 6.25rem; /* 100px — cadrage repris du projet nacer : la flèche remonte
-                        au-dessus du bord bas plutôt que de s'y coller. */
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: var(--tap-target-min);
-    min-height: var(--tap-target-min);
-    border-radius: var(--radius-pill);
-    color: var(--color-primary);
-    text-decoration: none;
-    transition: color var(--duration-base) var(--ease-header);
-}
-
-.scroll-down-indicator:hover {
-    color: var(--color-white);
-}
-
-.scroll-down-indicator:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 4px;
-}
-
-.scroll-down-indicator .material-symbols-outlined {
-    font-size: 3.75rem; /* 60px — taille du projet nacer */
-    font-weight: var(--weight-medium);
-    /* Dérive verticale douce, sans overshoot : suggère la direction du scroll
-       sans le rebond proscrit par CLAUDE.md. */
-    animation: scroll-hint 2s var(--ease-header) infinite;
-}
-
-@keyframes scroll-hint {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(8px); }
-}
-
-/* Boucle infinie : neutralisée pour les utilisateurs qui limitent les animations.
-   Le lien, lui, reste pleinement fonctionnel. */
-@media (prefers-reduced-motion: reduce) {
-    .scroll-down-indicator .material-symbols-outlined {
-        animation: none;
-    }
-}
-
-
-/* =========================================
-   5. SECTION SERVICES
-   ========================================= */
-.services-section {
-    padding: 5rem 0;
-}
-
 .section-header {
     margin-bottom: 4rem;
 }
@@ -1285,8 +1137,9 @@ a {
            pages avaient le même défaut.
 
            La forme raccourcie remet `transition-delay` à 0, mais seulement pour les
-           délais déclarés AVANT ce bloc : les cascades du hero (§ 4, en 0,3,0) et des
-           cartes (§ 5, plus bas dans le fichier) le surclassent et survivent. C'est
+           délais déclarés AVANT ce bloc : les cascades du hero (index.css § 2, en 0,3,0)
+           et des cartes (index.css § 3) le surclassent et survivent — les premières par
+           leur spécificité, les secondes parce qu'index.css est chargé après. C'est
            mesuré, et c'est acceptable — un échelonnement de 80 ms qui ne déplace rien
            et ne fait qu'ordonner des fondus n'est pas le mouvement que ce mode écarte.
            Ne pas partir à la chasse à la spécificité pour les annuler.
@@ -1314,14 +1167,6 @@ a {
        Ne restent donc que les enfoncements, qui sont des changements d'échelle. */
     .menu-toggle:active,
     .main-nav a:active {
-        transform: none;
-    }
-
-    /* La course du hero (§ 4) est posée en (0,3,0) : la règle ci-dessus, en (0,2,0),
-       ne la surclasse pas, quel que soit son rang dans le fichier. On répète donc la
-       forme exacte du sélecteur pour l'emporter par l'ordre, à spécificité égale —
-       même piège que celui documenté dans apropos.css § 8. */
-    .hero-content .animate-on-scroll:not(.visible) {
         transform: none;
     }
 }
@@ -1369,492 +1214,8 @@ a {
     transition: transform var(--duration-base) var(--ease-card);
 }
 
-/* Grille des expertises — mobile-first : une colonne, puis 2 (>= 841px)
-   et 3 (>= 950px) dans les media queries de la section 9. */
-.services-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-}
-
-.service-card {
-    position: relative;
-    background: var(--white);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-xl);
-    padding: 1.75rem 1.75rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    align-items: center;
-    text-align: center;
-    transition: transform var(--duration-medium) var(--ease-card),
-                box-shadow var(--duration-medium) ease,
-                border-color var(--duration-medium) ease;
-}
-
-/* Couleurs et ombres restent inconditionnelles : elles font un retour au toucher
-   acceptable, et une carte qui s'éclaire sous le doigt n'a rien de gênant. Seul le
-   déplacement passe dans le média tactile plus bas — c'est lui qui restait collé.
-   Ces cartes-ci gardent leur survol parce qu'elles sont cliquables (`.card-link`) ;
-   celles de services.html n'en ont plus, faute de mener où que ce soit. */
-.service-card:hover {
-    box-shadow: var(--shadow-card-hover);
-    border-color: var(--border-hover);
-}
-
-/* Icône sans cadre : la hiérarchie vient de la barre d'accent posée dessous (::after),
-   qui s'allonge au survol — plus discret qu'un aplat coloré derrière l'icône. */
-.icon-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.7rem;
-    padding-top: 0.25rem;
-    color: var(--color-forest);
-    transition: color var(--duration-medium) ease;
-}
-
-/* Pas de transition : aucune règle du dépôt ne change le `transform` de cette icône.
-   La hiérarchie au survol passe par la couleur de .icon-box et la barre d'accent
-   ci-dessous. */
-.icon-box .material-symbols-outlined {
-    font-size: var(--icon-xl);
-}
-
-.icon-box::after {
-    content: '';
-    display: block;
-    width: 1.75rem;
-    height: 2px;
-    background: var(--color-primary);
-    border-radius: 2px;
-    transition: width var(--duration-medium) var(--ease-card),
-                background var(--duration-base) ease;
-}
-
-.service-card:hover .icon-box {
-    color: var(--color-primary-dark);
-}
-
-.service-card:hover .icon-box::after {
-    width: 2.75rem;
-    background: var(--color-primary-dark);
-}
-
-.card-content {
-    width: 100%;
-}
-
-.card-content h3 {
-    font-size: var(--text-h3);
-    font-weight: var(--weight-bold);
-    letter-spacing: var(--tracking-tight);
-    color: var(--color-forest);
-    margin-bottom: 0.5rem;
-}
-
-.card-content p {
-    font-size: 0.9rem;
-    color: var(--fg2);
-    line-height: var(--leading-relaxed);
-}
-
-.service-card:hover .card-link {
-    color: var(--color-primary-dark);
-}
-
-/* Les deux `transform` de la carte, réunis ici : le lift et l'avancée de la flèche
-   sont un seul mouvement et n'ont de sens que sous un pointeur qui peut ressortir. */
-@media (hover: hover) and (pointer: fine) {
-    .service-card:hover {
-        transform: translateY(-4px);
-    }
-
-    .service-card:hover .card-link span {
-        transform: translateX(4px);
-    }
-}
-
-/* Stagger du reveal.
-   Le délai est porté par l'état de repos et non par `:not(.visible)` — une transition
-   lit ses paramètres dans l'état d'arrivée, et .visible n'est jamais retirée
-   (script.js fait `unobserve` après le premier passage).
-
-   Le RANG, lui, n'est attribué que dans les médias qui donnent des colonnes à la
-   grille (section 9). Un rang n'a de sens que s'il ordonne des éléments qui entrent
-   ENSEMBLE dans le viewport, donc s'ils partagent une rangée : sur la colonne unique
-   du mobile, chaque carte franchit le seuil seule, le rang ne cascade plus rien et
-   n'ajoute qu'un temps mort avant la carte que le lecteur vient d'atteindre — jusqu'à
-   600 ms pour la sixième, avec la série fixe qui était écrite ici. D'où le repli à 0s
-   porté par le `var()`. Même dispositif qu'apropos.css § 7. */
-.services-grid .service-card {
-    transition-delay: var(--step-delay, 0s);
-}
-
-/* ===== VARIANTE 2 — Split Cinématique ===== */
-.svc-v2 {
-    background: var(--bg-light);
-}
-
-.svc-v2-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
-    padding: 4rem 0;
-    border-bottom: 1px solid var(--border-default);
-}
-
-.svc-v2-row:first-of-type {
-    border-top: 1px solid var(--border-default);
-}
-
-/* Placeholder visuel 400x400 noir */
-.svc-placeholder {
-    background: #000;
-    width: 100%;
-    max-width: 400px;
-    aspect-ratio: 1 / 1;
-    flex-shrink: 0;
-}
-
-.svc-v2-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-lg);
-}
-
-.svc-v2-tags span {
-    font-size: var(--text-xs);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-badge);
-    color: var(--color-forest);
-    background: var(--badge-bg);
-    border: 1px solid var(--badge-border);
-    border-radius: var(--radius-pill);
-    padding: 0.3rem 0.8rem;
-}
-
-.svc-v2-content h3 {
-    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
-    font-weight: var(--weight-bold);
-    color: var(--fg1);
-    letter-spacing: var(--tracking-tight);
-    line-height: var(--leading-snug);
-    margin-bottom: var(--space-md);
-}
-
-.svc-v2-content p {
-    font-size: var(--text-body);
-    color: var(--fg2);
-    line-height: var(--leading-relaxed);
-    max-width: 50ch;
-    margin-bottom: var(--space-xl);
-}
-
-.svc-v2-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    font-size: 0.9rem;
-    font-weight: var(--weight-bold);
-    color: var(--color-primary-dark);
-    transition: gap var(--duration-base) var(--ease-card),
-                color var(--duration-base) ease;
-}
-
-.svc-v2-link .material-symbols-outlined {
-    font-size: var(--icon-base);
-    transition: transform var(--duration-base) var(--ease-card);
-}
-
-.svc-v2-link:hover { color: var(--color-forest); }
-.svc-v2-link:hover .material-symbols-outlined { transform: translateX(5px); }
-
-.svc-v2-row:nth-child(1):not(.visible) { transition-delay: 0.05s; }
-.svc-v2-row:nth-child(2):not(.visible) { transition-delay: 0.15s; }
-.svc-v2-row:nth-child(3):not(.visible) { transition-delay: 0.25s; }
-
-@media (min-width: 841px) {
-    .svc-v2-row {
-        grid-template-columns: 400px 1fr;
-        align-items: center;
-        gap: 5rem;
-    }
-
-    .svc-v2-row--reverse {
-        grid-template-columns: 1fr 400px;
-    }
-
-    .svc-v2-row--reverse .svc-v2-visual { order: 2; }
-    .svc-v2-row--reverse .svc-v2-content { order: 1; }
-
-    .svc-v2 .svc-placeholder {
-        width: 400px;
-        height: 400px;
-        max-width: 400px;
-        aspect-ratio: unset;
-    }
-}
-
 /* =========================================
-   6. SECTION PROJETS
-   ========================================= */
-.projects-section {
-    padding: 5rem 0;
-}
-
-.projects-header {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.projects-header h2 {
-    font-size: var(--text-h2-sm);
-    color: var(--color-forest);
-}
-
-.link-view-all {
-    display: flex;
-    align-items: center;
-    color: var(--color-primary-dark);
-    font-weight: var(--weight-bold);
-}
-
-.link-view-all span {
-    font-size: 1.1rem;
-    margin-left: 0.25rem;
-    transition: transform var(--duration-fast) var(--ease-card);
-}
-
-.link-view-all:hover {
-    color: var(--color-primary);
-}
-
-.link-view-all:hover span {
-    transform: translateX(5px);
-}
-
-.projects-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.75rem; /* intentional: between --space-lg and --space-xl */
-}
-
-/* isolation: isolate crée un contexte d'empilement local : z-index: 2 de .project-info
-   reste confiné à cette carte et n'interagit pas avec le z-index du header ou du footer. */
-.project-card {
-    position: relative;
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    aspect-ratio: 4/3;
-    box-shadow: 0 10px 25px -8px var(--forest-20);
-    cursor: pointer;
-    isolation: isolate;
-    transition: transform var(--duration-medium) var(--ease-card),
-                box-shadow var(--duration-medium) ease;
-}
-
-.project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-project-hover);
-}
-
-/* L'image de fond du projet qui zoome au survol */
-.project-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    transition: transform var(--duration-reveal) var(--ease-card);
-}
-
-.project-card:hover .project-bg {
-    transform: scale(1.08);
-}
-
-.project-overlay {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(to top, var(--forest-95) 0%, var(--forest-55) 40%, transparent 75%);
-    transition: opacity var(--duration-medium) ease;
-}
-
-
-
-/* z-index: 2 : au-dessus de .project-overlay (implicitement 1) et de .project-bg (auto).
-   Rendu sûr grâce à isolation: isolate sur .project-card. */
-.project-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1.5rem 1.5rem 1.4rem;
-    color: white;
-    z-index: 2;
-}
-
-.project-info h3 {
-    font-size: 1.15rem;
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-    color: inherit;
-}
-
-.project-category {
-    font-size: 0.68rem;
-    font-weight: var(--weight-bold);
-    color: var(--color-forest);
-    background: var(--color-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    display: inline-block;
-    padding: 0.3rem 0.65rem;
-    border-radius: 999px;
-    margin-bottom: 0.9rem;
-}
-
-/* Technique max-height pour animer vers une hauteur inconnue : on ne peut pas transitionner
-   height: auto, donc on part de max-height: 0 → 4rem (valeur supérieure au contenu réel).
-   L'inconvénient est une durée d'animation proportionnelle à max-height, pas à height réelle,
-   d'où le choix d'une valeur faible (4rem ≈ ~64px) proche de la hauteur attendue. */
-.project-detail {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.78);
-    margin-top: 0.5rem;
-    line-height: 1.5;
-    opacity: 0;
-    max-height: 0;
-    transform: translateY(8px);
-    transition: opacity var(--duration-medium) ease,
-                transform var(--duration-medium) var(--ease-card),
-                max-height var(--duration-medium) ease;
-}
-
-/* Hover : max-height passe à 4rem, opacity à 1. */
-.project-card:hover .project-detail {
-    opacity: 1;
-    transform: translateY(0);
-    max-height: 4rem;
-}
-
-/* Sur appareils tactiles (hover: none), le détail est toujours affiché —
-   le survol étant impossible, on ne prive pas l'utilisateur de l'information. */
-@media (hover: none) {
-    .project-detail {
-        opacity: 1;
-        transform: translateY(0);
-        max-height: 4rem;
-    }
-}
-
-/* =========================================
-   7. SECTION TECHNOLOGIE
-   ========================================= */
-.tech-section {
-    padding: 5rem 0;
-    background-color: var(--white);
-}
-
-/* Empilé sur mobile ; passe en deux colonnes côte à côte >= 950px (section 9). */
-.split-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
-    align-items: center;
-}
-
-.label-tech {
-    display: inline-block;
-    font-size: var(--text-xs);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-badge);
-    color: var(--color-primary-dark);
-    margin-bottom: 0.5rem;
-}
-
-.tech-text h2 {
-    font-size: var(--text-h2-sm);
-    color: var(--color-forest);
-    margin: 1rem 0;
-}
-
-.check-list {
-    list-style: none;
-    margin: 1.5rem 0;
-}
-
-.check-list li {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    font-weight: var(--weight-medium);
-}
-
-.check-icon {
-    color: var(--color-primary);
-}
-
-.tech-image-wrapper {
-    width: 100%;
-    position: relative;
-}
-
-/* L'ombre portée détache la capture du fond blanc de section : elle flotte
-   au-dessus plutôt que d'y être collée. */
-.image-container {
-    background-color: var(--color-forest);
-    aspect-ratio: 4/3;
-    border-radius: var(--radius-xl);
-    background-size: cover;
-    background-position: center;
-    box-shadow: var(--shadow-card-hover);
-}
-
-/* Encart verre dépoli posé sur l'image : fond blanc très translucide + backdrop-filter.
-   Il simule un widget de la plateforme — purement décoratif, aucun comportement. */
-.floating-ui {
-    position: absolute;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    right: 1.5rem;
-    background: var(--white-10);
-    backdrop-filter: var(--blur-glass);
-    border: 1px solid var(--white-20);
-    padding: 1rem;
-    border-radius: var(--radius-lg);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--fg-on-dark);
-}
-
-.file-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.status-badge {
-    background-color: var(--color-primary);
-    color: var(--color-forest);
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
-    font-weight: var(--weight-bold);
-    font-size: 0.75rem;
-}
-
-/* =========================================
-   8. PIED DE PAGE (FOOTER)
+   5. PIED DE PAGE (FOOTER)
    ========================================= */
 .site-footer {
     background-color: var(--color-forest);
@@ -1940,7 +1301,7 @@ a {
 }
 
 /* =========================================
-   9. ADAPTATION AUX GRANDS ÉCRANS (Responsive)
+   6. ADAPTATION AUX GRANDS ÉCRANS (Responsive)
    ========================================= */
 
 /* --- TABLETTES (Plus large que 840px) --- */
@@ -2010,25 +1371,6 @@ a {
         align-items: center;
     }
 
-    .hero-buttons {
-        flex-direction: row; /* Boutons côte à côte */
-    }
-
-    .hero-content h1 {
-        font-size: 3.5rem;
-    }
-
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Deux colonnes : la seconde carte de chaque rangée suit la première. */
-    .services-grid .service-card:nth-child(even) { --step-delay: 0.08s; }
-
-    .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2047,46 +1389,9 @@ a {
             justify-content: center;
         }
 
-    /* 3 colonnes pour les services */
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    /* Trois colonnes : la cascade se lit de gauche à droite dans chaque rangée, et
-       repart de zéro à la suivante — les deux rangées entrent souvent ensemble à
-       cette largeur, mais chacune se lit pour elle-même.
-       Le `:nth-child(even)` du média 841px reste actif ici (même condition remplie) :
-       on le remet donc explicitement à 0s pour les cartes 4 et 6, que la règle 3n+1
-       ne couvre pas. */
-    .services-grid .service-card:nth-child(3n+1) { --step-delay: 0s; }
-    .services-grid .service-card:nth-child(3n+2) { --step-delay: 0.08s; }
-    .services-grid .service-card:nth-child(3n)   { --step-delay: 0.16s; }
-
-    /* 3 colonnes pour les projets */
-    .projects-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
     /* Footer asymétrique : la colonne brand et la colonne contact (1fr chacune)
        sont plus larges que les colonnes de liens (0.5fr) — priorité au contenu informatif. */
     .footer-grid {
         grid-template-columns: 1fr 0.5fr 0.5fr 1fr;
-    }
-
-    .projects-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-
-    /* Texte et capture côte à côte */
-    .split-layout {
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .tech-text,
-    .tech-image-wrapper {
-        flex: 1;
     }
 }

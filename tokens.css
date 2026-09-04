@@ -334,7 +334,7 @@
      déjà à l'écran au CHARGEMENT : leur révélation se superpose alors au fondu
      d'entrée de <body> (.page-transition, --duration-page-fade), les deux opacités
      se multiplient, et plus la course est longue plus la zone terne dure. Voir
-     apropos.css § 2 et le hero d'index.html (style.css § 4).
+     apropos.css § 2 et le hero d'index.html (index.css § 2).
      ============================================================ */
   --ease-card:     cubic-bezier(0.22, 1, 0.36, 1);
   --ease-header:   cubic-bezier(0.4, 0, 0.2, 1);

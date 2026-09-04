@@ -35,9 +35,12 @@ Chaque page importe, dans cet ordre exact : `tokens.css` → `style.css` → `[p
 - **tokens.css** — source unique de vérité. Variables `:root` (couleurs, `--text-*`, `--space-*`,
   `--radius-*`, `--shadow-*`, `--header-height`), défauts sémantiques sur les balises de base, et
   quelques utilitaires (`.label-upper`, `.font-display`, `.text-highlight`, `.text-gradient`).
-- **style.css** — global aux 5 pages : reset, boutons, header, hero, services, projets (dormant, voir
-  « État fonctionnel »), footer.
-- **services.css / apropos.css / contact.css / login.css** — spécifique à une page.
+- **style.css** — global aux 5 pages : reset, boutons, header et menu, en-têtes de section,
+  révélation au défilement, liens à flèche, footer. Rien qui ne serve qu'à une seule page : si une
+  règle n'a plus qu'un seul appelant, sa place est dans la feuille de cette page.
+- **index.css / services.css / apropos.css / contact.css / login.css** — spécifique à une page.
+  `index.css` porte le hero, la grille de cartes de services, la section technologie et le CSS
+  dormant des projets (voir « État fonctionnel »).
 
 **Règle d'or : aucune valeur brute (hex, rgba, rem, px) hors de `tokens.css`.** S'il manque une
 valeur, ajouter d'abord un token. Seule exception assumée : `#1A3C34` en dur dans le
@@ -106,10 +109,11 @@ commit** — une couleur, un texte ou une valeur de token ne le nécessitent pas
   démarre et il n'y a pas encore de réalisations à présenter ; la section reviendra dès qu'il y aura
   de vrais projets à montrer. Le CSS est donc **dormant, pas mort — ne pas le supprimer** lors d'un
   nettoyage de code inutilisé :
-  - `style.css` — section 6 « SECTION PROJETS » (`.projects-section`, `.projects-header`,
+  - `index.css` — section 4 « SECTION PROJETS » (`.projects-section`, `.projects-header`,
     `.projects-grid`, `.project-card`, `.project-bg`, `.project-overlay`, `.project-info`,
-    `.project-category`, `.project-detail`), plus `.project-card` dans le média `480px` de la
-    section 1 et `.projects-grid` / `.projects-header` dans les médias `841px` et `950px`.
+    `.project-category`, `.project-detail`, `.link-view-all`), plus `.project-card` dans le média
+    `480px` de la section 1 et `.projects-grid` / `.projects-header` dans les médias `841px` et
+    `950px` de la section 6.
   - `tokens.css` — `--shadow-project-hover`, dont c'est le seul usage.
   - Pour la réactiver : remettre `<section class="projects-section" id="projets">` dans `index.html`
     entre la section services et la section technologie, et le lien `Projets` dans la `.main-nav` des

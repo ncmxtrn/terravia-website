@@ -969,7 +969,7 @@
    style.css et services.css — ne pas en introduire un de plus ici.
 
    Les tailles de titre sont écrites en dur, comme le `.hero-content h1` de
-   style.css § 1 : ce sont deux paliers de lecture propres à une page, pas des
+   index.css § 1 : ce sont deux paliers de lecture propres à une page, pas des
    rôles du design system. La règle d'or reste que toute valeur RÉUTILISÉE vit
    dans tokens.css. */
 @media (max-width: 480px) {

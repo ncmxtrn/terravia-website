@@ -220,7 +220,7 @@
 
 /* Le <h2> nomme la section dans le plan du document, mais c'est la phrase qui
    domine à l'œil : hiérarchie sémantique et hiérarchie typographique divergent
-   ici volontairement. Mise en forme reprise de `.label-tech` (style.css), sans
+   ici volontairement. Mise en forme reprise de `.label-tech` (index.css), sans
    réutiliser la classe — celle-ci est réservée à la section technologie. */
 .manifeste-label {
     font-size: var(--text-xs);
@@ -273,7 +273,8 @@
     display: flex;
 }
 
-/* 80 ms de cascade plutôt que les 100 ms de `.services-grid` : cette grille tient
+/* 80 ms de cascade plutôt que les 100 ms de `.services-grid` (index.css) : cette
+   grille tient
    sur une seule rangée en grand écran, où l'écart entre la première et la dernière
    carte se lit directement — à 100 ms, la quatrième traîne visiblement.
    Le délai est porté par l'état de repos, qui vaut aussi à l'arrivée.

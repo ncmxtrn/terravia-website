@@ -268,7 +268,7 @@
    soit l'exacte panoplie d'une carte cliquable. Or aucune n'est un lien : rien à
    l'intérieur ne mène nulle part, on ne peut pas les atteindre au clavier, et le
    pointeur reste une flèche. Le survol promettait donc une action qui n'existe pas.
-   Les cartes de l'accueil (style.css § .service-card) gardent le leur, elles
+   Les cartes de l'accueil (index.css § .service-card) gardent le leur, elles
    contiennent un vrai `.card-link`. */
 
 .service-sub-item h3 {

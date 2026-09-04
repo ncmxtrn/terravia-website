@@ -72,6 +72,9 @@
     <link rel="stylesheet" href="tokens.css">
     <!-- style.css : styles globaux du site, consomme exclusivement les tokens définis ci-dessus -->
     <link rel="stylesheet" href="style.css">
+    <!-- index.css : styles propres à cette page (hero, grille de services, technologie).
+         Chargé APRÈS style.css, comme les feuilles des quatre autres pages. -->
+    <link rel="stylesheet" href="index.css">
 
     <!--
         La photo du hero est déclarée en `background-image` sur `.hero-background` (plus bas
@@ -248,7 +251,7 @@
                     Les trois blocs portent `.animate-on-scroll` comme le reste du site :
                     l'IntersectionObserver de script.js émet toujours une première entrée,
                     ils sont donc révélés dès le chargement, sans attendre un défilement.
-                    Leur course est raccourcie et leur cascade calée dans style.css § 4 —
+                    Leur course est raccourcie et leur cascade calée dans index.css § 2 —
                     un bloc déjà à l'écran au chargement ne se révèle pas comme un bloc
                     qu'on va chercher en défilant.
                 -->

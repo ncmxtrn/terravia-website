@@ -1,6 +1,15 @@
 .vscode
 .DS_Store
+# Tout .claude est ignoré, sauf ce qui documente et outille le projet. Git ne descend pas dans un
+# dossier ignoré : il faut donc réautoriser `skills/`, réignorer son contenu (les liens symboliques
+# vers .agents/, lui-même ignoré), puis réautoriser la seule skill du projet.
 .claude/*
 !.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/hooks/
+!.claude/rules/
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/mecanismes-front/
 skills-lock.json
 .agents

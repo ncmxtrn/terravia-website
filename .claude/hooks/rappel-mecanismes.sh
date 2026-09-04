@@ -1,0 +1,35 @@
+#!/bin/bash
+# Rappel de maintenance — prévient quand un fichier à mécanismes vient d'être modifié, pour que la
+# skill `mecanismes-front` ne se périme pas en silence. Déclenché par le hook PostToolUse déclaré
+# dans `.claude/settings.json`.
+#
+# Pourquoi un hook plutôt qu'une consigne : une consigne dans CLAUDE.md ou dans la skill est du
+# conseil, elle ne se déclenche que si Claude la lit. Le hook, lui, est exécuté par Claude Code à
+# chaque édition, sans dépendre d'un jugement du modèle.
+#
+# Ne parle qu'une fois par session et par fichier : un rappel répété dix fois dans la même tâche
+# n'est plus lu, et c'est le rappel utile qui s'y noie.
+
+entree=$(cat)
+chemin=$(printf '%s' "$entree" | jq -r '.tool_input.file_path // empty')
+session=$(printf '%s' "$entree" | jq -r '.session_id // "sans-session"')
+fichier=$(basename "$chemin")
+
+# Seuls ces quatre fichiers portent les mécanismes documentés. Les autres (apropos.css,
+# contact.css, tokens.css…) sortent immédiatement.
+case "$fichier" in
+  script.js | style.css | services.css | services.html) ;;
+  *) exit 0 ;;
+esac
+
+marqueur="${TMPDIR:-/tmp}/terravia-rappel-$session-$fichier"
+[ -e "$marqueur" ] && exit 0
+touch "$marqueur"
+
+msg="⚠ $fichier porte des mécanismes documentés. Si ce changement rend fausse une phrase de la skill \`mecanismes-front\` (qui porte le fond du header, comment la jointure du verre est mesurée, quel élément est animé…), mettre à jour .claude/skills/mecanismes-front/SKILL.md dans le même commit, et la ligne de garde-fou de .claude/CLAUDE.md si l'interdiction elle-même change. Une couleur, un texte ou une valeur de token ne le nécessitent pas."
+
+# systemMessage : pour l'afficher à l'utilisateur. additionalContext : pour que Claude en tienne
+# compte dans la suite du tour.
+jq -n --arg m "$msg" \
+  '{systemMessage: $m, hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $m}}'
+exit 0

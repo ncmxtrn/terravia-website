@@ -148,8 +148,8 @@ commit** — une couleur, un texte ou une valeur de token ne le nécessitent pas
     quatre pages qui en ont une (`#projets` depuis la page d'accueil, `/#projets` depuis
     `/services/`, `/apropos/` et `/contact/`). Voir le commit `68ebb65` pour le markup exact (les
     chemins y sont d'avant la restructuration en dossiers — à adapter à la convention actuelle).
-- Polices Google (Montserrat, Orbitron, Material Symbols Outlined) chargées **avant** les CSS locaux,
-  pour que la cascade locale les surcharge sans `!important`.
+- Polices Google (Montserrat, Material Symbols Outlined) chargées **avant** les CSS locaux, pour que
+  la cascade locale les surcharge sans `!important`.
 - Les noms de fichiers d'`assets/` sont volontairement sans accent (les accents cassaient les URL).
 
 ## Photos des fiches de `/services/`

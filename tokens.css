@@ -7,9 +7,9 @@
  *      courbes d'animation.
  *   2. Applique les défauts sémantiques sur les éléments HTML de base (body,
  *      h1–h3, p, etc.) — un seul endroit où consommer les tokens pour le fond.
- *   3. Expose des classes utilitaires légères (.label-upper, .font-display,
- *      .text-highlight, .text-gradient) qui ne portent pas de sémantique
- *      structurelle et peuvent être appliquées depuis n'importe quel HTML.
+ *   3. Expose des classes utilitaires légères (.label-upper, .text-highlight,
+ *      .text-gradient) qui ne portent pas de sémantique structurelle et
+ *      peuvent être appliquées depuis n'importe quel HTML.
  *
  * Règle d'or : style.css et login.css ne doivent jamais contenir de valeur brute
  * (hex, rgba, rem, px). Si un token manque, l'ajouter ici d'abord.
@@ -19,7 +19,7 @@
  */
 
 /* Polices Google chargées via <link> dans le <head> de chaque page
-   (couvrent Montserrat, Orbitron et Material Symbols Outlined). */
+   (couvrent Montserrat et Material Symbols Outlined). */
 
 /* ============================================================
    BASE COLOR PRIMITIVES
@@ -154,13 +154,11 @@
   /* ============================================================
      TYPOGRAPHY
      ------------------------------------------------------------
-     Trois familles aux rôles strictement séparés :
+     Deux familles aux rôles strictement séparés :
      - Montserrat : corps, UI, navigation (toute prose).
-     - Orbitron   : logo et chiffres display uniquement — ne pas utiliser en prose.
      - Material Symbols Outlined : icônes, variante Outlined exclusivement (FILL=0).
      ============================================================ */
   --font-main:    'Montserrat', sans-serif;
-  --font-display: 'Orbitron', sans-serif;
   --font-icons:   'Material Symbols Outlined';
 
   /* Échelle typographique — desktop.
@@ -516,12 +514,6 @@ small, .text-sm {
   text-transform: uppercase;
   letter-spacing: var(--tracking-badge);
   color: var(--fg1);
-}
-
-/* Police display Orbitron — réservée au logo et aux chiffres display.
-   Ne pas utiliser en prose : Orbitron est illisible en corps de texte long. */
-.font-display {
-  font-family: var(--font-display);
 }
 
 /* Accent vert sur fond sombre (sections forest, footer).

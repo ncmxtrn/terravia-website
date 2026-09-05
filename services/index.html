@@ -211,7 +211,10 @@
                                         <li><a href="#env-lidar">LiDAR par drone et Orthophotos</a></li>
                                         <li><a href="#env-canopee">Modèles de terrain et canopée</a></li>
                                         <li><a href="#env-bathymetrie">Bathymétrie</a></li>
-                                        <li><a href="#env-volumes">Calculs volumétriques</a></li>
+                                        <!-- Calculs volumétriques : masqué en attendant une photo,
+                                             voir la fiche correspondante dans service-sub-grid
+                                             (id="env-volumes") pour la marche à suivre. -->
+                                        <!-- <li><a href="#env-volumes">Calculs volumétriques</a></li> -->
                                         <li><a href="#env-analyses">Analyses spatiales</a></li>
                                     </ul>
                                 </div>
@@ -260,12 +263,7 @@
                                      décrit, rangée dans assets/services/<secteur>/. Leur alt décrit
                                      ce que l'image MONTRE, pas le titre de la carte : les deux se
                                      recoupent souvent, mais un lecteur d'écran doit apprendre quelque
-                                     chose de l'image, pas relire le h3 juste en dessous.
-                                     Une carte de la page (env-volumes) n'a pas encore de photo et
-                                     reste volontairement en texte seul, sans la classe has-img :
-                                     mieux vaut une carte sobre qu'un visuel emprunté à un autre
-                                     service. Lui ajouter une photo = remettre has-img et la balise
-                                     img. -->
+                                     chose de l'image, pas relire le h3 juste en dessous. -->
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-topo">
                                     <!-- Seule image de la page sans loading="lazy" : elle est visible
                                          dès l'arrivée, la différer retarderait l'affichage. -->
@@ -563,12 +561,20 @@
                                     </div>
                                 </div>
 
+                                <!-- Calculs volumétriques : masquée tant qu'aucune photo n'est
+                                     disponible pour ce livrable (mieux vaut l'absence de fiche
+                                     qu'une photo empruntée à un autre service). Pour réactiver dès
+                                     qu'une photo existe : décommenter ce bloc ET le lien du
+                                     sommaire ci-dessus (#env-volumes), ranger la photo dans
+                                     assets/services/environnement/, puis ajouter has-img et la
+                                     balise img comme sur les autres fiches.
                                 <div class="service-sub-item animate-on-scroll" id="env-volumes">
                                     <div class="service-sub-body">
                                         <h3>Calculs volumétriques</h3>
                                         <p>Évaluation précise des volumes de matériaux pour les projets de réhabilitation ou d'érosion.</p>
                                     </div>
                                 </div>
+                                -->
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="env-analyses">
                                     <img src="/assets/services/environnement/analyses-spatiales.png" alt="Orthophotographie d'un secteur rural dont un bâtiment ressort en orange, isolé par une analyse spatiale" class="service-card-img" loading="lazy">

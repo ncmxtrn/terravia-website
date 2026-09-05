@@ -60,10 +60,19 @@
    afin que le contenu commence sous lui sans chevaucher.
    min-height: 100vh garantit que le fond de page couvre tout l'écran
    même si le contenu est court. */
+/* --surface-halo plutôt que --surface-page : la page n'a qu'un seul bloc de
+   contenu (pas de sections à alterner comme sur apropos.html ou index.html), le
+   halo couvre donc toute la page plutôt qu'une bande. Sans risque sur les champs
+   translucides du formulaire : `.form-card` (plus bas) leur pose un fond blanc
+   opaque avant qu'ils n'arrivent — à la différence de login.css, où la carte n'a
+   pas cet écran et qui garde le lavis pour cette raison précise. Bonus : l'origine
+   du halo (82 %, 78 %) tombe à peu près sous la colonne du formulaire, la plus
+   engageante des deux. */
 .contact-main {
     padding-top: var(--header-height);
     padding-bottom: var(--space-5xl);
-    background-color: var(--surface-page);
+    background-color: var(--white);
+    background-image: var(--surface-halo);
     min-height: 100vh;
 }
 

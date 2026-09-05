@@ -96,9 +96,16 @@
 /* L'espacement sous l'introduction est porté par la section et non par la marge
    de 4rem de `.section-header` : celle-ci sépare un en-tête de SON contenu, or
    l'introduction n'en a pas — ce qui suit est une autre section. Cumuler les deux
-   creusait un vide de 9rem entre le titre de page et le manifeste. */
+   creusait un vide de 9rem entre le titre de page et le manifeste.
+
+   `--surface-halo`, comme `.apropos-manifeste` juste en dessous : les deux
+   sections n'ont pas de filet entre elles, le même rendu les fait lire comme une
+   seule bande continue qui ouvre la page, jusqu'à l'aplat de « Nos valeurs » (§ 4)
+   qui vient la couper. */
 .apropos-intro {
     padding-bottom: var(--space-4xl);
+    background-color: var(--white);
+    background-image: var(--surface-halo);
 }
 
 .apropos-intro .section-header {
@@ -169,8 +176,15 @@
    qui pilotait cette rotation, a été supprimée avec lui.
    ============================================================ */
 
+/* Même `--surface-halo` que `.apropos-intro` juste au-dessus, sans filet entre les
+   deux : elles se lisent comme une seule bande. Le halo est ancré à un coin
+   (82 %, 78 %) plutôt qu'étalé en aplat — sur cette section à deux colonnes, il
+   vient discrètement appuyer le bloc de droite (Vision) sans rien retirer à la
+   lisibilité du filet d'accent ni du texte. */
 .apropos-manifeste {
     padding-bottom: var(--space-5xl);
+    background-color: var(--white);
+    background-image: var(--surface-halo);
 }
 
 .manifeste-grid {
@@ -249,8 +263,12 @@
    4. VALEURS
    ============================================================ */
 
-/* Bande à peine teintée : elle sépare les valeurs de l'approche, deux sections
-   claires successives, sans introduire une seconde couleur de fond dans la page. */
+/* Seule bande en aplat de la page (`--surface-muted`) — les trois autres sections
+   claires (§ 2, § 3, § 5) sont en halo. Historiquement la seule bande teintée de
+   la page, elle a gardé son rendu propre pendant que les autres s'alignaient sur
+   elle plutôt que l'inverse. La coupure nette qu'elle introduit entre deux halos
+   (manifeste avant, approche après) suffit à marquer que « Nos valeurs » est un
+   temps à part, pas juste une troisième répétition. */
 .apropos-valeurs {
     padding: var(--space-5xl) 0;
     background-color: var(--surface-muted);
@@ -330,8 +348,14 @@
    5. APPROCHE
    ============================================================ */
 
+/* Troisième bande en halo de la page (§ 2, § 3) avant la bande sombre du
+   territoire — elle referme sur le même rendu que l'ouverture (intro + manifeste),
+   pour que les deux halos encadrent le lavis de « Nos valeurs » plutôt que de s'y
+   accoler tous les deux. */
 .apropos-approche {
     padding: var(--space-5xl) 0;
+    background-color: var(--white);
+    background-image: var(--surface-halo);
 }
 
 .approche-steps {

@@ -121,11 +121,22 @@
      --surface-card : fond de carte, identique au blanc mais sémantiquement distinct.
      --surface-muted : bande de section à peine teintée, pour séparer deux sections
        claires successives sans introduire de seconde couleur de fond.
+     --surface-halo : variante directionnelle de --surface-muted — même encre forêt,
+       mais en dégradé radial ancré à un coin (82 %, 78 %) plutôt qu'en aplat. Sert à
+       alterner avec --surface-muted sur des sections consécutives sans poser deux fois
+       le même rendu ; même origine que --station-x/--station-y de la bande Territoire
+       (apropos.css § 6), rejouée en clair. Les arrêts sont en pourcentage et non en px :
+       le halo garde ses proportions quelle que soit la hauteur du bloc qui le porte,
+       contrairement au tracé de portée de la bande Territoire (rayons fixes, pensés
+       pour une seule bande) — c'est ce qui le rend réutilisable d'une section à l'autre.
+       S'applique en `background-image`, avec `background-color: var(--white)` en repli
+       explicite (le dégradé s'arrête avant les bords, le blanc comble le reste).
      --surface-dark : fond footer et sections sombres.
      --surface-header : fond glassmorphism du header au scroll (blanc translucide). */
   --surface-page:   var(--bg-light);
   --surface-card:   var(--white);
   --surface-muted:  var(--forest-03);
+  --surface-halo:   radial-gradient(circle at 82% 78%, var(--forest-05) 0%, var(--forest-03) 24%, transparent 56%);
   --surface-dark:   var(--forest-900);
   --surface-header: rgba(255, 255, 255, 0.85);
 

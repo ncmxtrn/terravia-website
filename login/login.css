@@ -27,13 +27,18 @@
    padding: 2rem 1rem garantit un espace suffisant sur mobile
    pour que la carte ne colle pas aux bords de l'écran.
    ========================================= */
+/* --surface-muted et non --surface-halo : .login-card n'a pas de fond propre (elle
+   ne fait que gérer le padding, voir plus bas) et .form-input est translucide à
+   50 % — le halo, ancré à un coin, aurait traversé les champs et la carte centrée
+   n'aurait pas coïncidé avec son origine. L'aplat, lui, reste identique partout où
+   la carte se pose. */
 .login-main {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--white);
+    background-color: var(--surface-muted);
     padding: 2rem 1rem;
 }
 

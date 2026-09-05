@@ -194,13 +194,12 @@
 /* =========================================
    3. SECTION SERVICES
    ========================================= */
-/* --surface-muted : même lavis que « Nos valeurs » d'apropos.html (aplat, pas de
-   dégradé) — la section porte une grille de cartes, un aplat neutre n'entre pas
-   en concurrence avec plusieurs surfaces blanches côte à côte. Alterne avec le
-   halo de .tech-section plus bas. */
+/* --surface-halo : premier temps de l'alternance après le hero (photo, son
+   propre fond) — alterne avec le lavis de .tech-section plus bas. */
 .services-section {
     padding: 5rem 0;
-    background-color: var(--surface-muted);
+    background-color: var(--white);
+    background-image: var(--surface-halo);
 }
 
 /* Grille des expertises — mobile-first : une colonne, puis 2 (>= 841px)
@@ -485,14 +484,10 @@
 /* =========================================
    5. SECTION TECHNOLOGIE
    ========================================= */
-/* --surface-halo : second temps de l'alternance amorcée par .services-section.
-   La section oppose un bloc de texte à une capture d'écran (.split-layout) — un
-   seul point focal, contrairement à la grille de cartes juste au-dessus — le halo,
-   dégradé directionnel, y a plus de sens qu'un aplat. */
+/* --surface-muted : second temps de l'alternance amorcée par .services-section. */
 .tech-section {
     padding: 5rem 0;
-    background-color: var(--white);
-    background-image: var(--surface-halo);
+    background-color: var(--surface-muted);
 }
 
 /* Empilé sur mobile ; passe en deux colonnes côte à côte >= 950px (section 6). */

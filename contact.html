@@ -41,14 +41,10 @@
 
     <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
     <link rel="stylesheet" href="tokens.css">
-    <!-- style.css : styles globaux partagés avec index.html (header, footer, boutons, utilitaires) -->
+    <!-- style.css : styles globaux (header, footer, boutons, utilitaires) et les classes
+         de formulaire partagées avec login.html — section 6 (.form-input, .input-wrapper,
+         .input-label, .error-banner…). Chargé avant contact.css pour permettre la surcharge locale. -->
     <link rel="stylesheet" href="style.css">
-    <!--
-        login.css : fournit les classes de formulaire génériques réutilisées ici
-        (.form-stack, .input-wrapper, .form-input, .input-label, etc.).
-        Importé en amont de contact.css pour permettre la surcharge locale.
-    -->
-    <link rel="stylesheet" href="login.css">
     <!-- contact.css : styles spécifiques à cette page (layout, cartes de coordonnées, formulaire) -->
     <link rel="stylesheet" href="contact.css">
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.

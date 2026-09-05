@@ -47,9 +47,14 @@ valeur, ajouter d'abord un token. Seule exception assumée : `#1A3C34` en dur da
 `<meta name="theme-color">` des 5 pages et dans `assets/favicon.svg` (ni `<link>` ni `<meta>` ne lit
 une variable CSS) — si `--forest-900` change, répercuter à ces endroits.
 
-**`login.css` a un double rôle** : styles de `login.html` *et* classes de formulaire génériques
-(`.form-stack`, `.input-wrapper`, `.form-input`, `.error-banner`…) réutilisées par `contact.html`.
-Toucher à ces classes impacte les deux pages.
+**Les classes de formulaire sont dans `style.css`, section 6** (`.form-stack`, `.input-group`,
+`.input-wrapper`, `.input-icon`, `.form-input`, `.input-label`, `.checkbox-input`, `.error-banner`,
+`.error-icon`). Deux pages s'en servent — `login.html` et `contact.html` — donc y toucher impacte
+les deux. `login.css` et `contact.css` ne font que les étendre : `login.css` pour le champ mot de
+passe (`.form-input[type="password"]`, `.password-toggle`) et ses options propres
+(`.inputs-wrapper`, `.checkbox-group`, `.flex-between`, `.form-options`), `contact.css` pour le
+déclencheur du panneau de services et la hauteur du `textarea`. Ces surcharges reposent sur l'ordre
+de chargement : `style.css` doit rester avant la feuille de page.
 
 Breakpoints en usage : `380px`, `480px`, `555px`, `840px` (mobile max) / `841px` (tablette),
 `950px` (desktop). `555px` est propre à la bascule du logo du header (voir « Logo adaptatif » dans

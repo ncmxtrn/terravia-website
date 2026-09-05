@@ -3,9 +3,11 @@
  *
  * Ce fichier s'appuie sur deux dépendances :
  *   - tokens.css : toutes les valeurs (couleurs, tailles, ombres, transitions).
- *   - login.css  : classes de formulaire génériques (.form-stack, .input-wrapper,
- *     .input-icon, .form-input, .input-label, .inputs-wrapper, .checkbox-group,
- *     .error-banner, .flex-between). Ces classes ne sont pas redéfinies ici.
+ *   - style.css, section 6 : les classes de formulaire partagées avec login.html
+ *     (.form-stack, .input-group, .input-wrapper, .input-icon, .form-input,
+ *     .input-label, .checkbox-input, .error-banner, .error-icon). Leurs règles de
+ *     base ne sont pas redéfinies ici : cette feuille ne fait que les étendre
+ *     (déclencheur .services-trigger, hauteur du textarea, panneau de services).
  *
  * Structure de la page :
  *   0. Header — masquage du CTA sur cette page

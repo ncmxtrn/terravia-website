@@ -1,14 +1,19 @@
 /*
- * login.css — Double rôle dans l'architecture CSS :
+ * login.css — Styles de la page de connexion (login.html), et rien d'autre.
  *
- * 1. Styles de la page de connexion (login.html) :
- *    mise en page pleine page, carte centrée, animation d'entrée,
- *    en-tête de marque, options de formulaire (mémorisation, lien oubli).
+ * Structure :
+ *   1. Mise en page pleine page et carte centrée, animation d'entrée
+ *   2. En-tête de marque (logo, titre, sous-titre) et pied de formulaire
+ *   3. Options propres à la connexion (mémorisation, mot de passe oublié)
+ *   4. Champ mot de passe : glyphes, bouton œil, avertissement Caps Lock
  *
- * 2. Classes de formulaire génériques réutilisées dans contact.html :
- *    .form-stack, .input-wrapper, .input-icon, .form-input, .input-label,
- *    .inputs-wrapper, .checkbox-group, .error-banner, .flex-between, .flex-end.
- *    Toute modification de ces classes impacte les deux pages.
+ * Les classes de formulaire partagées avec contact.html (.form-input,
+ * .input-wrapper, .input-icon, .input-label, .form-stack, .input-group,
+ * .checkbox-input, .error-banner, .error-icon) sont dans style.css, section 6.
+ * Ce fichier ne garde que ce qui n'a qu'un seul appelant : .inputs-wrapper,
+ * .checkbox-group, .checkbox-label, .flex-between, .form-options, ainsi que
+ * .form-input[type="password"] et .password-toggle, qui surchargent les
+ * classes partagées pour le seul champ mot de passe.
  *
  * Tous les tokens (couleurs, tailles, ombres) viennent de tokens.css.
  * Aucune valeur brute dans ce fichier — voir les commentaires inline
@@ -33,47 +38,6 @@
 }
 
 
-/* =========================================
-   BANNIÈRE D'ERREUR
-   Masquée par défaut (display: none). La classe .visible lui applique
-   display: flex via le sélecteur suivant. Le !important est nécessaire
-   pour surcharger le display: none initial sans augmenter la spécificité
-   du sélecteur de base (ce qui casserait la cascade).
-   Voir aussi : role="alert" aria-live="polite" dans login.html.
-   ========================================= */
-.error-banner {
-    display: none;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: var(--error-bg);
-    border: 1px solid var(--error-border);
-    color: var(--error-text);
-    border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    font-weight: var(--weight-medium);
-    margin-bottom: var(--space-2xs);
-}
-
-.error-banner.visible {
-    display: flex !important;
-}
-
-/* =========================================
-   ÉTATS D'ERREUR SUR LES INPUTS
-   Surcharge la bordure par défaut de .form-input.
-   .has-error est ajouté par script.js après validation.
-   L'anneau de focus d'erreur (--error-focus-ring) remplace --focus-ring
-   pour maintenir la cohérence visuelle même en état d'alerte.
-   ========================================= */
-.form-input.has-error {
-    border-color: var(--error-border-strong);
-}
-
-.form-input.has-error:focus {
-    border-color: var(--error);
-    box-shadow: var(--error-focus-ring);
-}
 
 /* =========================================
    CONTENEUR PRINCIPAL — ANIMATION D'ENTRÉE
@@ -239,18 +203,13 @@
 }
 
 /* =========================================
-   STRUCTURE DU FORMULAIRE (classes génériques — réutilisées dans contact.html)
-   .form-stack : colonne verticale avec gap --space-lg (1.5rem) entre
-     les grandes sections (bannière d'erreur, groupe d'inputs, options, bouton).
-   .inputs-wrapper : réduit le gap à --space-sm (0.75rem) entre les champs
-     adjacents — la proximité visuelle signale qu'ils forment un groupe logique.
-   .input-group : wrapper sémantique autour de chaque champ (label + input-wrapper).
+   GROUPE DE CHAMPS RAPPROCHÉS
+   Réduit le gap de .form-stack (--space-lg) à --space-sm (0.75rem) entre les
+   champs adjacents — la proximité visuelle signale qu'ils forment un groupe
+   logique. Seule login.html s'en sert : contact.html espace tous ses champs
+   de la même façon. L'ossature partagée (.form-stack, .input-group) est dans
+   style.css, section 6.
    ========================================= */
-.form-stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-}
 
 .inputs-wrapper {
     display: flex;
@@ -258,105 +217,9 @@
     gap: var(--space-sm);
 }
 
-.input-group {
-    display: block;
-}
 
-/* =========================================
-   LABEL DE CHAMP (utilisé dans contact.html)
-   ========================================= */
-.input-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: var(--weight-semibold);
-    color: var(--color-forest);
-    margin-bottom: var(--space-xs);
-}
 
-/* =========================================
-   WRAPPER D'INPUT + ICÔNE POSITIONNÉE
-   .input-wrapper : position: relative pour ancrer les icônes en absolu.
-   .input-icon : centrage vertical via top: 50% + translateY(-50%).
-     left: 0.75rem correspond au padding-left de .form-input (2.8rem = 44.8px)
-     moins la largeur de l'icône (24px), laissant ~8px de marge visuelle.
-   ========================================= */
-.input-wrapper {
-    position: relative;
-}
 
-.input-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--fg3);
-    font-size: var(--icon-lg);
-    user-select: none;
-    transition: color var(--duration-medium) ease;
-}
-
-/* Sélecteur :has() — support : Chrome 105+, Safari 15.4+, Firefox 121+.
-   NOTE: ce sélecteur n'a pas de fallback ; sur les navigateurs non supportés,
-   l'icône reste en --fg3 (état par défaut), ce qui est acceptable.
-   Comportement : l'icône prend la couleur du texte dès que le champ contient
-   une valeur (placeholder masqué = champ rempli). */
-.input-wrapper:has(.form-input:not(:placeholder-shown)) .input-icon {
-    color: var(--color-forest);
-}
-
-/* La bordure du champ se renforce quand il est rempli, SAUF au focus
-   (on ne veut pas superposer deux états visuels).
-   :not(:focus) est nécessaire pour éviter le conflit entre la bordure verte
-   du focus (.form-input:focus → --color-primary) et la bordure forest ici. */
-.input-wrapper:has(.form-input:not(:placeholder-shown)) .form-input:not(:focus) {
-    border-color: var(--color-forest);
-}
-
-/* =========================================
-   INPUT TEXTE (classe générique — réutilisée dans contact.html)
-
-   height: 3.175rem (~50.8px) :
-     Valeur calibrée pour que la zone tactile dépasse 44px (WCAG 2.5.5)
-     tout en maintenant les proportions visuelles avec le bouton submit
-     (padding: var(--space-md) = 1rem top+bottom + 1rem line-height ≈ 50px).
-
-   padding: 0 2.5rem 0 2.8rem :
-     Côté droit (2.5rem = 40px) : espace pour le bouton toggle (44px de zone
-     tactile, visuellement décalé à droite via right: 0.25rem).
-     Côté gauche (2.8rem = 44.8px) : espace pour l'icône positionnée à left: 0.75rem
-     (12px) + largeur icône (24px) + marge interne (~8px).
-
-   background-color: rgba(248, 252, 248, 0.5) :
-     Blanc légèrement teinté de vert (248/252/248), semi-transparent pour
-     laisser transparaître le fond de la carte. Différencie visuellement
-     les inputs du fond blanc sans introduire un contraste fort.
-   ========================================= */
-.form-input {
-    width: 100%;
-    height: 3.175rem;
-    padding: 0 2.5rem 0 2.8rem;
-    background-color: rgba(248, 252, 248, 0.5);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    color: var(--fg1);
-    font-family: inherit;
-    transition: border-color var(--duration-base) ease, box-shadow var(--duration-base) ease;
-}
-
-.form-input:focus {
-    border-color: var(--color-primary);
-    outline: none;
-    box-shadow: var(--focus-ring);
-}
-
-/* opacity: 1 sur ::placeholder est un correctif cross-browser :
-   Firefox applique opacity: 0.54 par défaut sur les placeholders,
-   Safari peut varier. On force l'opacité pour obtenir --fg3 exact. */
-.form-input::placeholder {
-    color: var(--fg3);
-    opacity: 1;
-}
 
 /* =========================================
    OPTIONS DE FORMULAIRE (mot de passe oublié + mémorisation)
@@ -401,21 +264,15 @@
 
 /* =========================================
    CASE À COCHER "SE SOUVENIR DE MOI"
-   accent-color : colorie la case native avec --color-primary sans
-   reconstruire un composant custom. Support : Chrome 93+, Firefox 92+, Safari 15.4+.
+   Habillage propre à cette page : l'alignement de la ligne et son étiquette.
+   La case elle-même (.checkbox-input) est partagée avec contact.html et vit
+   dans style.css, section 6.
    ========================================= */
 .checkbox-group {
     display: flex;
     align-items: center;
 }
 
-.checkbox-input {
-    height: 1rem;
-    width: 1rem;
-    accent-color: var(--color-primary);
-    border-radius: 0.25rem;
-    cursor: pointer;
-}
 
 .checkbox-label {
     margin-left: 0.5rem;
@@ -473,13 +330,6 @@
     font-family: var(--font-main);
 }
 
-/* =========================================
-   ICÔNE D'ERREUR DANS LA BANNIÈRE
-   ========================================= */
-.error-icon {
-    font-size: 1.1rem;
-    vertical-align: middle;
-}
 
 /* =========================================
    BOUTON TOGGLE VISIBILITÉ DU MOT DE PASSE

@@ -255,13 +255,6 @@
     padding: 0 var(--space-xs);
 }
 
-.flex-end {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: var(--space-xs);
-}
-
 /* =========================================
    CASE À COCHER "SE SOUVENIR DE MOI"
    Habillage propre à cette page : l'alignement de la ligne et son étiquette.

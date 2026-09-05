@@ -15,7 +15,8 @@
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
     <meta name="chrome" content="nointentdetection" />
     <title>Nos services — Solutions Terravia</title>
-    <meta name="description" content="Découvrez nos services géospatiaux : arpentage, LiDAR, photogrammétrie, scan-to-BIM et analyses spatiales pour le secteur minier, municipal et de la construction." />
+    <meta name="description"
+        content="Découvrez nos services géospatiaux : arpentage, LiDAR, photogrammétrie, scan-to-BIM et analyses spatiales pour le secteur minier, municipal et de la construction." />
 
     <!-- Icônes du site — bloc identique à celui du <head> de index.html, où l'ordre
          des balises et la bascule clair/sombre sont documentés en détail. -->
@@ -36,8 +37,9 @@
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
          Repli sans JS ci-dessous ; repli sans script.js dans style.css.
          Voir le commentaire détaillé dans le <head> de index.html. -->
-    <noscript><style>
-        /* JavaScript entièrement désactivé : script.js ne lèvera jamais le masquage,
+    <noscript>
+        <style>
+            /* JavaScript entièrement désactivé : script.js ne lèvera jamais le masquage,
            on neutralise donc ici tout ce qui dépend de lui.
 
            `animation: none` est indispensable et non cosmétique : sans lui, le filet
@@ -51,14 +53,25 @@
            resterait hors écran, laissant la page sans barre de navigation. On le
            laisse dans son état de base — fond blanc opaque, lisible à toute hauteur
            de défilement, ce que l'état flottant transparent ne garantirait pas. */
-        html.is-loading body { opacity: 1; visibility: visible; animation: none; }
-        html.is-loading .animate-on-scroll { opacity: 1; transform: none; animation: none; }
-        .site-header:not(.is-floating):not(.show-cta) {
-            transform: none;
-            background-color: var(--white);
-            border-bottom-color: var(--border-subtle);
-        }
-    </style></noscript>
+            html.is-loading body {
+                opacity: 1;
+                visibility: visible;
+                animation: none;
+            }
+
+            html.is-loading .animate-on-scroll {
+                opacity: 1;
+                transform: none;
+                animation: none;
+            }
+
+            .site-header:not(.is-floating):not(.show-cta) {
+                transform: none;
+                background-color: var(--white);
+                border-bottom-color: var(--border-subtle);
+            }
+        </style>
+    </noscript>
 </head>
 
 <body class="page-transition">
@@ -82,23 +95,27 @@
                          alt vide + aria-hidden : le nom accessible du lien est déjà porté
                          par le lockup ci-dessus, qui reste dans le DOM en permanence — le
                          fondu ne joue que sur l'opacité. -->
-                    <img src="../assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
+                    <img src="../assets/logo-monogramme-noir.svg" alt="" aria-hidden="true"
+                        class="logo-icon logo-icon--mark">
                 </a>
 
                 <!-- Chevrons réservés à la feuille du menu mobile (≤ 840px) ; masqués
                      dans la barre horizontale du desktop. Collés au libellé, sans
                      retour à la ligne : voir la note dans index.html. -->
                 <nav class="main-nav">
-                    <a href="../" class="transition-link">Accueil<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="../" class="transition-link">Accueil<span class="material-symbols-outlined nav-chevron"
+                            aria-hidden="true">chevron_right</span></a>
                     <a href="../login/" class="transition-link client-link">
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
-                    <a href="../apropos/" class="transition-link">À propos<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="../apropos/" class="transition-link">À propos<span
+                            class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
                 </nav>
 
                 <div class="header-actions">
-                    <a href="../contact/" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
+                    <a href="../contact/" class="btn btn-primary transition-link"
+                        id="header-quote-btn">Contactez-nous</a>
                     <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
                         <div class="burger-icon">
                             <span></span>
@@ -248,7 +265,8 @@
                         <section id="arpentage" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">square_foot</span>
+                                <span class="material-symbols-outlined service-block-icon"
+                                    aria-hidden="true">square_foot</span>
                                 <div>
                                     <h2>Arpentage</h2>
                                     <p class="service-intro">
@@ -267,50 +285,68 @@
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-topo">
                                     <!-- Seule image de la page sans loading="lazy" : elle est visible
                                          dès l'arrivée, la différer retarderait l'affichage. -->
-                                    <img src="../assets/services/arpentage/releve-topographique.png" alt="Plan topographique en DAO : courbes de niveau, points cotés et bordures relevés sur le terrain" class="service-card-img">
+                                    <img src="../assets/services/arpentage/releve-topographique.png"
+                                        alt="Plan topographique en DAO : courbes de niveau, points cotés et bordures relevés sur le terrain"
+                                        class="service-card-img">
                                     <div class="service-sub-body">
                                         <h3>Relevés topographiques</h3>
-                                        <p>Acquisition de données de haute précision sur le terrain pour la modélisation et l'ingénierie.</p>
+                                        <p>Acquisition de données de haute précision sur le terrain pour la modélisation
+                                            et l'ingénierie.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-mnt">
-                                    <img src="../assets/services/arpentage/modele-numerique-terrain.png" alt="Modèle numérique de terrain en ombrage, révélant le relief et les chemins sous la végétation" class="service-card-img">
+                                    <img src="../assets/services/arpentage/modele-numerique-terrain.png"
+                                        alt="Modèle numérique de terrain en ombrage, révélant le relief et les chemins sous la végétation"
+                                        class="service-card-img">
                                     <div class="service-sub-body">
                                         <h3>Modèle numérique de terrain</h3>
-                                        <p>Création de MNT détaillés pour une compréhension parfaite et précise de la topographie.</p>
+                                        <p>Création de MNT détaillés pour une compréhension parfaite et précise de la
+                                            topographie.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-photogrammetrie">
-                                    <img src="../assets/services/arpentage/photogrammetrie.png" alt="Orthophotographie verticale haute résolution d'un secteur résidentiel et de sa rue" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/arpentage/photogrammetrie.png"
+                                        alt="Orthophotographie verticale haute résolution d'un secteur résidentiel et de sa rue"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Photogrammétrie de haute précision</h3>
-                                        <p>Génération d'orthophotographies et de photomaillages texturés de très haute résolution.</p>
+                                        <p>Génération d'orthophotographies et de photomaillages texturés de très haute
+                                            résolution.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-lidar">
-                                    <img src="../assets/services/arpentage/releve-lidar.png" alt="Nuage de points LiDAR colorisé d'une route de campagne, de ses arbres et de ses fils électriques" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/arpentage/releve-lidar.png"
+                                        alt="Nuage de points LiDAR colorisé d'une route de campagne, de ses arbres et de ses fils électriques"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Relevés LiDAR</h3>
-                                        <p>Acquisition de nuages de points par systèmes aéroportés (drone), mobiles et statiques.</p>
+                                        <p>Acquisition de nuages de points par systèmes aéroportés (drone), mobiles et
+                                            statiques.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-calcul">
-                                    <img src="../assets/services/arpentage/outils-calcul.png" alt="Volume de matériaux isolé en bleu sur un modèle de terrain, calculé sur mesure" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/arpentage/outils-calcul.png"
+                                        alt="Volume de matériaux isolé en bleu sur un modèle de terrain, calculé sur mesure"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Outils de calcul sur mesure</h3>
-                                        <p>Développement de solutions d'analyse et de calcul adaptées à vos besoins spécifiques.</p>
+                                        <p>Développement de solutions d'analyse et de calcul adaptées à vos besoins
+                                            spécifiques.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arp-mesures">
-                                    <img src="../assets/services/arpentage/prise-mesures-complexes.jpg" alt="Scanner laser statique sur trépied devant un bâtiment entouré d'échafaudages" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/arpentage/prise-mesures-complexes.jpg"
+                                        alt="Scanner laser statique sur trépied devant un bâtiment entouré d'échafaudages"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Prises de mesures complexes</h3>
-                                        <p>Déploiement de technologies adaptées pour les environnements difficiles d'accès ou complexes.</p>
+                                        <p>Déploiement de technologies adaptées pour les environnements difficiles
+                                            d'accès ou complexes.</p>
                                     </div>
                                 </div>
                             </div>
@@ -324,63 +360,81 @@
                         <section id="minier" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">terrain</span>
+                                <span class="material-symbols-outlined service-block-icon"
+                                    aria-hidden="true">terrain</span>
                                 <div>
                                     <h2>Secteur Minier</h2>
                                     <p class="service-intro">
-                                        Suivi volumétrique des réserves, documentation des fronts
-                                        d'exploitation et planification du sautage, avec un historique
-                                        consultable campagne après campagne.
+                                        Suivi volumétrique des réserves, documentation des fronts d'exploitation, avec
+                                        un historique consultable.
                                     </p>
                                 </div>
                             </div>
 
                             <div class="service-sub-grid">
                                 <div class="service-sub-item animate-on-scroll has-img" id="min-reserves">
-                                    <img src="../assets/services/secteur-minier/calcul-reserves.png" alt="Modèle de terrain ombré d'une aire d'entreposage, piles de matériaux détourées une à une" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/secteur-minier/calcul-reserves.png"
+                                        alt="Modèle de terrain ombré d'une aire d'entreposage, piles de matériaux détourées une à une"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Calculs des réserves</h3>
-                                        <p>Évaluation par drone, scan laser ou méthode traditionnelle, selon le lieu et les conditions d'entreposage.</p>
+                                        <p>Évaluation par drone, scan laser ou méthode traditionnelle, selon le lieu et
+                                            les conditions d'entreposage.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="min-orthophotos">
-                                    <img src="../assets/services/secteur-minier/orthophotos-exploitation.png" alt="Orthophotographie verticale d'une carrière en exploitation : fronts, pistes et installations de concassage" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/secteur-minier/orthophotos-exploitation.png"
+                                        alt="Orthophotographie verticale d'une carrière en exploitation : fronts, pistes et installations de concassage"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Orthophotos d'exploitation</h3>
-                                        <p>Imagerie aérienne régulière pour documenter et assurer le suivi visuel de l'exploitation.</p>
+                                        <p>Imagerie aérienne régulière pour documenter et assurer le suivi visuel de
+                                            l'exploitation.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="min-dynamitage">
-                                    <img src="../assets/services/secteur-minier/calculs-dynamitage.jpg" alt="Fronts de taille étagés d'une carrière à ciel ouvert, vus depuis les airs" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/secteur-minier/calculs-dynamitage.jpg"
+                                        alt="Fronts de taille étagés d'une carrière à ciel ouvert, vus depuis les airs"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Calculs de dynamitage</h3>
-                                        <p>Analyses volumétriques et spatiales pour l'optimisation des opérations de forage et de sautage.</p>
+                                        <p>Analyses volumétriques et spatiales pour l'optimisation des opérations de
+                                            forage et de sautage.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="min-bathymetrie">
-                                    <img src="../assets/services/secteur-minier/bathymetrie.jpg" alt="Modèle bathymétrique d'un bassin de rétention, coloré du jaune au bleu selon la profondeur" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/secteur-minier/bathymetrie.jpg"
+                                        alt="Modèle bathymétrique d'un bassin de rétention, coloré du jaune au bleu selon la profondeur"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Bathymétrie</h3>
-                                        <p>Levés topographiques sous-marins pour les bassins de rétention et cours d'eau miniers.</p>
+                                        <p>Levés topographiques sous-marins pour les bassins de rétention et cours d'eau
+                                            miniers.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="min-webapp">
-                                    <img src="../assets/services/secteur-minier/application-web.jpg" alt="Application Web affichant les volumes de déblai et de remblai calculés sur des zones d'une carrière" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/secteur-minier/application-web.jpg"
+                                        alt="Application Web affichant les volumes de déblai et de remblai calculés sur des zones d'une carrière"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Application Web conviviale</h3>
-                                        <p>Plateforme dédiée pour la consultation, la comparaison d'historique des données, et la prise de mesures précises.</p>
+                                        <p>Plateforme dédiée pour la consultation, la comparaison d'historique des
+                                            données, et la prise de mesures précises.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="min-dao">
-                                    <img src="../assets/services/secteur-minier/exportation-dao.jpg" alt="Courbes de niveau d'un site minier ouvertes dans un logiciel de DAO" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/secteur-minier/exportation-dao.jpg"
+                                        alt="Courbes de niveau d'un site minier ouvertes dans un logiciel de DAO"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Exportation DAO</h3>
-                                        <p>Extraction et intégration fluides de vos données vers des formats standards de conception (DWF, DWG).</p>
+                                        <p>Extraction et intégration fluides de vos données vers des formats standards
+                                            de conception (DWF, DWG).</p>
                                     </div>
                                 </div>
                             </div>
@@ -394,7 +448,8 @@
                         <section id="civil" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">construction</span>
+                                <span class="material-symbols-outlined service-block-icon"
+                                    aria-hidden="true">construction</span>
                                 <div>
                                     <h2>Génie Civil et Construction</h2>
                                     <p class="service-intro">
@@ -407,50 +462,68 @@
 
                             <div class="service-sub-grid">
                                 <div class="service-sub-item animate-on-scroll has-img" id="civ-infrastructures">
-                                    <img src="../assets/services/genie-civil-construction/releves-infrastructures.png" alt="Orthophotographie verticale d'une intersection routière, marquage au sol et trottoirs lisibles" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/genie-civil-construction/releves-infrastructures.png"
+                                        alt="Orthophotographie verticale d'une intersection routière, marquage au sol et trottoirs lisibles"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Relevés d'infrastructures</h3>
-                                        <p>Relevés topographiques de haute précision dédiés aux ouvrages d'art et infrastructures existantes.</p>
+                                        <p>Relevés topographiques de haute précision dédiés aux ouvrages d'art et
+                                            infrastructures existantes.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="civ-relief">
-                                    <img src="../assets/services/genie-civil-construction/modelisation-relief.jpg" alt="Modèle numérique de surface d'un secteur urbain et portuaire, coloré selon l'élévation" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/genie-civil-construction/modelisation-relief.jpg"
+                                        alt="Modèle numérique de surface d'un secteur urbain et portuaire, coloré selon l'élévation"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Modélisation du relief</h3>
-                                        <p>Génération de modèles numériques de terrain (MNT), de canopée (MNC) et d'élévation (MNE).</p>
+                                        <p>Génération de modèles numériques de terrain (MNT), de canopée (MNC) et
+                                            d'élévation (MNE).</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="civ-hydrologie">
-                                    <img src="../assets/services/genie-civil-construction/analyses-hydrologiques.png" alt="Réseau hydrographique tracé en bleu sur un modèle numérique de terrain ombré et coloré" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/genie-civil-construction/analyses-hydrologiques.png"
+                                        alt="Réseau hydrographique tracé en bleu sur un modèle numérique de terrain ombré et coloré"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Analyses hydrologiques</h3>
-                                        <p>Études de bassins versants, calculs rigoureux des pentes et détection de micro-dépressions.</p>
+                                        <p>Études de bassins versants, calculs rigoureux des pentes et détection de
+                                            micro-dépressions.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="civ-tel-construit">
-                                    <img src="../assets/services/genie-civil-construction/tel-que-construit.jpg" alt="Plans de construction déroulés sur un établi, une zone entourée au crayon rouge" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/genie-civil-construction/tel-que-construit.jpg"
+                                        alt="Plans de construction déroulés sur un établi, une zone entourée au crayon rouge"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Plans tel que construit</h3>
-                                        <p>Documentation exacte de l'état final des structures et infrastructures après les travaux.</p>
+                                        <p>Documentation exacte de l'état final des structures et infrastructures après
+                                            les travaux.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="civ-chantier">
-                                    <img src="../assets/services/genie-civil-construction/suivi-chantier.jpg" alt="Comparateur avant-après entre deux orthophotos d'un même chantier de bâtiment" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/genie-civil-construction/suivi-chantier.jpg"
+                                        alt="Comparateur avant-après entre deux orthophotos d'un même chantier de bâtiment"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Suivi de chantier</h3>
-                                        <p>Documentation régulière et calculs de déblais/remblais pour contrôler l'avancement des travaux.</p>
+                                        <p>Documentation régulière et calculs de déblais/remblais pour contrôler
+                                            l'avancement des travaux.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="civ-jumeau">
-                                    <img src="../assets/services/genie-civil-construction/jumeau-numerique.png" alt="Maquette 3D d'un chantier : dalles, murs de fondation et grue à tour modélisés" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/genie-civil-construction/jumeau-numerique.png"
+                                        alt="Maquette 3D d'un chantier : dalles, murs de fondation et grue à tour modélisés"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Jumeau numérique 2D/3D</h3>
-                                        <p>Visite virtuelle de votre chantier avec des outils intégrés pour la prise de mesures précises à distance.</p>
+                                        <p>Visite virtuelle de votre chantier avec des outils intégrés pour la prise de
+                                            mesures précises à distance.</p>
                                     </div>
                                 </div>
                             </div>
@@ -464,7 +537,8 @@
                         <section id="architecture" class="service-block">
 
                             <div class="service-block-header animate-on-scroll">
-                                <span class="material-symbols-outlined service-block-icon" aria-hidden="true">architecture</span>
+                                <span class="material-symbols-outlined service-block-icon"
+                                    aria-hidden="true">architecture</span>
                                 <div>
                                     <h2>Architecture et Bâtiment</h2>
                                     <p class="service-intro">
@@ -477,42 +551,57 @@
 
                             <div class="service-sub-grid">
                                 <div class="service-sub-item animate-on-scroll has-img" id="arc-scan">
-                                    <img src="../assets/services/architecture-batiment/scan-laser-nuage-points.png" alt="Nuage de points colorisé d'un immeuble résidentiel en brique et de son escalier extérieur" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/architecture-batiment/scan-laser-nuage-points.png"
+                                        alt="Nuage de points colorisé d'un immeuble résidentiel en brique et de son escalier extérieur"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Scan laser &amp; Nuages de points</h3>
-                                        <p>Numérisation millimétrique des bâtiments pour capturer les conditions existantes avec une fidélité absolue.</p>
+                                        <p>Numérisation millimétrique des bâtiments pour capturer les conditions
+                                            existantes avec une fidélité absolue.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arc-modeles-3d">
-                                    <img src="../assets/services/architecture-batiment/modeles-3d-photogrammetriques.png" alt="Modèle 3D texturé d'un bâtiment industriel, de sa toiture et de sa cour de manœuvre" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/architecture-batiment/modeles-3d-photogrammetriques.png"
+                                        alt="Modèle 3D texturé d'un bâtiment industriel, de sa toiture et de sa cour de manœuvre"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Modèles 3D photogrammétriques</h3>
-                                        <p>Création de modèles texturés de très haute résolution pour une visualisation réaliste des structures.</p>
+                                        <p>Création de modèles texturés de très haute résolution pour une visualisation
+                                            réaliste des structures.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arc-bim">
-                                    <img src="../assets/services/architecture-batiment/scan-to-bim.png" alt="Même bâtiment industriel montré pour moitié en maquette BIM, pour moitié en nuage de points" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/architecture-batiment/scan-to-bim.png"
+                                        alt="Même bâtiment industriel montré pour moitié en maquette BIM, pour moitié en nuage de points"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Scan-to-BIM</h3>
-                                        <p>Vectorisation des nuages de points pour la création de maquettes intelligentes (Revit, IFC, DWG).</p>
+                                        <p>Vectorisation des nuages de points pour la création de maquettes
+                                            intelligentes (Revit, IFC, DWG).</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arc-jumeaux">
-                                    <img src="../assets/services/architecture-batiment/jumeaux-numeriques-immersifs.png" alt="Vue immersive à l'intérieur d'une maquette 3D : un étage dégagé et ses colonnes de béton" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/architecture-batiment/jumeaux-numeriques-immersifs.png"
+                                        alt="Vue immersive à l'intérieur d'une maquette 3D : un étage dégagé et ses colonnes de béton"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Jumeaux numériques immersifs</h3>
-                                        <p>Environnement interactif combinant la réalité (nuages de points/modèles 3D) et le modèle conçu (maquettes BIM).</p>
+                                        <p>Environnement interactif combinant la réalité (nuages de points/modèles 3D)
+                                            et le modèle conçu (maquettes BIM).</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="arc-inspections">
-                                    <img src="../assets/services/architecture-batiment/inspection-loi-122.png" alt="Orthofaçade d'un mur de briques inspecté, une fissure verticale courant à la jonction des deux parements" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/architecture-batiment/inspection-loi-122.png"
+                                        alt="Orthofaçade d'un mur de briques inspecté, une fissure verticale courant à la jonction des deux parements"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Inspections de bâtiments (Loi 122)</h3>
-                                        <p>Solution clé en main : orthofaçades haute résolution, détection préliminaire de déficiences par IA, outils d'annotation et rapports automatisés.</p>
+                                        <p>Solution clé en main : orthofaçades haute résolution, détection préliminaire
+                                            de déficiences par IA, outils d'annotation et rapports automatisés.</p>
                                     </div>
                                 </div>
                             </div>
@@ -538,26 +627,35 @@
 
                             <div class="service-sub-grid">
                                 <div class="service-sub-item animate-on-scroll has-img" id="env-lidar">
-                                    <img src="../assets/services/environnement/lidar-orthophoto.png" alt="Orthophotographie verticale de terres agricoles bordées de boisés et traversées par un chemin" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/environnement/lidar-orthophoto.png"
+                                        alt="Orthophotographie verticale de terres agricoles bordées de boisés et traversées par un chemin"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>LiDAR par drone et Orthophotos</h3>
-                                        <p>Déploiement de capteurs permettant de percer la végétation, couplés à une imagerie aérienne haute définition.</p>
+                                        <p>Déploiement de capteurs permettant de percer la végétation, couplés à une
+                                            imagerie aérienne haute définition.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="env-canopee">
-                                    <img src="../assets/services/environnement/mnt-canopee.png" alt="Coupe verticale d'un nuage de points LiDAR : hauteur des arbres mesurée au-dessus du sol, graduée en mètres" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/environnement/mnt-canopee.png"
+                                        alt="Coupe verticale d'un nuage de points LiDAR : hauteur des arbres mesurée au-dessus du sol, graduée en mètres"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Modèles de terrain et canopée</h3>
-                                        <p>Génération de modèles numériques révélant la vraie topographie du sol et la structure végétale.</p>
+                                        <p>Génération de modèles numériques révélant la vraie topographie du sol et la
+                                            structure végétale.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="env-bathymetrie">
-                                    <img src="../assets/services/environnement/bathymetrie.png" alt="Carte bathymétrique d'un plan d'eau, profondeurs relevées point par point du rivage vers le centre" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/environnement/bathymetrie.png"
+                                        alt="Carte bathymétrique d'un plan d'eau, profondeurs relevées point par point du rivage vers le centre"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Bathymétrie</h3>
-                                        <p>Levés topographiques sous-marins pour l'étude des lits de cours d'eau, des berges et des lacs.</p>
+                                        <p>Levés topographiques sous-marins pour l'étude des lits de cours d'eau, des
+                                            berges et des lacs.</p>
                                     </div>
                                 </div>
 
@@ -577,10 +675,13 @@
                                 -->
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="env-analyses">
-                                    <img src="../assets/services/environnement/analyses-spatiales.png" alt="Orthophotographie d'un secteur rural dont un bâtiment ressort en orange, isolé par une analyse spatiale" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/environnement/analyses-spatiales.png"
+                                        alt="Orthophotographie d'un secteur rural dont un bâtiment ressort en orange, isolé par une analyse spatiale"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Analyses spatiales</h3>
-                                        <p>Création experte de cartes des pentes et modélisation des directions d'écoulement des eaux.</p>
+                                        <p>Création experte de cartes des pentes et modélisation des directions
+                                            d'écoulement des eaux.</p>
                                     </div>
                                 </div>
                             </div>
@@ -607,50 +708,68 @@
 
                             <div class="service-sub-grid">
                                 <div class="service-sub-item animate-on-scroll has-img" id="mun-actifs">
-                                    <img src="../assets/services/municipalites/inventaire-actifs.jpg" alt="Plaque d'identification d'un poteau d'utilité publique, portant son numéro d'actif et sa cible d'arpentage" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/municipalites/inventaire-actifs.jpg"
+                                        alt="Plaque d'identification d'un poteau d'utilité publique, portant son numéro d'actif et sa cible d'arpentage"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Inventaire des actifs</h3>
-                                        <p>Collecte systématique et géolocalisation précise des données pour la gestion des infrastructures municipales.</p>
+                                        <p>Collecte systématique et géolocalisation précise des données pour la gestion
+                                            des infrastructures municipales.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="mun-lidar">
-                                    <img src="../assets/services/municipalites/lidar-orthophoto.png" alt="Nuage de points colorisé d'un boulevard résidentiel, avec ses arbres, ses lampadaires et ses entrées" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/municipalites/lidar-orthophoto.png"
+                                        alt="Nuage de points colorisé d'un boulevard résidentiel, avec ses arbres, ses lampadaires et ses entrées"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>LiDAR et Orthophotos</h3>
-                                        <p>Acquisition de données par LiDAR (aérien et terrestre) et génération d'imagerie aérienne du territoire.</p>
+                                        <p>Acquisition de données par LiDAR (aérien et terrestre) et génération
+                                            d'imagerie aérienne du territoire.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="mun-analyses">
-                                    <img src="../assets/services/municipalites/analyses-spatiales.png" alt="Carte de zonage en 3D d'un centre-ville, chaque usage dans sa couleur, une fiche détaillant un bâtiment" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/municipalites/analyses-spatiales.png"
+                                        alt="Carte de zonage en 3D d'un centre-ville, chaque usage dans sa couleur, une fiche détaillant un bâtiment"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Analyses spatiales du territoire</h3>
-                                        <p>Études géospatiales avancées pour supporter la planification urbaine et la prise de décision.</p>
+                                        <p>Études géospatiales avancées pour supporter la planification urbaine et la
+                                            prise de décision.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="mun-etl">
-                                    <img src="../assets/services/municipalites/automatisation-etl.png" alt="Chaîne de traitement ETL : blocs reliés transformant des nuages de points en données prêtes à diffuser" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/municipalites/automatisation-etl.png"
+                                        alt="Chaîne de traitement ETL : blocs reliés transformant des nuages de points en données prêtes à diffuser"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Automatisation de données (ETL)</h3>
-                                        <p>Mise en place de solutions d'intégration (ETL) pour transformer et automatiser vos flux de données spatiales.</p>
+                                        <p>Mise en place de solutions d'intégration (ETL) pour transformer et
+                                            automatiser vos flux de données spatiales.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="mun-bdd">
-                                    <img src="../assets/services/municipalites/bases-donnees.jpg" alt="Schéma de bases de données reliées en étoile autour d'une base centrale" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/municipalites/bases-donnees.jpg"
+                                        alt="Schéma de bases de données reliées en étoile autour d'une base centrale"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Bases de données spatiales</h3>
-                                        <p>Création, structuration, et gestion optimale de vos données géographiques centralisées.</p>
+                                        <p>Création, structuration, et gestion optimale de vos données géographiques
+                                            centralisées.</p>
                                     </div>
                                 </div>
 
                                 <div class="service-sub-item animate-on-scroll has-img" id="mun-jumeaux">
-                                    <img src="../assets/services/municipalites/jumeaux-numeriques.png" alt="Maquette 3D d'un centre-ville : bâtiments, voirie et parcs modélisés en volumes simplifiés" class="service-card-img" loading="lazy">
+                                    <img src="../assets/services/municipalites/jumeaux-numeriques.png"
+                                        alt="Maquette 3D d'un centre-ville : bâtiments, voirie et parcs modélisés en volumes simplifiés"
+                                        class="service-card-img" loading="lazy">
                                     <div class="service-sub-body">
                                         <h3>Jumeaux numériques urbains</h3>
-                                        <p>Cartographie Web interactive et développement de solutions sur mesure selon les besoins de la ville.</p>
+                                        <p>Cartographie Web interactive et développement de solutions sur mesure selon
+                                            les besoins de la ville.</p>
                                     </div>
                                 </div>
                             </div>
@@ -719,4 +838,5 @@
 
     <script src="../script.js"></script>
 </body>
+
 </html>

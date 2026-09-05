@@ -641,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- Transitions fluides entre les pages ---
 // Sur les liens .transition-link qui pointent vers une autre page,
 // on ajoute "fade-out" sur le body avant de naviguer.
-// Les ancres vers la même page (ex : index.html#services depuis index.html)
+// Les ancres vers la même page (ex : /services/#arpentage depuis /services/)
 // sont exclues et laissent le navigateur gérer le scroll natif.
 
 /**
@@ -663,19 +663,24 @@ const dureeFonduPage = () => {
     return Number.isFinite(ms) ? ms : 250;
 };
 
+// Chaque page vit dans son propre dossier et se nomme index.html (ex :
+// /services/index.html) : comparer par nom de fichier ferait correspondre
+// toutes les pages entre elles. On compare donc le chemin de dossier, en
+// ignorant un "index.html" final et les barres obliques finales, pour que
+// "/services", "/services/" et "/services/index.html" désignent la même page.
+const normaliserChemin = (chemin) =>
+    chemin.replace(/index\.html$/, "").replace(/\/+$/, "") || "/";
+
 document.querySelectorAll(".transition-link").forEach(link => {
     link.addEventListener("click", function (e) {
         const targetUrl = this.getAttribute("href");
 
         const isSamePageAnchor = targetUrl.startsWith("#");
 
-        // NOTE: pathname.split("/").pop() renvoie "" à la racine "/" (ex : dev server).
-        // Fallback sur "index.html" pour que les ancres type "index.html#services"
-        // soient reconnues comme appartenant à la page courante.
-        const currentPage = window.location.pathname.split("/").pop() || "index.html";
+        const currentPage = normaliserChemin(window.location.pathname);
         const isCurrentPageAnchor =
             targetUrl.includes("#") &&
-            targetUrl.split("#")[0] === currentPage;
+            normaliserChemin(targetUrl.split("#")[0] || "/") === currentPage;
 
         if (targetUrl && !isSamePageAnchor && !isCurrentPageAnchor) {
             e.preventDefault();

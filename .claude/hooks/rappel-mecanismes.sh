@@ -13,16 +13,26 @@
 entree=$(cat)
 chemin=$(printf '%s' "$entree" | jq -r '.tool_input.file_path // empty')
 session=$(printf '%s' "$entree" | jq -r '.session_id // "sans-session"')
-fichier=$(basename "$chemin")
 
 # Seuls ces quatre fichiers portent les mécanismes documentés. Les autres (apropos.css,
 # contact.css, tokens.css…) sortent immédiatement.
-case "$fichier" in
-  script.js | style.css | services.css | services.html) ;;
+#
+# On filtre sur le CHEMIN complet et non sur le seul basename : depuis que chaque page
+# vit dans son propre dossier et se nomme index.html, un basename() de services/index.html
+# vaudrait "index.html" — indiscernable de la page d'accueil à la racine.
+case "$chemin" in
+  */services/index.html) fichier="services/index.html" ;;
+  */services/services.css) fichier="services/services.css" ;;
+  *script.js) fichier="script.js" ;;
+  *style.css) fichier="style.css" ;;
   *) exit 0 ;;
 esac
 
-marqueur="${TMPDIR:-/tmp}/terravia-rappel-$session-$fichier"
+# "/" remplacé par "-" pour la clé du marqueur : $fichier peut désormais contenir un
+# segment de dossier (ex. "services/index.html"), et un "/" y créerait un chemin au
+# lieu d'un nom de fichier.
+cle="${fichier//\//-}"
+marqueur="${TMPDIR:-/tmp}/terravia-rappel-$session-$cle"
 [ -e "$marqueur" ] && exit 0
 touch "$marqueur"
 

@@ -17,10 +17,26 @@ explication laissée uniquement dans le message de chat ne compte pas.
 
 ## Le projet
 
-Site vitrine statique de **Solutions Terravia** (géomatique et arpentage, Québec) : 5 pages HTML
+Site vitrine statique de **Solutions Terravia** (géomatique et arpentage, Québec) : 5 pages
 (`index`, `services`, `apropos`, `contact`, `login`) servies telles quelles, sans build, sans
-dépendance npm, sans tests. Le contenu, les commentaires du
-code et les messages de commit sont **en français** — s'y tenir.
+dépendance npm, sans tests — voir « Arborescence » ci-dessous pour leur emplacement exact. Le
+contenu, les commentaires du code et les messages de commit sont **en français** — s'y tenir.
+
+## Arborescence
+
+La page d'accueil (`index.html`) reste seule à la racine, avec les fichiers partagés par les 5
+pages : `tokens.css`, `style.css`, `script.js`, `assets/`, `favicon.ico`, `apple-touch-icon.png`.
+Chaque autre page vit dans son propre dossier, nommée `index.html`, à côté de sa feuille de style —
+`services/` (`index.html` + `services.css`), `apropos/` (`index.html` + `apropos.css`), `contact/`
+(`index.html` + `contact.css`), `login/` (`index.html` + `login.css`). Ce découpage donne des URL
+sans `.html` : `/`, `/services/`, `/apropos/`, `/contact/`, `/login/`.
+
+**Tous les liens internes — nav, footer, CSS, `script.js`, assets, favicons — sont écrits en chemins
+absolus depuis la racine** (`/tokens.css`, `/script.js`, `/assets/...`, `/services/services.css`,
+`/services/`, `/services/#arpentage`…), y compris dans `index.html` bien qu'il ne bouge pas : une
+seule convention pour tout le site plutôt que des `../` à recompter par dossier. Ça suppose que le
+site est servi à la racine du domaine — vrai avec Live Server et avec un hébergement à domaine
+personnalisé, à revoir si le site finissait un jour sous une sous-adresse (ex. `monsite.github.io/repo/`).
 
 ## Lancer le site
 
@@ -38,9 +54,10 @@ Chaque page importe, dans cet ordre exact : `tokens.css` → `style.css` → `[p
 - **style.css** — global aux 5 pages : reset, boutons, header et menu, en-têtes de section,
   révélation au défilement, liens à flèche, footer. Rien qui ne serve qu'à une seule page : si une
   règle n'a plus qu'un seul appelant, sa place est dans la feuille de cette page.
-- **index.css / services.css / apropos.css / contact.css / login.css** — spécifique à une page.
-  `index.css` porte le hero, la grille de cartes de services, la section technologie et le CSS
-  dormant des projets (voir « État fonctionnel »).
+- **index.css / services.css / apropos.css / contact.css / login.css** — spécifique à une page,
+  rangée dans le dossier de cette page (sauf `index.css`, à la racine avec `index.html` — voir
+  « Arborescence »). `index.css` porte le hero, la grille de cartes de services, la section
+  technologie et le CSS dormant des projets (voir « État fonctionnel »).
 
 **Règle d'or : aucune valeur brute (hex, rgba, rem, px) hors de `tokens.css`.** S'il manque une
 valeur, ajouter d'abord un token. Seule exception assumée : `#1A3C34` en dur dans le
@@ -49,8 +66,8 @@ une variable CSS) — si `--forest-900` change, répercuter à ces endroits.
 
 **Les classes de formulaire sont dans `style.css`, section 6** (`.form-stack`, `.input-group`,
 `.input-wrapper`, `.input-icon`, `.form-input`, `.input-label`, `.checkbox-input`, `.error-banner`,
-`.error-icon`). Deux pages s'en servent — `login.html` et `contact.html` — donc y toucher impacte
-les deux. `login.css` et `contact.css` ne font que les étendre : `login.css` pour le champ mot de
+`.error-icon`). Deux pages s'en servent — `login/index.html` et `contact/index.html` — donc y
+toucher impacte les deux. `login.css` et `contact.css` ne font que les étendre : `login.css` pour le champ mot de
 passe (`.form-input[type="password"]`, `.password-toggle`) et ses options propres
 (`.inputs-wrapper`, `.checkbox-group`, `.flex-between`, `.form-options`), `contact.css` pour le
 déclencheur du panneau de services et la hauteur du `textarea`. Ces surcharges reposent sur l'ordre
@@ -71,7 +88,7 @@ charger le même script partout sans erreur.
 Mécanismes transversaux — **le détail vit dans la skill `mecanismes-front`**, dont le corps est
 chargé à la demande et non à chaque session.
 
-**IMPORTANT — avant de modifier le header, le menu burger, la barre de pilules de `services.html`,
+**IMPORTANT — avant de modifier le header, le menu burger, la barre de pilules de `services/index.html`,
 le scroll-spy ou le chargement des pages : invoquer la skill `mecanismes-front`.** Les lignes
 ci-dessous ne sont que des garde-fous : elles disent qu'un piège existe, pas comment il marche. Un
 changement qui rend fausse une phrase de la skill doit être répercuté dans la skill **au même
@@ -83,7 +100,7 @@ commit** — une couleur, un texte ou une valeur de token ne le nécessitent pas
 - **Transitions de page** — durée dans le seul token `--duration-page-fade`, lu par le JS ; jamais de
   valeur en dur côté JS.
 - **États du header** — `is-floating`, `is-scrolled`, `show-cta`, `is-hidden`, plus le miroir
-  `body.header-hidden` consommé par `services.css`.
+  `body.header-hidden` consommé par `services/services.css`.
 - **Masquage au scroll descendant (mobile)** — seuil `840px` tenu en double, le JS **et** le média
   CSS.
 - **Surface de verre unique (services, mobile)** — un seul `backdrop-filter` pour le header **et** la
@@ -106,9 +123,10 @@ commit** — une couleur, un texte ou une valeur de token ne le nécessitent pas
 
 ## État fonctionnel
 
-- **Aucun backend.** Le formulaire de `contact.html` valide côté client puis simule le succès et se
-  reset ; `login.html` valide les champs et affiche une bannière d'erreur, sans authentification
-  réelle. Le markup est prêt pour un branchement ultérieur (Formspree, Netlify Forms ou API).
+- **Aucun backend.** Le formulaire de `contact/index.html` valide côté client puis simule le succès
+  et se reset ; `login/index.html` valide les champs et affiche une bannière d'erreur, sans
+  authentification réelle. Le markup est prêt pour un branchement ultérieur (Formspree, Netlify
+  Forms ou API).
 - Le site n'est pas encore déployé.
 - **Section « Projets récents » : retirée du HTML, styles conservés volontairement.** L'activité
   démarre et il n'y a pas encore de réalisations à présenter ; la section reviendra dès qu'il y aura
@@ -122,13 +140,14 @@ commit** — une couleur, un texte ou une valeur de token ne le nécessitent pas
   - `tokens.css` — `--shadow-project-hover`, dont c'est le seul usage.
   - Pour la réactiver : remettre `<section class="projects-section" id="projets">` dans `index.html`
     entre la section services et la section technologie, et le lien `Projets` dans la `.main-nav` des
-    quatre pages qui en ont une (`#projets` depuis `index.html`, `index.html#projets` depuis
-    `services.html`, `apropos.html` et `contact.html`). Voir le commit `68ebb65` pour le markup exact.
+    quatre pages qui en ont une (`#projets` depuis la page d'accueil, `/#projets` depuis
+    `/services/`, `/apropos/` et `/contact/`). Voir le commit `68ebb65` pour le markup exact (les
+    chemins y sont d'avant la restructuration en dossiers — à adapter à la convention actuelle).
 - Polices Google (Montserrat, Orbitron, Material Symbols Outlined) chargées **avant** les CSS locaux,
   pour que la cascade locale les surcharge sans `!important`.
 - Les noms de fichiers d'`assets/` sont volontairement sans accent (les accents cassaient les URL).
 
-## Photos des fiches de `services.html`
+## Photos des fiches de `/services/`
 
 Rangées dans `assets/services/<secteur>/<sujet>.<ext>` — minuscules, sans accent, tirets, sans
 répéter le nom du secteur que le dossier porte déjà. Le `alt` décrit **ce que l'image montre**, pas

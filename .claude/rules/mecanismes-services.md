@@ -1,10 +1,10 @@
 ---
 paths:
-  - "services.html"
-  - "services.css"
+  - "services/index.html"
+  - "services/services.css"
 ---
 
-# Mécanismes de services.html
+# Mécanismes de services/index.html (/services/)
 
 Cette page repose sur quatre mécanismes mesurés — surface de verre de la barre de pilules, sommaire
 synchronisé, ligne de lecture du scroll-spy, ancres de fiches. **Avant de modifier le header, la

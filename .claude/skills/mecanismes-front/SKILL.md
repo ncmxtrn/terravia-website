@@ -2,14 +2,14 @@
 name: mecanismes-front
 description: >-
   Mécanismes transversaux du front de Solutions Terravia — header (quatre états, masquage au
-  scroll), feuille du menu burger, surface de verre de la barre de pilules de services.html,
+  scroll), feuille du menu burger, surface de verre de la barre de pilules de services/index.html,
   sommaire synchronisé et scroll-spy, ancres de fiches, logo adaptatif, anti-FOUC, transitions de
   page, bfcache. À charger avant toute modification de ces zones : elles tiennent sur des équilibres
   mesurés (pixels, spécificité CSS, thread principal d'un iPhone) qu'on ne devine pas en lisant le
   code.
 when_to_use: >-
   Dès que la demande touche le header, le menu burger ou sa feuille, la barre de pilules, le
-  sommaire ou le scroll-spy de services.html, les ancres de fiches, le logo du header, le chargement
+  sommaire ou le scroll-spy de services/index.html, les ancres de fiches, le logo du header, le chargement
   ou le fondu des pages — ou un symptôme du genre : barre qui perd son fond, éclair blanc à
   l'ouverture du menu, saut du sommaire, section active en retard, page restée invisible.
 ---
@@ -32,12 +32,12 @@ un aller-retour déjà fait.
 3. [Transitions de page](#transitions-de-page)
 4. [États du header](#états-du-header)
 5. [Masquage au scroll descendant (mobile)](#masquage-au-scroll-descendant-mobile)
-6. [Surface de verre unique (services.html, mobile)](#surface-de-verre-unique-serviceshtml-mobile)
-7. [Sommaire synchronisé (services.html, desktop)](#sommaire-synchronisé-serviceshtml-desktop)
-8. [Ligne de lecture (services.html)](#ligne-de-lecture-serviceshtml)
+6. [Surface de verre unique (services/index.html, mobile)](#surface-de-verre-unique-servicesindexhtml-mobile)
+7. [Sommaire synchronisé (services/index.html, desktop)](#sommaire-synchronisé-servicesindexhtml-desktop)
+8. [Ligne de lecture (services/index.html)](#ligne-de-lecture-servicesindexhtml)
 9. [Logo adaptatif du header](#logo-adaptatif-du-header)
-10. [Zone collante vs `--sticky-top` (services.html)](#zone-collante-vs---sticky-top-serviceshtml)
-11. [Ancres de services (services.html)](#ancres-de-services-serviceshtml)
+10. [Zone collante vs `--sticky-top` (services/index.html)](#zone-collante-vs---sticky-top-servicesindexhtml)
+11. [Ancres de services (services/index.html)](#ancres-de-services-servicesindexhtml)
 12. [Feuille du menu mobile (≤ 840px)](#feuille-du-menu-mobile--840px)
 13. [Révélation au scroll](#révélation-au-scroll)
 14. [Liens non implémentés](#liens-non-implémentés)
@@ -80,7 +80,7 @@ observer de plus), et il **n'ajoute que du masquage** : il ne révèle jamais un
 caché dérivé tient hors écran, ce qui laisse le haut du hero d'`index.html` inchangé. Les deux
 mécanismes posent le même `translateY(-100%)` et cohabitent sans conflit de spécificité. Le JS **et**
 le média CSS gardent tous deux le seuil des `840px`. Miroir sur `<body>` : la classe
-**`body.header-hidden`**, dont l'unique consommateur est `services.css` — la barre de pilules
+**`body.header-hidden`**, dont l'unique consommateur est `services/services.css` — la barre de pilules
 collante y passe à `top: 0` pour suivre le header (le CSS ne peut pas cibler un ancêtre de
 `.site-header`). `--sticky-top` n'est volontairement **pas** recalculé selon cet état : la ligne de
 lecture du scroll-spy en dérive, et les `scroll-margin-top` doivent rester stables.
@@ -99,7 +99,7 @@ le header n'y disparaît jamais. Le header se cache alors normalement pendant le
 n'importe quel autre défilement descendant, et la section arrive à ras de l'écran une fois qu'il est
 parti.
 
-## Surface de verre unique (services.html, mobile)
+## Surface de verre unique (services/index.html, mobile)
 
 Accostée sous le header, la barre de pilules lui est jointive : deux `backdrop-filter` voisins y
 feraient une marche de ton (chacun floute son **propre** arrière-plan en s'écrêtant à ses propres
@@ -152,7 +152,7 @@ header est opaque au-dessus, il n'y a plus de jointure à accorder. Un `backdrop
 neutre est déclaré en permanence sur la barre, uniquement pour que la couche de composition existe
 déjà à cet instant — sans elle, un téléphone peut laisser les pilules à découvert une image ou deux.
 
-## Sommaire synchronisé (services.html, desktop)
+## Sommaire synchronisé (services/index.html, desktop)
 
 La sidebar fait ~1700px de liens pour 650-800px de fenêtre visible : elle défile en interne
 (`overflow-y: auto`), et `syncSidebarScroll` reporte sur son `scrollTop` la progression de la page.
@@ -175,7 +175,7 @@ dur : c'est ce partage qui fait coïncider la bascule du spy avec `q = 1`. Deux 
 rouvriraient un saut à chaque changement de section. Appelé hors du gel `navScrollActive`, comme
 `syncPillGlass` et pour la même raison — une position n'est pas une sélection.
 
-## Ligne de lecture (services.html)
+## Ligne de lecture (services/index.html)
 
 `ligneDeLecture` est un repère **perceptuel** qui décide quelle section est active, à distinguer de
 `--sticky-top`, qui est **physique** (où une section se pose au clic sur un lien, et la valeur des
@@ -188,7 +188,7 @@ osciller la sélection, et ils sont calés sur deux cas réels — une section �
 73 % elle a déjà basculé.
 
 **L'asymétrie est le cœur du dispositif : la page pilote le sommaire, jamais l'inverse.** Elle ne
-coûte aucun état côté JS, c'est `overscroll-behavior: contain` (services.css) qui la tient, en
+coûte aucun état côté JS, c'est `overscroll-behavior: contain` (services/services.css) qui la tient, en
 empêchant le sommaire de propager son défilement à la page en fin de course. Tant que l'utilisateur
 parcourt le sommaire, aucun événement `scroll` de page ne part et rien n'écrase sa position ; la
 synchronisation ne reprend la main qu'au prochain défilement de la page. **Ne pas ajouter de timer de
@@ -199,18 +199,18 @@ le sommaire désynchronisé après un défilement manuel.
 
 ## Logo adaptatif du header
 
-Sur `index.html`, `services.html` et `apropos.html`, le `.logo` du header porte la classe
+Sur `index.html`, `services/index.html` et `apropos/index.html`, le `.logo` du header porte la classe
 **`.logo--adaptive`** et contient **deux** `<img>` : le lockup `logo-noir.svg` (`.logo-icon--full`)
 et le monogramme carré `logo-monogramme-noir.svg` (`.logo-icon--mark`). Sous `555px` ils se croisent
 en fondu — mais la bascule est pilotée par **`.show-cta`**, pas par la largeur seule : c'est le
 bouton « Contactez-nous » qui crée l'encombrement, donc l'état flottant en haut du hero garde
-volontairement le lockup complet. **`contact.html` est hors du dispositif** (pas de classe, pas de
+volontairement le lockup complet. **`contact/index.html` est hors du dispositif** (pas de classe, pas de
 second `<img>`) : son `show-cta` en dur ne sert qu'à empêcher le header de se cacher, son CTA étant
-neutralisé par `contact.css` — rien n'y encombre la grille. Les `.logo` de pied de page sont hors du
+neutralisé par `contact/contact.css` — rien n'y encombre la grille. Les `.logo` de pied de page sont hors du
 dispositif pour la même raison. La largeur animée de `.logo--adaptive` impose un token en dur,
 `--logo-lockup-w` — **à recalculer (hauteur × 3,27) si `--logo-icon-h` change**.
 
-## Zone collante vs `--sticky-top` (services.html)
+## Zone collante vs `--sticky-top` (services/index.html)
 
 Deux mesures à ne pas confondre. **`hauteurZoneCollante()`** rend ce qui reste collé en haut : le
 header seul en desktop, header **+ barre de pilules** en mobile. **`--sticky-top`** y ajoute un
@@ -223,7 +223,7 @@ Le recalage des liens de section se mesure contre `hauteurZoneCollante()`, **pas
 `scroll-margin-top` de la section — celui-ci vaut 80px et ignore la barre de pilules, ce qui poserait
 la section derrière elle en mobile.
 
-## Ancres de services (services.html)
+## Ancres de services (services/index.html)
 
 Le handler des sous-liens distingue **deux cibles** : `elScroll`, ce vers quoi on défile, et
 `targetEl`, ce qui flashe (toujours la fiche cliquée). `elScroll` vaut la **section** quand la fiche
@@ -249,9 +249,9 @@ lointaine. Le minuteur initial d'`apresScroll` est plus long que les suivants **
 une cible déjà en place ne produit aucun événement `scroll`, et sans lui le flash ne partirait jamais.
 
 Le recalage se mesure contre le **`scroll-margin-top` propre à la cible**, pas contre `--sticky-top` :
-les deux diffèrent. Une fiche reçoit les 112px de `services.css`, mais une section se voit imposer
+les deux diffèrent. Une fiche reçoit les 112px de `services/services.css`, mais une section se voit imposer
 les **80px** du `section[id]` de `style.css` — plus spécifique (0,1,1) que `.service-block` (0,1,0),
-donc le `scroll-margin-top` de `services.css` sur `.service-block` est **mort**. Comparer à
+donc le `scroll-margin-top` de `services/services.css` sur `.service-block` est **mort**. Comparer à
 `--sticky-top` ferait croire à un écart permanent de 32px sur les sections.
 
 ## Feuille du menu mobile (≤ 840px)
@@ -292,12 +292,12 @@ s'arrêtait avant le header. Même remède que pour la barre de pilules : une su
 arrière-plan reprend un fond plein. `:not(.is-floating)` exclut le haut du hero d'`index.html`, où le
 header est volontairement transparent avec un logo blanc. Les trois classes du sélecteur sont
 nécessaires : il faut (0,3,1) pour l'emporter sur `.has-pill-nav .site-header::before` de
-`services.css` (0,2,1), chargé après `style.css`.
+`services/services.css` (0,2,1), chargé après `style.css`.
 
-**`services.html` fait exception, et l'opacité y passe par la BOÎTE du header, pas par son
+**`services/index.html` fait exception, et l'opacité y passe par la BOÎTE du header, pas par son
 `::before`** — parce que ce pseudo-élément y déborde pour peindre la barre de pilules. Un blanc plein
 posé dessus claque sur la bande des pilules à l'instant où `menu-open` tombe, puis revient au verre
-en 400 ms. `services.css` rend donc au pseudo-élément son `--surface-glass` (0,3,2) et pose le blanc
+en 400 ms. `services/services.css` rend donc au pseudo-élément son `--surface-glass` (0,3,2) et pose le blanc
 sur `.site-header` : même rendu — un verre à 72 % sur un blanc plein donne du blanc plein — sans la
 secousse. Ne pas remettre l'opacité sur le pseudo-élément de cette page.
 

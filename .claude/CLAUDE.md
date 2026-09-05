@@ -32,11 +32,16 @@ Chaque autre page vit dans son propre dossier, nommée `index.html`, à côté d
 sans `.html` : `/`, `/services/`, `/apropos/`, `/contact/`, `/login/`.
 
 **Tous les liens internes — nav, footer, CSS, `script.js`, assets, favicons — sont écrits en chemins
-absolus depuis la racine** (`/tokens.css`, `/script.js`, `/assets/...`, `/services/services.css`,
-`/services/`, `/services/#arpentage`…), y compris dans `index.html` bien qu'il ne bouge pas : une
-seule convention pour tout le site plutôt que des `../` à recompter par dossier. Ça suppose que le
-site est servi à la racine du domaine — vrai avec Live Server et avec un hébergement à domaine
-personnalisé, à revoir si le site finissait un jour sous une sous-adresse (ex. `monsite.github.io/repo/`).
+relatifs au document** (`tokens.css`, `script.js`, `assets/...` depuis `index.html` ;
+`../tokens.css`, `../script.js`, `../assets/...`, `services.css`, `../services/#arpentage`…
+depuis une page d'un sous-dossier). La règle : un chemin qui partirait de la racine s'écrit sans son
+`/` de tête depuis `index.html`, et avec un `../` de plus par niveau de sous-dossier depuis les
+quatre autres pages (un seul niveau ici, donc toujours `../`). Ce choix rend le site fonctionnel
+**quel que soit l'endroit où le dossier est servi ou ouvert** — Live Server, domaine personnalisé,
+sous-adresse GitHub Pages (`monsite.github.io/repo/`), ou même un double-clic local en `file://` —
+puisque plus rien ne dépend de la racine du domaine. Avant d'utiliser des chemins absolus
+(`/tokens.css`) pour une nouvelle page ou un nouvel asset, vérifier sa profondeur et appliquer la
+même règle plutôt que de réintroduire un `/` de tête.
 
 ## Lancer le site
 

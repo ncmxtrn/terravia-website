@@ -19,9 +19,9 @@
 
     <!-- Icônes du site — bloc identique à celui du <head> de index.html, où l'ordre
          des balises et la bascule clair/sombre sont documentés en détail. -->
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="../favicon.ico" sizes="32x32" />
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
     <meta name="theme-color" content="#1A3C34" />
 
     <!-- Polices et icônes Google Fonts chargées en premier pour éviter le FOUT.
@@ -35,9 +35,9 @@
 
     <!-- tokens.css : source unique de vérité du design system (couleurs, typographie,
          espacement, ombres). Doit être importé avant style.css et login.css. -->
-    <link rel="stylesheet" href="/tokens.css">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="/login/login.css">
+    <link rel="stylesheet" href="../tokens.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../login/login.css">
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
          Repli sans JS ci-dessous ; repli sans script.js dans style.css.
          Voir le commentaire détaillé dans le <head> de index.html. -->
@@ -81,8 +81,8 @@
                              Le logo renvoie vers index.html via .transition-link
                              (fondu de sortie géré dans script.js). -->
                         <div class="brand-header">
-                            <a class="logo-link transition-link" href="/">
-                                <img alt="Solutions Terravia" class="logo-icon" src="/assets/logo-noir.svg" />
+                            <a class="logo-link transition-link" href="../">
+                                <img alt="Solutions Terravia" class="logo-icon" src="../assets/logo-noir.svg" />
                             </a>
                             <h1 class="login-title">Connectez-vous</h1>
                             <p class="brand-subtitle">Saisissez vos identifiants pour accéder à votre espace.</p>
@@ -176,7 +176,7 @@
                                  .transition-link déclenche le fondu de sortie de page. -->
                             <p class="footer-text brand-footer-text">
                                 Pas encore de compte ?
-                                <a class="footer-link brand-footer-link transition-link" href="/contact/">Contactez-nous</a>
+                                <a class="footer-link brand-footer-link transition-link" href="../contact/">Contactez-nous</a>
                             </p>
                         </form>
                     </div>
@@ -186,7 +186,7 @@
         </main>
 
     </div>
-    <script src="/script.js"></script>
+    <script src="../script.js"></script>
 </body>
 
 </html>

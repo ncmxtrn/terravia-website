@@ -51,9 +51,9 @@
         lire une variable CSS. C'est la seule sortie assumée de la règle d'or de tokens.css
         — si --forest-900 change, répercuter aux deux endroits.
     -->
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="favicon.ico" sizes="32x32" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <meta name="theme-color" content="#1A3C34" />
 
     <!--
@@ -69,12 +69,12 @@
         rel="stylesheet" />
 
     <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
-    <link rel="stylesheet" href="/tokens.css">
+    <link rel="stylesheet" href="tokens.css">
     <!-- style.css : styles globaux du site, consomme exclusivement les tokens définis ci-dessus -->
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css">
     <!-- index.css : styles propres à cette page (hero, grille de services, technologie).
          Chargé APRÈS style.css, comme les feuilles des quatre autres pages. -->
-    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="index.css">
 
     <!--
         La photo du hero est déclarée en `background-image` sur `.hero-background` (plus bas
@@ -91,7 +91,7 @@
         doivent être modifiées ensemble, sinon le preload télécharge un fichier inutilisé
         (avertissement console « preloaded but not used ») et la photo est découverte tard.
     -->
-    <link rel="preload" as="image" href="/assets/hero-background.jpg">
+    <link rel="preload" as="image" href="assets/hero-background.jpg">
 
     <!--
         Anti-FOUC — plus aucun JS inline. `is-loading` est écrite en dur sur <html>
@@ -174,14 +174,14 @@
                      (section « HEADER — LOGO ADAPTATIF » de style.css) ; sans elle,
                      le second <img> ci-dessous resterait inerte. -->
                 <a href="#" class="logo logo--adaptive">
-                    <img src="/assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
+                    <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
                     <!-- Marque compacte, affichée seulement sous 555px quand le bouton
                          « Contactez-nous » occupe la colonne centrale du header (voir la
                          section « HEADER — LOGO ADAPTATIF » de style.css).
                          alt vide + aria-hidden : le nom accessible du lien est déjà porté
                          par le lockup ci-dessus, qui reste dans le DOM en permanence — le
                          fondu ne joue que sur l'opacité. -->
-                    <img src="/assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
+                    <img src="assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
                 </a>
 
                 <!-- Navigation principale.
@@ -192,16 +192,16 @@
                      desktop le lien est un élément inline, où une espace avant ou
                      après élargirait sa boîte — et avec elle le trait de survol. -->
                 <nav class="main-nav">
-                    <a href="/services/" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
-                    <a href="/login/" class="transition-link client-link">
+                    <a href="services/" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="login/" class="transition-link client-link">
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
-                    <a href="/apropos/" class="transition-link">À propos<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="apropos/" class="transition-link">À propos<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
                 </nav>
 
                 <div class="header-actions">
-                    <a href="/contact/" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
+                    <a href="contact/" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
                     <!--
                         Bouton hamburger — visible uniquement sur mobile (géré en CSS).
                         Les attributs `aria-label` et `aria-expanded` sont mis à jour dynamiquement
@@ -243,7 +243,7 @@
                      modification du chemin doit être reportée là-haut, sinon le preload
                      télécharge un fichier inutilisé et la photo est découverte trop tard. -->
                 <div class="hero-background"
-                    style='background-image: url("/assets/hero-background.jpg");'>
+                    style='background-image: url("assets/hero-background.jpg");'>
                 </div>
                 <div class="hero-overlay"></div>
 
@@ -261,7 +261,7 @@
                         De l'acquisition à l'ingénierie de la donnée, nous créons les fondations numériques de vos projets.
                     </p>
                     <div class="hero-buttons animate-on-scroll">
-                        <a href="/contact/" class="btn btn-primary transition-link" id="hero-start-btn">Contactez-nous</a>
+                        <a href="contact/" class="btn btn-primary transition-link" id="hero-start-btn">Contactez-nous</a>
                         <a href="#services" class="btn btn-outline-white">Découvrir nos services</a>
                     </div>
                 </div>
@@ -313,7 +313,7 @@
                                 <h3>Arpentage</h3>
                                 <p>Acquisition de données de haute précision, modélisation numérique de terrain (MNT), photogrammétrie et relevés LiDAR pour la livraison de données géospatiales fiables.</p>
                             </div>
-                            <a href="/services/#arpentage" class="card-link transition-link">
+                            <a href="services/#arpentage" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
@@ -328,7 +328,7 @@
                                 <h3>Secteur Minier</h3>
                                 <p>Évaluation précise des réserves, bathymétrie, calculs de dynamitage et suivi d'exploitation régulier via nos applications Web interactives dédiées.</p>
                             </div>
-                            <a href="/services/#minier" class="card-link transition-link">
+                            <a href="services/#minier" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
@@ -343,7 +343,7 @@
                                 <h3>Génie Civil et Construction</h3>
                                 <p>Relevés d'infrastructures, analyses hydrologiques, plans tel que construit et création de jumeaux numériques 2D/3D pour un suivi de chantier rigoureux.</p>
                             </div>
-                            <a href="/services/#civil" class="card-link transition-link">
+                            <a href="services/#civil" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
@@ -358,7 +358,7 @@
                                 <h3>Architecture et Bâtiment</h3>
                                 <p>Numérisation millimétrique par scan laser, modélisation 3D réaliste, vectorisation intelligente (Scan-to-BIM) et inspections de façades (Loi 122).</p>
                             </div>
-                            <a href="/services/#architecture" class="card-link transition-link">
+                            <a href="services/#architecture" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
@@ -373,7 +373,7 @@
                                 <h3>Environnement</h3>
                                 <p>Acquisition LiDAR perçant la canopée, bathymétrie, calculs volumétriques et analyses spatiales poussées pour supporter vos études environnementales.</p>
                             </div>
-                            <a href="/services/#environnement" class="card-link transition-link">
+                            <a href="services/#environnement" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
@@ -388,7 +388,7 @@
                                 <h3>Municipalités</h3>
                                 <p>Inventaire géolocalisé des actifs, acquisition LiDAR, automatisation des flux de données (ETL) et jumeaux numériques pour la gestion intelligente du territoire.</p>
                             </div>
-                            <a href="/services/#territoire" class="card-link transition-link">
+                            <a href="services/#territoire" class="card-link transition-link">
                                 En savoir plus
                                 <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                             </a>
@@ -457,7 +457,7 @@
                 <div class="footer-grid">
                     <div class="footer-brand">
                         <a href="#" class="logo">
-                            <img src="/assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                            <img src="assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
                         </a>
                         <p>Levés, traitement et livrables<br>géospatiaux.</p>
                     </div>
@@ -465,19 +465,19 @@
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="/services/#arpentage" class="transition-link">Arpentage</a></li>
-                            <li><a href="/services/#minier" class="transition-link">Secteur Minier</a></li>
-                            <li><a href="/services/#civil" class="transition-link">Génie Civil et Construction</a></li>
-                            <li><a href="/services/#architecture" class="transition-link">Architecture et Bâtiment</a></li>
-                            <li><a href="/services/#environnement" class="transition-link">Environnement</a></li>
-                            <li><a href="/services/#territoire" class="transition-link">Municipalités</a></li>
+                            <li><a href="services/#arpentage" class="transition-link">Arpentage</a></li>
+                            <li><a href="services/#minier" class="transition-link">Secteur Minier</a></li>
+                            <li><a href="services/#civil" class="transition-link">Génie Civil et Construction</a></li>
+                            <li><a href="services/#architecture" class="transition-link">Architecture et Bâtiment</a></li>
+                            <li><a href="services/#environnement" class="transition-link">Environnement</a></li>
+                            <li><a href="services/#territoire" class="transition-link">Municipalités</a></li>
                         </ul>
                     </div>
 
                     <div class="footer-links">
                         <h4>Entreprise</h4>
                         <ul>
-                            <li><a href="/apropos/" class="transition-link">À propos</a></li>
+                            <li><a href="apropos/" class="transition-link">À propos</a></li>
                             <li><a href="#" class="link-placeholder">Carrières</a></li>
                             <li><a href="#" class="link-placeholder">Blogue technique</a></li>
                         </ul>
@@ -515,7 +515,7 @@
         parsé avant l'initialisation. Centralise toute l'interactivité : reveal au scroll,
         glassmorphisme du header, menu hamburger, transitions de page, alertes placeholders.
     -->
-    <script src="/script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

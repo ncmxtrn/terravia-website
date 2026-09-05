@@ -31,9 +31,9 @@
 
     <!-- Icônes du site — bloc identique à celui du <head> de index.html, où l'ordre
          des balises et la bascule clair/sombre sont documentés en détail. -->
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="../favicon.ico" sizes="32x32" />
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
     <meta name="theme-color" content="#1A3C34" />
 
     <!--
@@ -48,11 +48,11 @@
         rel="stylesheet" />
 
     <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
-    <link rel="stylesheet" href="/tokens.css">
+    <link rel="stylesheet" href="../tokens.css">
     <!-- style.css : styles globaux partagés — header, footer, boutons, .section-header, utilitaires -->
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="../style.css">
     <!-- apropos.css : styles spécifiques à cette page (manifeste, valeurs, approche, territoire) -->
-    <link rel="stylesheet" href="/apropos/apropos.css">
+    <link rel="stylesheet" href="../apropos/apropos.css">
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
          Repli sans JS ci-dessous ; repli sans script.js dans style.css.
          Voir le commentaire détaillé dans le <head> de index.html. -->
@@ -121,15 +121,15 @@
                      le second <img> ci-dessous resterait inerte. Cette page a un CTA
                      réellement actif, elle est donc concernée — contrairement à
                      contact.html, dont le bouton est neutralisé par contact.css. -->
-                <a href="/" class="logo logo--adaptive transition-link">
-                    <img src="/assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
+                <a href="../" class="logo logo--adaptive transition-link">
+                    <img src="../assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon logo-icon--full">
                     <!-- Marque compacte, affichée seulement sous 555px quand le bouton
                          « Contactez-nous » occupe la colonne centrale du header (voir la
                          section « HEADER — LOGO ADAPTATIF » de style.css).
                          alt vide + aria-hidden : le nom accessible du lien est déjà porté
                          par le lockup ci-dessus, qui reste dans le DOM en permanence — le
                          fondu ne joue que sur l'opacité. -->
-                    <img src="/assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
+                    <img src="../assets/logo-monogramme-noir.svg" alt="" aria-hidden="true" class="logo-icon logo-icon--mark">
                 </a>
 
                 <!-- Comme sur les autres pages, la navigation omet le lien vers la page
@@ -138,16 +138,16 @@
                      dans la barre horizontale du desktop. Collés au libellé, sans
                      retour à la ligne : voir la note dans index.html. -->
                 <nav class="main-nav">
-                    <a href="/" class="transition-link">Accueil<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
-                    <a href="/services/" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
-                    <a href="/login/" class="transition-link client-link">
+                    <a href="../" class="transition-link">Accueil<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="../services/" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="../login/" class="transition-link client-link">
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
                 </nav>
 
                 <div class="header-actions">
-                    <a href="/contact/" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
+                    <a href="../contact/" class="btn btn-primary transition-link" id="header-quote-btn">Contactez-nous</a>
                     <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
                         <div class="burger-icon">
                             <span></span>
@@ -398,8 +398,8 @@
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <a href="/" class="logo transition-link">
-                            <img src="/assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                        <a href="../" class="logo transition-link">
+                            <img src="../assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
                         </a>
                         <p>Levés, traitement et livrables<br>géospatiaux.</p>
                     </div>
@@ -407,19 +407,19 @@
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="/services/#arpentage" class="transition-link">Arpentage</a></li>
-                            <li><a href="/services/#minier" class="transition-link">Secteur Minier</a></li>
-                            <li><a href="/services/#civil" class="transition-link">Génie Civil et Construction</a></li>
-                            <li><a href="/services/#architecture" class="transition-link">Architecture et Bâtiment</a></li>
-                            <li><a href="/services/#environnement" class="transition-link">Environnement</a></li>
-                            <li><a href="/services/#territoire" class="transition-link">Municipalités</a></li>
+                            <li><a href="../services/#arpentage" class="transition-link">Arpentage</a></li>
+                            <li><a href="../services/#minier" class="transition-link">Secteur Minier</a></li>
+                            <li><a href="../services/#civil" class="transition-link">Génie Civil et Construction</a></li>
+                            <li><a href="../services/#architecture" class="transition-link">Architecture et Bâtiment</a></li>
+                            <li><a href="../services/#environnement" class="transition-link">Environnement</a></li>
+                            <li><a href="../services/#territoire" class="transition-link">Municipalités</a></li>
                         </ul>
                     </div>
 
                     <div class="footer-links">
                         <h4>Entreprise</h4>
                         <ul>
-                            <li><a href="/apropos/" class="transition-link">À propos</a></li>
+                            <li><a href="../apropos/" class="transition-link">À propos</a></li>
                             <li><a href="#" class="link-placeholder">Carrières</a></li>
                             <li><a href="#" class="link-placeholder">Blogue technique</a></li>
                         </ul>
@@ -457,7 +457,7 @@
         parsé avant l'initialisation. Gère sur cette page : anti-FOUC, révélation au scroll,
         états du header, escamotage mobile, menu hamburger, transitions de page.
     -->
-    <script src="/script.js"></script>
+    <script src="../script.js"></script>
 </body>
 
 </html>

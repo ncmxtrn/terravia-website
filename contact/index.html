@@ -23,9 +23,9 @@
 
     <!-- Icônes du site — bloc identique à celui du <head> de index.html, où l'ordre
          des balises et la bascule clair/sombre sont documentés en détail. -->
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="../favicon.ico" sizes="32x32" />
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
     <meta name="theme-color" content="#1A3C34" />
 
     <!--
@@ -40,13 +40,13 @@
         rel="stylesheet" />
 
     <!-- tokens.css : source unique de vérité du design system — couleurs, typographie, espacements, ombres -->
-    <link rel="stylesheet" href="/tokens.css">
+    <link rel="stylesheet" href="../tokens.css">
     <!-- style.css : styles globaux (header, footer, boutons, utilitaires) et les classes
          de formulaire partagées avec login.html — section 6 (.form-input, .input-wrapper,
          .input-label, .error-banner…). Chargé avant contact.css pour permettre la surcharge locale. -->
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="../style.css">
     <!-- contact.css : styles spécifiques à cette page (layout, cartes de coordonnées, formulaire) -->
-    <link rel="stylesheet" href="/contact/contact.css">
+    <link rel="stylesheet" href="../contact/contact.css">
     <!-- Anti-FOUC : `is-loading` est en dur sur <html>, retirée par script.js.
          Repli sans JS ci-dessous ; repli sans script.js dans style.css.
          Voir le commentaire détaillé dans le <head> de index.html. -->
@@ -98,20 +98,20 @@
              redescendait en glissant par-dessus le fondu d'entrée de la page. -->
         <header class="site-header is-scrolled show-cta">
             <div class="container header-content">
-                <a href="/" class="logo transition-link">
-                    <img src="/assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                <a href="../" class="logo transition-link">
+                    <img src="../assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
                 </a>
 
                 <!-- Chevrons réservés à la feuille du menu mobile (≤ 840px) ; masqués
                      dans la barre horizontale du desktop. Collés au libellé, sans
                      retour à la ligne : voir la note dans index.html. -->
                 <nav class="main-nav">
-                    <a href="/services/" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
-                    <a href="/login/" class="transition-link client-link">
+                    <a href="../services/" class="transition-link">Services<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="../login/" class="transition-link client-link">
                         Espace client
                         <span class="material-symbols-outlined client-icon">arrow_outward</span>
                     </a>
-                    <a href="/apropos/" class="transition-link">À propos<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
+                    <a href="../apropos/" class="transition-link">À propos<span class="material-symbols-outlined nav-chevron" aria-hidden="true">chevron_right</span></a>
                 </nav>
 
                 <div class="header-actions">
@@ -390,8 +390,8 @@
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <a href="/" class="logo transition-link">
-                            <img src="/assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
+                        <a href="../" class="logo transition-link">
+                            <img src="../assets/logo-noir.svg" alt="Solutions Terravia" class="logo-icon">
                         </a>
                         <p>Levés, traitement et livrables<br>géospatiaux.</p>
                     </div>
@@ -399,19 +399,19 @@
                     <div class="footer-links">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="/services/#arpentage" class="transition-link">Arpentage</a></li>
-                            <li><a href="/services/#minier" class="transition-link">Secteur Minier</a></li>
-                            <li><a href="/services/#civil" class="transition-link">Génie Civil et Construction</a></li>
-                            <li><a href="/services/#architecture" class="transition-link">Architecture et Bâtiment</a></li>
-                            <li><a href="/services/#environnement" class="transition-link">Environnement</a></li>
-                            <li><a href="/services/#territoire" class="transition-link">Municipalités</a></li>
+                            <li><a href="../services/#arpentage" class="transition-link">Arpentage</a></li>
+                            <li><a href="../services/#minier" class="transition-link">Secteur Minier</a></li>
+                            <li><a href="../services/#civil" class="transition-link">Génie Civil et Construction</a></li>
+                            <li><a href="../services/#architecture" class="transition-link">Architecture et Bâtiment</a></li>
+                            <li><a href="../services/#environnement" class="transition-link">Environnement</a></li>
+                            <li><a href="../services/#territoire" class="transition-link">Municipalités</a></li>
                         </ul>
                     </div>
 
                     <div class="footer-links">
                         <h4>Entreprise</h4>
                         <ul>
-                            <li><a href="/apropos/" class="transition-link">À propos</a></li>
+                            <li><a href="../apropos/" class="transition-link">À propos</a></li>
                             <li><a href="#" class="link-placeholder">Carrières</a></li>
                             <li><a href="#" class="link-placeholder">Blogue technique</a></li>
                         </ul>
@@ -448,7 +448,7 @@
         parsé avant l'initialisation. Gère sur cette page : reveal au scroll, glassmorphisme du header,
         menu hamburger, copie presse-papiers des cartes de coordonnées, dropdown services, validation formulaire.
     -->
-    <script src="/script.js"></script>
+    <script src="../script.js"></script>
 </body>
 
 </html>

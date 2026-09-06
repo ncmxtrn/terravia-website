@@ -166,15 +166,26 @@ Au-delà de 840 px la barre latérale de 240 px et la seconde colonne reprennent
 retombe à 452 px sur un écran de 1280 px. C'est donc 792 × 160, doublé pour les écrans à haute
 densité, d'où 1600 × 340. En dessous, l'image est agrandie et devient visiblement floue.
 
-Deux photos sont actuellement sous ce seuil et paraîtront floues :
-`secteur-minier/calculs-dynamitage.jpg` (299 × 225) et `secteur-minier/exportation-dao.jpg`
-(315 × 160).
+**En pratique, la plupart des photos actuelles sont sous ce seuil**, pas seulement une exception :
+ce sont des exports de rendus (nuages de points, drone, SIG) à leur résolution d'origine, pas des
+photos prises pour le site. Seules `arpentage/releve-topographique.png` (1920 × 784) et
+`arpentage/outils-calcul.jpg` (1600 × 857) l'atteignent franchement ; `environnement/analyses-spatiales.jpg`
+et `environnement/lidar-orthophoto.jpg` (≈1590 px de large) en sont si proches que le flou est
+imperceptible. Seules `secteur-minier/calculs-dynamitage.jpg` (299 × 225) et
+`secteur-minier/exportation-dao.jpg` (315 × 160) sont nettement en dessous. Le reste du dossier tourne
+entre 500 et 1300 px de large : agrandi par `object-fit: cover`, mais pas au point de sauter aux yeux
+comme les deux images ci-dessus. Rien de bloquant — mais avant d'ajouter une photo, vérifier sa
+largeur (`sips -g pixelWidth -g pixelHeight fichier`) plutôt que de supposer qu'elle passe.
 
 **Cadrage** : `object-fit: cover` sur un bandeau de ratio ~5:1 ne garde d'une photo 16:9 que le tiers
 central en hauteur — le haut et le bas sont coupés. Le sujet doit être centré verticalement.
 
-**Poids** : aucune compression n'a encore été faite, le dossier pèse ~33 Mo pour des images affichées
-en 160 px de haut. Chantier ouvert, à traiter dans un commit dédié.
+**Poids et format** : compressé — une vraie photo ou un rendu continu (aérien, nuage de points, jumeau
+3D) va en **JPEG qualité ~82** ; une capture avec du texte ou des traits fins (plan CAO, diagramme
+d'export) reste en **PNG**, une compression avec perte y baverait le texte. C'est ce qui distingue
+aujourd'hui les deux formats dans le dossier — pas le sujet de la photo, sa nature graphique. Le
+dossier est passé de ~35 Mo à ~9,5 Mo ; suivre la même règle pour toute photo ajoutée plutôt que de
+déposer un PNG par défaut.
 
 ## Conventions
 

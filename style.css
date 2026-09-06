@@ -1029,14 +1029,19 @@ a {
 
     /* Les deux marqueurs de fin de ligne — le chevron des liens internes et la
        flèche sortante d'« Espace client » — sont poussés au bord droit et
-       ramenés à la même teinte. Ils indiquent tous les deux « ça mène ailleurs » ;
-       les distinguer par la couleur ferait croire à deux natures de lien
-       différentes alors que seule la destination change. */
+       partagent leur mise en page. La couleur, elle, reste celle du desktop :
+       le chevron des liens internes est neutre (--forest-30), la flèche
+       d'« Espace client » garde le vert (--color-primary) qui la distingue déjà
+       là-bas comme lien externe — l'éteindre ici aurait rendu la feuille
+       incohérente avec la barre desktop, pas l'inverse. */
     .nav-chevron,
     .main-nav .client-icon {
         display: inline-flex;
         margin-left: auto;
         font-size: var(--icon-md);
+    }
+
+    .nav-chevron {
         color: var(--forest-30);
     }
 

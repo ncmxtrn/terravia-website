@@ -401,8 +401,10 @@
             <!--
                 Section technologie — mise en valeur de la Plateforme Intelligente (concept de marque).
                 Disposition en deux colonnes asymétriques : texte à gauche, capture d'écran à droite
-                (empilées sous 950px). L'élément `.floating-ui` superposé à l'image simule un widget
-                de l'interface client et ancre visuellement la section dans le produit réel.
+                (empilées sous 950px). La capture montre l'application cliente telle qu'elle est :
+                c'est elle qui ancre la section dans le produit réel, et rien n'est posé par-dessus.
+                Un encart de verre y flottait tant que la vignette n'était qu'une illustration — il
+                masquait une partie de l'interface dès lors qu'elle est devenue authentique.
             -->
             <section class="tech-section" id="technologie">
                 <div class="container">
@@ -424,20 +426,19 @@
                         </div>
 
                         <div class="tech-image-wrapper animate-on-scroll">
-                            <div class="image-container"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKsQURZJLaLh_GoqHsD7gSEfG0dZ_Axp3-Na8DsVwHqAm8-IPMElk7gfipTjpPW8cxyqkNmiDYngnK3WcEeq0YhgAMBo-gOY-Ur13OzkrSE1W5Xt798oppmGMzsVBXSbOnMzsZr1j3eSdxVtnk0e5swVlWIfdztC3g5q67tUMnn6jMrHjkY66XVyVdrHZLu74NNyhgPeLb52MNJpXVOaWOOgaPLXoHpqCoNAjpb-W-0xq1_Edw7O3vpBDGLwCZtm4TYClQNN04pA0");'>
-                            </div>
                             <!--
-                                Widget flottant décoratif positionné en absolu sur l'image.
-                                Il illustre l'interface de la plateforme sans nécessiter une vraie capture d'écran.
-                                Pas de comportement interactif — rôle purement visuel.
+                                Capture réelle de l'application cliente. L'image est portée par
+                                `.image-container` dans index.css (§ 5) et non par un style en
+                                ligne : le fichier vit maintenant dans assets/, il n'y a plus
+                                d'URL distante à transporter dans le HTML.
+
+                                `role="img"` + `aria-label` : une image de fond CSS n'entre pas
+                                dans l'arbre d'accessibilité. Tant que la vignette était un
+                                visuel d'illustration, ce silence était le bon choix ; elle
+                                montre désormais le produit lui-même, donc elle se décrit.
                             -->
-                            <div class="floating-ui">
-                                <div class="file-info">
-                                    <span class="material-symbols-outlined" aria-hidden="true">description</span>
-                                    <span>Relevé_Site_A.dwg</span>
-                                </div>
-                                <span class="status-badge">Prêt</span>
+                            <div class="image-container" role="img"
+                                aria-label="Interface de la plateforme Terravia : maillage 3D texturé d'un bâtiment, panneau des calques à gauche, fiche d'inspection avec photo annotée à droite.">
                             </div>
                         </div>
                     </div>

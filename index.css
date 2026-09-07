@@ -531,19 +531,33 @@
     color: var(--color-primary);
 }
 
+/* `perspective` vit ici, sur le PARENT de l'élément qui tourne : posée sur
+   `.image-container` elle-même, chaque transform aurait son propre point de fuite
+   et la bascule se lirait comme un aplatissement, pas comme un écran qui se
+   redresse. Le wrapper garde par ailleurs sa révélation `.animate-on-scroll`
+   inchangée — la rotation s'ajoute sur l'enfant, donc aucune des deux ne se
+   dispute la propriété `transform` de l'autre. */
 .tech-image-wrapper {
     width: 100%;
     position: relative;
+    perspective: var(--perspective-screen);
 }
 
-/* L'ombre portée détache la capture du fond blanc de section : elle flotte
-   au-dessus plutôt que d'y être collée.
+/* `--shadow-screen` et non `--shadow-card-hover` : cette dernière n'a qu'une
+   ombre lointaine, et une dalle presque noire posée sur un fond clair sans
+   ombre de CONTACT paraît collée en surface, sans poids. Le détail des trois
+   couches est dans tokens.css, section SHADOWS.
 
    Le ratio suit celui de la capture (1800 × 1004, soit 16/9) et non un format
    décoratif choisi librement : avec `cover`, un cadre en 4/3 rognerait un quart
    de la largeur — soit le panneau des calques à gauche et la moitié de la fiche
    d'inspection à droite, c'est-à-dire justement ce que l'image doit montrer.
-   Remplacer la capture par une autre suppose donc de revérifier ce ratio. */
+   Remplacer la capture par une autre suppose donc de revérifier ce ratio.
+
+   La bascule à la révélation : la capture se redresse au lieu de monter comme
+   un paragraphe. `transform-origin` sur l'arête BASSE et non au centre — un
+   écran posé pivote sur sa base ; au centre, il flotterait en tournant.
+   La course est portée par `.visible`, que script.js pose sur le wrapper. */
 .image-container {
     background-color: var(--color-forest);
     background-image: url("assets/plateforme-image.jpg");
@@ -551,7 +565,28 @@
     border-radius: var(--radius-sm);
     background-size: cover;
     background-position: center;
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: var(--shadow-screen);
+    transform: rotateX(var(--tilt-screen));
+    transform-origin: center bottom;
+    transition: transform var(--duration-reveal) var(--ease-entrance);
+}
+
+.tech-image-wrapper.visible .image-container {
+    transform: rotateX(0deg);
+}
+
+/* ⚠ Ce bloc est indispensable et n'est PAS couvert par celui de style.css § 5 :
+   le bloc global neutralise `.animate-on-scroll`, donc le WRAPPER. La bascule
+   vit sur l'enfant, qui ne porte pas cette classe — sans la coupure ci-dessous,
+   elle survivrait telle quelle au mode « réduire les animations ».
+   Même arbitrage qu'ailleurs sur le site : on coupe le MOUVEMENT, pas le fondu,
+   que le wrapper continue d'assurer de son côté. */
+@media (prefers-reduced-motion: reduce) {
+    .image-container,
+    .tech-image-wrapper.visible .image-container {
+        transform: none;
+        transition: none;
+    }
 }
 
 /* `.tech-image-wrapper` reste en `position: relative` alors que plus rien ne s'y

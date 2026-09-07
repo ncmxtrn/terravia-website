@@ -75,7 +75,7 @@
   --white-05:    rgba(255, 255, 255, 0.05);   /* cercles proches du tracé de portée */
   --white-08:    rgba(255, 255, 255, 0.08);   /* cœur de la lumière au point de station */
   --white-10:    rgba(255, 255, 255, 0.10);   /* overlay/border subtil sur fond sombre */
-  --white-20:    rgba(255, 255, 255, 0.20);   /* bordure d'encart verre dépoli sur photo */
+  --white-20:    rgba(255, 255, 255, 0.20);   /* arête claire du haut de la capture plateforme */
   --gray-200:    #e5e7eb;
 
   /* — Semantic: state —
@@ -298,6 +298,15 @@
      dans la palette monochrome — jamais de noir pur.
      --shadow-card : ombre composite (near + far) pour donner de la profondeur
        aux cartes au repos sans attirer l'attention.
+     --shadow-screen : la capture de la plateforme (index.css § 5). Trois couches
+       qui décrivent un écran POSÉ sur la page, et non une image collée dessus :
+       l'arête claire du haut (la lumière qui accroche le bord de la dalle, même
+       idée que --shadow-sheet), l'ombre de CONTACT courte qui pose l'objet sur
+       le fond, et l'ombre ambiante longue qui lui donne son élévation.
+       C'est la couche de contact qui manquait : la capture portait
+       --shadow-card-hover, qui n'a que la lointaine — un objet sans poids, posé
+       sur rien. Ne pas « simplifier » en retirant une des trois couches, c'est
+       leur superposition qui fait la profondeur.
      --shadow-card-hover / --shadow-project-hover : ombres plus étirées et plus
        opaques pour accentuer l'élévation au survol.
      --shadow-glow / --shadow-glow-hover : halo vert sur les boutons CTA ;
@@ -310,6 +319,10 @@
   --shadow-card:
     0 2px 4px rgba(26, 60, 52, 0.06),
     0 12px 24px -8px rgba(26, 60, 52, 0.12);
+  --shadow-screen:
+    inset 0 1px 0 var(--white-20),
+    0 2px 6px rgba(26, 60, 52, 0.10),
+    0 28px 56px -20px rgba(26, 60, 52, 0.28);
   --shadow-glow:       0 0 15px rgba(74, 222, 128, 0.30);
   --shadow-glow-hover: 0 0 18px rgba(74, 222, 128, 0.40);
   --focus-ring:        0 0 0 3px rgba(74, 222, 128, 0.10);
@@ -389,6 +402,15 @@
 
   --reveal-shift:    30px;
   --reveal-shift-sm: 16px;
+
+  /* Bascule 3D de la capture de la plateforme à sa révélation (index.css § 5).
+     --perspective-screen se pose sur le PARENT et non sur l'élément qui tourne :
+     appliquée à l'élément lui-même, chaque transform aurait son propre point de
+     fuite et la rotation paraîtrait plate, ce qui viderait l'effet de son sens.
+     --tilt-screen reste sous 8° : au-delà, la capture se lit de biais et le texte
+     de l'interface devient illisible pendant toute la course. */
+  --perspective-screen: 1200px;
+  --tilt-screen:        6deg;
 
   /* ============================================================
      FILTRES CSS
